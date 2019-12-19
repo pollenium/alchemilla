@@ -34,55 +34,57 @@ contract Alchemilla is Ownable, Oligarchy {
   }
 
   function execute(
-    bytes32 anchor,
-    address[] memory tokens,
-    uint8[]   counts,
 
+    bytes32   prevBlockHash,
+
+    uint8     ordersCount,
     uint8[]   memory orderUint8s,
     uint256[] memory orderUint256s,
     bytes32[] memory orderBytes32s,
 
+    uint8     exchangesCount,
     uint8[]   memory exchangeUint8s,
-    uint256[] memory exchangeUint256s
+    uint256[] memory exchangeUint256s,
 
+    address quotToken,
+    address variToken
   ) public onlyBlockOligarch() {
+
+    require(prevBlockHash == blockhash(block.number-1));
+
+    bytes32 anchor = keccak256(abi.encodePacked(
+      prevBlockHash, quotToken, variToken
+    ));
 
     Order[256] memory orders;
 
-    bytes32 tokensHash = keccak256(abi.encodePacked(
-      tokens[0], tokens[1]
-    ));
-
-    for (uint256 orderIndex = 0; orderIndex < counts[0]; orderIndex++) {
+    for (uint256 orderIndex = 0; orderIndex < ordersCount; orderIndex++) {
       uint256 orderIndexTimes2 = orderIndex * 2;
       uint256 orderIndexTimes3 = orderIndex * 3;
 
-      address originator = ecrecover(
+      Order memory order = orders[orderIndex];
+
+      order.orderType  = orderUint8s[orderIndexTimes2];
+      order.priceNumer = orderUint256s[orderIndexTimes3];
+      order.priceDenom = orderUint256s[orderIndexTimes3 + 1];
+      order.tokenLimit = orderUint256s[orderIndexTimes3 + 2];
+
+      order.originator = ecrecover(
         keccak256(abi.encodePacked(
           anchor,
-          /*orderType*/  orderUint8s[orderIndexTimes2],
-          /*quotToken*/  tokensHash,
-          /*priceNumer*/ orderUint256s[orderIndexTimes3],
-          /*priceDenom*/ orderUint256s[orderIndexTimes3 + 1],
-          /*tokenLimit*/ orderUint256s[orderIndexTimes3 + 2]
+          order.orderType,
+          order.priceNumer,
+          order.priceDenom,
+          order.tokenLimit
         )),
         /*signatureV*/ orderUint8s[orderIndexTimes2 + 1],
         /*signatureR*/ orderBytes32s[orderIndexTimes2],
         /*signatureS*/ orderBytes32s[orderIndexTimes2 + 1]
       );
 
-      orders[orderIndex] = Order(
-        /*orderType*/ orderUint8s[orderIndexTimes2],
-        originator,
-        /*priceNumer*/ orderUint256s[orderIndexTimes3],
-        /*priceDenom*/ orderUint256s[orderIndexTimes3 + 1],
-        /*tokenLimit*/ orderUint256s[orderIndexTimes3 + 2],
-        0
-      );
-
     }
 
-    for (uint256 exchangeIndex = 0; exchangeIndex < counts[1]; exchangeIndex++) {
+    for (uint256 exchangeIndex = 0; exchangeIndex < exchangesCount; exchangeIndex++) {
       uint256 exchangeUint8Index   = exchangeIndex * 5;
       uint256 exchangeUint256Index = exchangeIndex * 5;
 
@@ -122,14 +124,17 @@ contract Alchemilla is Ownable, Oligarchy {
       );
 
       /* Transfer quot token trans from buyer to seller; Transfer quot token arbit from buyer to oligarch*/
-      balances[buyyOrder.originator][tokens[0]] -= quotTokenTotal;
-      balances[sellOrder.originator][tokens[0]] += quotTokenTrans;
-      balances[msg.sender          ][tokens[0]] += quotTokenArbit;
+      balances[buyyOrder.originator][quotToken] -= quotTokenTotal;
+      balances[sellOrder.originator][quotToken] += quotTokenTrans;
+      balances[msg.sender          ][quotToken] += quotTokenArbit;
 
       /* Transfer vari token trans from buyer to seller */
-      balances[sellOrder.originator][tokens[1]] -= quotTokenTrans;
-      balances[buyyOrder.originator][tokens[1]] += variTokenTrans;
+      balances[sellOrder.originator][variToken] -= quotTokenTrans;
+      balances[buyyOrder.originator][variToken] += variTokenTrans;
 
+      /* Update token filled */
+      buyyOrder.tokenFilled += quotTokenTotal;
+      sellOrder.tokenFilled += variTokenTrans;
     }
   }
 
