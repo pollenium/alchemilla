@@ -1,0 +1,15 @@
+{
+  "contractName": "Context",
+  "abi": [
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    }
+  ],
+  "bytecode": "0x",
+  "networks": {},
+  "schemaVersion": "3.0.18",
+  "updatedAt": "2019-12-18T23:07:45.687Z"
+}

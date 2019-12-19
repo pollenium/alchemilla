@@ -1,63 +1,14 @@
 pragma solidity ^0.5.0;
 
 import './token/ERC20/ERC20.sol';
+import './ownership/Ownable.sol';
+import './Oligarchy.sol';
 
 
-contract AlchemillaV1 {
-
-  address public owner;
-
-  constructor() public{
-    owner = msg.sender;
-  }
-
-  function getPersonalMessageHash (
-    address quotToken,
-    address variToken,
-    uint256 tokenLimit,
-    uint256 priceNumer,
-    uint256 priceDenom,
-    uint256 expiration,
-    uint256 salt
-  ) public view returns(bytes32 hash) {
-      return keccak256(abi.encodePacked(
-          "\x19Ethereum Signed Message:\n53Alchemilla V1 Order:\n",
-          address(this),
-          quotToken,
-          variToken,
-          tokenLimit,
-          priceNumer,
-          priceDenom,
-          expiration,
-          salt
-      ));
-  }
-
-  function recoverOriginator(
-    address quotToken,
-    address variToken,
-    uint256 tokenLimit,
-    uint256 priceNumer,
-    uint256 priceDenom,
-    uint256 expiration,
-    uint256 salt,
-    uint8 signatureV,
-    bytes32 signatureR,
-    bytes32 signatureS
-  ) public view returns(address originator) {
-    return ecrecover(this.getPersonalMessageHash(
-      quotToken,
-      variToken,
-      tokenLimit,
-      priceNumer,
-      priceDenom,
-      expiration,
-      salt
-    ), signatureV, signatureR, signatureS);
-  }
+contract Alchemilla is Ownable, Oligarchy {
 
   mapping(address => mapping(address => uint256)) public balances;
-  mapping(uint256 => uint256) public tokenFills;
+  mapping(bytes32 => uint256) public tokenFills;
 
   event Deposit(
     address indexed token,
@@ -74,104 +25,152 @@ contract AlchemillaV1 {
   );
 
   function execute(
-    address     quotToken,
-    address     variToken,
-    uint256     quotTokenTrans,
-    uint256     variTokenTrans,
-    uint256     quotTokenArbit,
+    address[ 4] memory addressVars,
+      /*
+       0: quotToken,
+       1: variToken,
+       2: buyyOrderOriginator,
+       3: sellOrderOriginator
+      */
+    uint256[13] memory uint256Vars,
+    /*
+       0: quotTokenTrans,
+       1: variTokenTrans,
+       2: quotTokenArbit,
+       3: buyyOrderTokenLimit,
+       4: buyyOrderPriceNumer,
+       5: buyyOrderPriceDenom,
+       6: buyyOrderExpiration,
+       7: buyyOrderSalt,
+       8: sellOrderTokenLimit,
+       9: sellOrderPriceNumer,
+      10: sellOrderPriceDenom,
+      11: sellOrderExpiration
+      12: sellOrderSalt
+    */
+    uint8[ 2] memory uint008Vars,
+    /*
+       0: buyyTokenSignatureV,
+       1: sellTokenSignatureV
+    */
+    bytes32[ 4] memory bytes32Vars
+    /*
+       0: buyyOrderSignatureR,
+       1: buyyOrderSignatureS,
+       2: sellOrderSignatureR
+       3: sellOrderSignatureS
+    */
+  ) public onlyBlockOligarch() {
 
-    address     buyyOrderOriginator,
-    uint256     buyyOrderQuotTokenLimit,
-    uint256     buyyOrderPriceNumer,
-    uint256     buyyOrderPriceDenom,
-    uint256     buyyOrderExpiration,
-    uint256     buyyOrderSalt,
-    uint8       buyyOrderSignatureV,
-    bytes32     buyyOrderSignatureR,
-    bytes32     buyyOrderSignatureS,
+    bytes32 buyyOrderHash = keccak256(abi.encodePacked(
+      addressVars[ 0] /*quotToken*/,
+      addressVars[ 1] /*variToken*/,
+      uint256Vars[ 3] /*buyyOrderTokenLimit*/,
+      uint256Vars[ 4] /*buyyOrderPriceNumer*/,
+      uint256Vars[ 5] /*buyyOrderPriceDenom*/,
+      uint256Vars[ 6] /*buyyOrderExpiration*/,
+      uint256Vars[ 7] /*buyyOrderSalt*/
+    ));
 
-    address     sellOrderOriginator,
-    uint256     sellOrderQuotTokenLimit,
-    uint256     sellOrderPriceNumer,
-    uint256     sellOrderPriceDenom,
-    uint256     sellOrderExpiration,
-    uint256     sellOrderSalt,
-    uint8       sellOrderSignatureV,
-    bytes32     sellOrderSignatureR,
-    bytes32     sellOrderSignatureS
-  ) public {
+    bytes32 sellOrderHash = keccak256(abi.encodePacked(
+      addressVars[ 0] /*quotToken*/,
+      addressVars[ 1] /*variToken*/,
+      uint256Vars[ 8] /*sellOrderTokenLimit*/,
+      uint256Vars[ 9] /*sellOrderPriceNumer*/,
+      uint256Vars[10] /*sellOrderPriceDenom*/,
+      uint256Vars[11] /*sellOrderExpiration*/,
+      uint256Vars[12] /*sellOrderSalt*/
+    ));
 
-      /* Check signatures */
-      require(buyyOrderOriginator == recoverOriginator(
-        quotToken,
-        variToken,
-        buyyOrderQuotTokenLimit,
-        buyyOrderPriceNumer,
-        buyyOrderPriceDenom,
-        buyyOrderExpiration,
-        buyyOrderSalt,
-        buyyOrderSignatureV,
-        buyyOrderSignatureR,
-        buyyOrderSignatureS
-      ));
+    /* Check signatures */
+    require(
+      addressVars[ 2] /*buyyOrderOriginator*/ == ecrecover(
+        buyyOrderHash,
+        uint008Vars[ 0] /*buyyTokenSignatureV*/,
+        bytes32Vars[ 0] /*buyyOrderSignatureR*/,
+        bytes32Vars[ 1] /*buyyOrderSignatureS*/
+      )
+    );
 
-      require(sellOrderOriginator == recoverOriginator(
-        quotToken,
-        variToken,
-        sellOrderQuotTokenLimit,
-        sellOrderPriceNumer,
-        sellOrderPriceDenom,
-        sellOrderExpiration,
-        sellOrderSalt,
-        sellOrderSignatureV,
-        sellOrderSignatureR,
-        sellOrderSignatureS
-      ));
+    require(
+      addressVars[ 3] /*sellOrderOriginator*/ == ecrecover(
+        sellOrderHash,
+        uint008Vars[ 1] /*sellTokenSignatureV*/,
+        bytes32Vars[ 2] /*sellOrderSignatureR*/,
+        bytes32Vars[ 3] /*sellOrderSignatureS*/
+      )
+    );
 
-      /* Check expirations */
-      require(buyyOrderExpiration > now);
-      require(sellOrderExpiration > now);
+    /* Check expirations */
+    require(uint256Vars[ 6] /*buyyOrderExpiration*/ > now);
+    require(uint256Vars[11] /*sellOrderExpiration*/ > now);
 
-      uint256 quotTokenTotal = quotTokenTrans + quotTokenArbit;
+    uint256 quotTokenTotal =
+      uint256Vars[ 0] /*quotTokenTrans*/
+      +
+      uint256Vars[ 2] /*quotTokenArbit*/;
 
-      /* Check buy price is lte than or equal to total price */
-      require(
-        (buyyOrderPriceNumer * quotTokenTotal)
-        <=
-        (buyyOrderPriceDenom * variTokenTrans)
-      );
+    /* Check buy price is lte than or equal to total price */
+    require(
+      (
+        uint256Vars[ 4] /*buyyOrderPriceNumer*/
+        *
+        quotTokenTotal
+      )
+      <=
+      (
+        uint256Vars[ 5] /*buyyOrderPriceDenom*/
+        *
+        uint256Vars[ 1] /*variTokenTrans*/
+      )
+    );
 
-      /* Check sell price is gte than or equal to trans price */
-      require(
-        (sellOrderPriceNumer * quotTokenTrans)
-        >=
-        (sellOrderPriceDenom * variTokenTrans)
-      );
+    /* Check sell price is gte than or equal to trans price */
+    require(
+      (
+        uint256Vars[ 9] /*sellOrderPriceNumer*/
+        *
+        uint256Vars[ 0] /*quotTokenTrans*/
+      )
+      >=
+      (
+        uint256Vars[10] /*sellOrderPriceDenom*/
+        *
+        uint256Vars[ 1] /*variTokenTrans*/
+      )
+    );
 
 
-      /* Check quot token fillability */
-      /* TODO: Use hash instead of salt */
-      /* TODO: Determine if balance check is necessary */
-      require(quotTokenTotal + tokenFills[buyyOrderSalt] <= buyyOrderQuotTokenLimit);
-      require(quotTokenTrans <= balances[buyyOrderOriginator][quotToken]);
+    /* Check quot token fillability */
+    /* TODO: Determine if balance check is necessary */
+    require(
+      quotTokenTotal
+      + tokenFills[buyyOrderHash]
+      <=
+      uint256Vars[ 3] /*buyyOrderTokenLimit*/
+    );
 
-      /* Check vari token fillability */
-      /* TODO: Use hash instead of salt */
-      /* TODO: Determine if balance check is necessary */
-      require(variTokenTrans + tokenFills[sellOrderSalt] <= sellOrderQuotTokenLimit);
-      require(variTokenTrans <= balances[sellOrderOriginator][variToken]);
+    /* Check vari token fillability */
+    /* TODO: Determine if balance check is necessary */
+    require(
+      uint256Vars[ 1] /*variTokenTrans*/
+      +
+      tokenFills[sellOrderHash]
+      <=
+      uint256Vars[ 8] /*sellOrderTokenLimit*/
+    );
 
-      /* Transfer quot token from buyer to seller and arbitrager */
-      balances[buyyOrderOriginator][quotToken] -= quotTokenTotal;
-      balances[sellOrderOriginator][quotToken] += quotTokenTrans;
-      balances[sellOrderOriginator][quotToken] += quotTokenArbit;
+    /* Transfer quot token from buyer to seller and arbitrager */
+    balances[addressVars[ 2] /*buyyOrderOriginator*/][addressVars[ 0] /*quotToken*/] -= quotTokenTotal;
+    balances[addressVars[ 3] /*sellOrderOriginator*/][addressVars[ 0] /*quotToken*/] += uint256Vars[ 0] /*quotTokenTrans*/;
+    balances[addressVars[ 3] /*sellOrderOriginator*/][addressVars[ 0] /*quotToken*/] += uint256Vars[ 2] /*quotTokenArbit*/;
 
-      /* Transfer vari token from buyer to seller */
-      balances[sellOrderOriginator][variToken] -= quotTokenTrans;
-      balances[buyyOrderOriginator][variToken] += variTokenTrans;
+    /* Transfer vari token from buyer to seller */
+    balances[addressVars[ 3] /*sellOrderOriginator*/][addressVars[ 1] /*variToken*/] -= uint256Vars[ 0] /*quotTokenTrans*/;
+    balances[addressVars[ 2] /*buyyOrderOriginator*/][addressVars[ 1] /*variToken*/] += uint256Vars[ 1] /*variTokenTrans*/;
 
-        /* Transfer quot token from buyer to seller */
-      balances[sellOrderOriginator][variToken] -= variTokenTrans;
+    /* Transfer quot token from buyer to seller */
+    balances[addressVars[ 3] /*sellOrderOriginator*/][addressVars[ 1] /*variToken*/] -= uint256Vars[ 1] /*variTokenTrans*/;
   }
 
   function deposit(

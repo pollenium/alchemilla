@@ -14,7 +14,9 @@ const sourcePaths = {
   'GSN/Context.sol': `${zeppelinContractsDir}/GSN/Context.sol`,
   'token/ERC20/IERC20.sol': `${zeppelinContractsDir}/token/ERC20/IERC20.sol`,
   'token/ERC20/ERC20.sol': `${zeppelinContractsDir}/token/ERC20/ERC20.sol`,
+  'Oligarchy.sol': `${__dirname}/contracts/Oligarchy.sol`,
   'Alchemilla.sol': `${__dirname}/contracts/Alchemilla.sol`,
+  'Token.sol': `${__dirname}/contracts/Token.sol`,
 }
 
 const sources = {}
@@ -24,15 +26,13 @@ Object.keys(sourcePaths).forEach((key) => {
   sources[key] = { content }
 })
 
-console.dir(sources)
-
 const input = {
   language: 'Solidity',
   sources: sources,
   settings: {
     outputSelection: {
       '*': {
-        '*': ['abi', 'evm.bytecode.opcodes'],
+        '*': ['abi', 'evm.bytecode.object'],
         '': ['ast']
       }
     }
