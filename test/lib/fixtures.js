@@ -2,11 +2,9 @@ const ganache = require('ganache-cli')
 const ilex = require('pollenium-ilex')
 const buttercup = require('pollenium-buttercup')
 
-const oligarchNames = ['alice', 'bob']
-const traderNames = ['charlie', 'dave']
-const oligarchAndTraderNames = oligarchNames.concat(traderNames)
-const accountNames = ['deployer', 'admin', 'profiteer', 'attacker', ...oligarchNames, ...traderNames]
-const tokenNames = ['biddy', 'dai', 'usdc', 'weth', 'mkr']
+const traderNames = ['alice', 'bob']
+const accountNames = ['deployer', 'admin', 'attacker', 'monarchHot', 'monarchCold', ...traderNames]
+const tokenNames = ['dai', 'usdc', 'weth', 'mkr']
 
 const Keypair = ilex.Keypair
 const Address = buttercup.Address
@@ -27,9 +25,8 @@ accountNames.forEach((accountName) => {
 })
 
 module.exports = {
-  oligarchNames,
   traderNames,
-  oligarchAndTraderNames,
+
   accountNames,
   tokenNames,
   keypairs,

@@ -34,12 +34,12 @@ describe('tokens', () => {
         const totalSupply = await tokens[tokenName].fetchTotalSupply()
         totalSupply.getIsEqual(fixtures.totalSupply).should.equal(true)
       })
-      fixtures.oligarchAndTraderNames.forEach((accountName) => {
-        describe(accountName, () => {
-          it(`should transfer ${fixtures.startBalance.getNumber()} to ${accountName}`, async () => {
+      fixtures.traderNames.forEach((traderName) => {
+        describe(traderName, () => {
+          it(`should transfer ${fixtures.startBalance.getNumber()} to ${traderName}`, async () => {
             await tokens[tokenName].broadcastTransfer(
               fixtures.addresses.admin,
-              fixtures.addresses[accountName],
+              fixtures.addresses[traderName],
               fixtures.startBalance
             )
           })

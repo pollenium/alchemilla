@@ -2,13 +2,26 @@ pragma solidity ^0.5.0;
 
 import './token/ERC20/ERC20.sol';
 import './ownership/Ownable.sol';
-import './Oligarchy.sol';
+import './ExecutorOracle.interface.sol';
 
 
-contract Alchemilla is Ownable, Oligarchy {
+contract Alchemilla is Ownable {
 
+  address public executorOracle;
   mapping(address => mapping(address => uint256)) public balances;
   mapping(bytes32 => bool) public isAnchorExecuted;
+
+  function setExecutorOracle(address _executorOracle) public onlyOwner() {
+    executorOracle = _executorOracle;
+  }
+
+  modifier onlyExecutorHot() {
+    /* require(
+      msg.sender == ExecutorOracleInterface(executorOracle).hot(),
+      'Only Executor Hot'
+    ); */
+    _;
+  }
 
   /* TODO: events? */
 
@@ -36,7 +49,7 @@ contract Alchemilla is Ownable, Oligarchy {
 
     address quotToken,
     address variToken
-  ) public {
+  ) public onlyExecutorHot() {
 
     require(
       prevBlockHash == blockhash(block.number - 1),
@@ -147,11 +160,11 @@ contract Alchemilla is Ownable, Oligarchy {
         "vari token fillability"
       );
 
-      /* Transfer quot token trans from buyer to seller; Transfer quot token arbit from buyer to oligarch*/
+      /* Transfer quot token trans from buyer to seller; Transfer quot token arbit from buyer to executor cold*/
       balances[buyyOrder.originator][_quotToken] -= quotTokenTotal;
       balances[sellOrder.originator][_quotToken] += quotTokenTrans;
-      /* TODO: Transfer to msg.sender or arbit */
-      balances[msg.sender          ][_quotToken] += quotTokenArbit;
+      /* TODO: Transfer to msg.sender or executorCold */
+      balances[msg.sender][_quotToken] += quotTokenArbit;
 
       /* Transfer vari token trans from buyer to seller */
       balances[sellOrder.originator][_variToken] -= variTokenTrans;

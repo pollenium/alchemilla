@@ -33,12 +33,12 @@ describe('alchemilla', () => {
     )
   })
   describe('approvals', () => {
-    fixtures.oligarchAndTraderNames.forEach((accountName) => {
-      describe(accountName, () => {
+    fixtures.traderNames.forEach((traderName) => {
+      describe(traderName, () => {
         fixtures.tokenNames.forEach((tokenName) => {
           it(`should approve ${tokenName}`, async () => {
             await tokens[tokenName].broadcastApprove(
-              fixtures.addresses[accountName],
+              fixtures.addresses[traderName],
               alchemilla.address,
               fixtures.startBalance
             )
@@ -87,58 +87,6 @@ describe('alchemilla', () => {
     it('owner should be admin', async () => {
       const owner = await alchemilla.fetchOwner()
       owner.getIsEqual(fixtures.addresses.admin).should.equal(true)
-    })
-  })
-  describe('oligarchyBidToken', () => {
-    it('oligarchyBidToken should be nullAddress', async () => {
-      const oligarchyBidToken = await alchemilla.fetchOligarchyBidToken()
-      oligarchyBidToken.getIsEqual(fixtures.nullAddress).should.equal(true)
-    })
-    it('should set oligarchyBidToken', async () => {
-      await alchemilla.broadcastSetOligarchBidToken(
-        fixtures.addresses.admin,
-        tokens.biddy.address
-      )
-    })
-    it('oligarchyBidToken should be biddy', async () => {
-      const oligarchyBidToken = await alchemilla.fetchOligarchyBidToken()
-      oligarchyBidToken.getIsEqual(tokens.biddy.address).should.equal(true)
-    })
-    it('attacker should NOT be able to set bid token', async () => {
-      await alchemilla.broadcastSetOligarchBidToken(
-        fixtures.addresses.attacker,
-        tokens.dai.address
-      ).should.be.rejectedWith(Error)
-    })
-    it('oligarchyBidToken should be biddy', async () => {
-      const oligarchyBidToken = await alchemilla.fetchOligarchyBidToken()
-      oligarchyBidToken.getIsEqual(tokens.biddy.address).should.equal(true)
-    })
-  })
-  describe('oligarchyProfiteer', () => {
-    it('oligarchyProfiteer should be nullAddress', async () => {
-      const oligarchyProfiteer = await alchemilla.fetchOligarchyProfiteer()
-      oligarchyProfiteer.getIsEqual(fixtures.nullAddress).should.equal(true)
-    })
-    it('should set oligarchyProfiteer', async () => {
-      await alchemilla.broadcastSetOligarchyProfiteer(
-        fixtures.addresses.admin,
-        fixtures.addresses.profiteer
-      )
-    })
-    it('oligarchyProfiteer should be oligarchyProfiteer', async () => {
-      const oligarchyProfiteer = await alchemilla.fetchOligarchyProfiteer()
-      oligarchyProfiteer.getIsEqual(fixtures.addresses.profiteer).should.equal(true)
-    })
-    it('attacker should NOT be able to set oligarchyProfiteer', async () => {
-      await alchemilla.broadcastSetOligarchyProfiteer(
-        fixtures.addresses.attacker,
-        fixtures.addresses.attacker
-      ).should.be.rejectedWith(Error)
-    })
-    it('oligarchyProfiteer should be oligarchyProfiteer', async () => {
-      const oligarchyProfiteer = await alchemilla.fetchOligarchyProfiteer()
-      oligarchyProfiteer.getIsEqual(fixtures.addresses.profiteer).should.equal(true)
     })
   })
 })

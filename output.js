@@ -14,7 +14,8 @@ const sourcePaths = {
   'GSN/Context.sol': `${zeppelinContractsDir}/GSN/Context.sol`,
   'token/ERC20/IERC20.sol': `${zeppelinContractsDir}/token/ERC20/IERC20.sol`,
   'token/ERC20/ERC20.sol': `${zeppelinContractsDir}/token/ERC20/ERC20.sol`,
-  'Oligarchy.sol': `${__dirname}/contracts/Oligarchy.sol`,
+  'ExecutorOracle.interface.sol': `${__dirname}/contracts/ExecutorOracle.interface.sol`,
+  'MonarchicExecutorOracle.sol': `${__dirname}/contracts/MonarchicExecutorOracle.sol`,
   'Alchemilla.sol': `${__dirname}/contracts/Alchemilla.sol`,
   'Token.sol': `${__dirname}/contracts/Token.sol`,
 }

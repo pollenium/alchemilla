@@ -1,4 +1,4 @@
-const alchemillaPromise = require('./alchemilla.oligarchy')
+const alchemillaPromise = require('./alchemilla')
 const tokensPromise = require('./tokens')
 const orchid = require('pollenium-orchid')
 const takeSnapshot = require('./lib/takeSnapshot')
@@ -49,19 +49,19 @@ describe('alchemilla.execute', () => {
 
         it('balances should be startBalance', async () => {
           const balanceCharlieDai = await alchemilla.fetchBalance(
-            fixtures.addresses.charlie,
+            fixtures.addresses.alice,
             tokens.dai.address
           )
           const balanceCharlieWeth = await alchemilla.fetchBalance(
-            fixtures.addresses.dave,
+            fixtures.addresses.bob,
             tokens.dai.address
           )
           const balanceDaveDai = await alchemilla.fetchBalance(
-            fixtures.addresses.charlie,
+            fixtures.addresses.alice,
             tokens.weth.address
           )
           const balanceDaveWeth = await alchemilla.fetchBalance(
-            fixtures.addresses.dave,
+            fixtures.addresses.bob,
             tokens.weth.address
           )
 
@@ -85,7 +85,7 @@ describe('alchemilla.execute', () => {
             type: ORDER_TYPE.BUYY,
             quotToken: tokens.dai.address,
             variToken: tokens.weth.address,
-            originator: fixtures.addresses.charlie,
+            originator: fixtures.addresses.alice,
             tokenLimit: Uint256.fromNumber(fixture.orders.buyy.tokenLimit),
             priceNumer: Uint256.fromNumber(fixture.orders.buyy.priceNumer),
             priceDenom: Uint256.fromNumber(fixture.orders.buyy.priceDenom),
@@ -98,7 +98,7 @@ describe('alchemilla.execute', () => {
             type: ORDER_TYPE.SELL,
             quotToken: tokens.dai.address,
             variToken: tokens.weth.address,
-            originator: fixtures.addresses.dave,
+            originator: fixtures.addresses.bob,
             tokenLimit: Uint256.fromNumber(fixture.orders.sell.tokenLimit),
             priceNumer: Uint256.fromNumber(fixture.orders.sell.priceNumer),
             priceDenom: Uint256.fromNumber(fixture.orders.sell.priceDenom),
@@ -108,12 +108,12 @@ describe('alchemilla.execute', () => {
 
           const signedBuyyOrder = new SignedOrder(
             buyyOrder,
-            fixtures.keypairs.charlie.getSignature(buyyOrder.getEncodingHash())
+            fixtures.keypairs.alice.getSignature(buyyOrder.getEncodingHash())
           )
 
           const signedSellOrder = new SignedOrder(
             sellOrder,
-            fixtures.keypairs.dave.getSignature(sellOrder.getEncodingHash())
+            fixtures.keypairs.bob.getSignature(sellOrder.getEncodingHash())
           )
 
           signedBuyyOrder.getIsValidSignature().should.equal(true)
@@ -136,17 +136,17 @@ describe('alchemilla.execute', () => {
           })
         })
 
-        it('should have transferred dai from charlie to alice and dave', async () => {
+        it('should have transferred dai from alice to alice and bob', async () => {
           const balanceAlice = await alchemilla.fetchBalance(
             fixtures.addresses.alice,
             tokens.dai.address
           )
           const balanceCharlie = await alchemilla.fetchBalance(
-            fixtures.addresses.charlie,
+            fixtures.addresses.alice,
             tokens.dai.address
           )
           const balanceDave = await alchemilla.fetchBalance(
-            fixtures.addresses.dave,
+            fixtures.addresses.bob,
             tokens.dai.address
           )
           balanceAlice.getNumber().should.equal(quotTokenArbit.getNumber())
@@ -154,13 +154,13 @@ describe('alchemilla.execute', () => {
           balanceDave.getNumber().should.equal(fixtures.startBalance.add(quotTokenTrans).getNumber())
         })
 
-        it('should have transferred weth from dave to charlie', async () => {
+        it('should have transferred weth from bob to alice', async () => {
           const balanceDave = await alchemilla.fetchBalance(
-            fixtures.addresses.dave,
+            fixtures.addresses.bob,
             tokens.weth.address
           )
           const balanceCharlie = await alchemilla.fetchBalance(
-            fixtures.addresses.charlie,
+            fixtures.addresses.alice,
             tokens.weth.address
           )
           balanceCharlie.getNumber().should.equal(fixtures.startBalance.add(variTokenTrans).getNumber())
@@ -176,7 +176,7 @@ describe('alchemilla.execute', () => {
           type: ORDER_TYPE.BUYY,
           quotToken: tokens.dai.address,
           variToken: tokens.weth.address,
-          originator: fixtures.addresses.charlie,
+          originator: fixtures.addresses.alice,
           tokenLimit: Uint256.fromNumber(255),
           priceNumer: Uint256.fromNumber(1),
           priceDenom: Uint256.fromNumber(1),
@@ -189,7 +189,7 @@ describe('alchemilla.execute', () => {
           type: ORDER_TYPE.SELL,
           quotToken: tokens.dai.address,
           variToken: tokens.weth.address,
-          originator: fixtures.addresses.dave,
+          originator: fixtures.addresses.bob,
           tokenLimit: Uint256.fromNumber(1),
           priceNumer: Uint256.fromNumber(1),
           priceDenom: Uint256.fromNumber(1),
@@ -199,12 +199,12 @@ describe('alchemilla.execute', () => {
 
         const signedBuyyOrder = new SignedOrder(
           buyyOrder,
-          fixtures.keypairs.charlie.getSignature(buyyOrder.getEncodingHash())
+          fixtures.keypairs.alice.getSignature(buyyOrder.getEncodingHash())
         )
 
         const signedSellOrder = new SignedOrder(
           sellOrder,
-          fixtures.keypairs.dave.getSignature(sellOrder.getEncodingHash())
+          fixtures.keypairs.bob.getSignature(sellOrder.getEncodingHash())
         )
 
         const signedSellOrders = []
