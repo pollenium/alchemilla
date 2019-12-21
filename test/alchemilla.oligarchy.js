@@ -136,21 +136,21 @@ describe('alchemilla.oligarchy', () => {
       before(async () => {
         await restoreSnapshot(initialSnapshotId)
       })
-      for (let i = 0; i <= 255; i++) {
-        it(`#${i}/255`, async () => {
-          const oligarchIndexNumber = (targetedOligarchIndex.getNumber() + i) % 256
-          const oligarchIndex = Uint8.fromNumber(oligarchIndexNumber)
-
-          await alchemilla.broadcastOverthrowOligarch(
-            fixtures.addresses.alice,
-            oligarchIndex,
-            Uint256.fromNumber(1)
-          )
-          const oligarch = await alchemilla.fetchOligarchStruct(oligarchIndex)
-          oligarch.address.getIsEqual(fixtures.addresses.alice).should.equal(true)
-          oligarch.bidAmount.getNumber().should.equal(1)
-        })
-      }
+      // for (let i = 0; i <= 255; i++) {
+      //   it(`#${i}/255`, async () => {
+      //     const oligarchIndexNumber = (targetedOligarchIndex.getNumber() + i) % 256
+      //     const oligarchIndex = Uint8.fromNumber(oligarchIndexNumber)
+      //
+      //     await alchemilla.broadcastOverthrowOligarch(
+      //       fixtures.addresses.alice,
+      //       oligarchIndex,
+      //       Uint256.fromNumber(1)
+      //     )
+      //     const oligarch = await alchemilla.fetchOligarchStruct(oligarchIndex)
+      //     oligarch.address.getIsEqual(fixtures.addresses.alice).should.equal(true)
+      //     oligarch.bidAmount.getNumber().should.equal(1)
+      //   })
+      // }
     })
 
 

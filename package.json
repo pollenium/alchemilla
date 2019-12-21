@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "node ./bin/compile.js",
-    "test": "mocha --timeout 5000 --bail"
+    "test": "mocha --timeout 1200000 --bail"
   },
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
     "fs-extra": "^8.1.0",
     "ganache-cli": "^6.7.0",
     "mocha": "^6.2.2",
-    "pollenium-orchid": "^3.0.0",
+    "pollenium-orchid": "^5.0.1",
     "truffle-contract": "^4.0.31",
     "truffle-resolver": "^5.0.16",
     "web3": "^1.2.2"

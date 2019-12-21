@@ -11,7 +11,11 @@ module.exports = async function restoreSnapshot(id) {
       if (error) {
         return reject(error)
       } else {
-        resolve(res.result)
+        if (res.result === true) {
+          resolve()
+        } else {
+          reject(new Error('Failed to Restore'))
+        }
       }
     })
   })

@@ -47,6 +47,22 @@ describe('alchemilla', () => {
       })
     })
   })
+  describe('deposits', () => {
+    fixtures.traderNames.forEach((traderName) => {
+      describe(traderName, () => {
+        fixtures.tokenNames.forEach((tokenName) => {
+          it(`should deposit ${tokenName}`, async () => {
+            await alchemilla.broadcastDeposit(
+              fixtures.addresses[traderName],
+              fixtures.addresses[traderName],
+              tokens[tokenName].address,
+              fixtures.startBalance
+            )
+          })
+        })
+      })
+    })
+  })
   describe('owner', () => {
     it('owner should be deployer', async () => {
       const owner = await alchemilla.fetchOwner()

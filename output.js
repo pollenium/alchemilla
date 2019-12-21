@@ -30,6 +30,7 @@ const input = {
   language: 'Solidity',
   sources: sources,
   settings: {
+    optimizer: { 'enabled': true },
     outputSelection: {
       '*': {
         '*': ['abi', 'evm.bytecode.object'],
