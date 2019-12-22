@@ -27,7 +27,6 @@ contract Alchemilla is Ownable {
   /* TODO: events? */
 
   struct Order {
-    uint8   orderType;
     address originator;
     uint256 priceNumer;
     uint256 priceDenom;
@@ -39,8 +38,8 @@ contract Alchemilla is Ownable {
   }
 
   struct Exchange {
-    uint8   buyyOrderIndex;
-    uint8   sellOrderIndex;
+    uint16  buyyOrderIndex;
+    uint16  sellOrderIndex;
     uint256 quotTokenTrans;
     uint256 variTokenTrans;
     uint256 quotTokenArbit;
@@ -49,10 +48,11 @@ contract Alchemilla is Ownable {
 
   function execute(
     bytes32     prevBlockHash,
+    Order[]     memory buyyOrders,
+    Order[]     memory sellOrders,
+    Exchange[]  memory exchanges,
     address     quotToken,
-    address     variToken,
-    Order[]     memory orders,
-    Exchange[]  memory exchanges
+    address     variToken
   ) public onlyExecutorHot() {
 
     require(
@@ -77,14 +77,14 @@ contract Alchemilla is Ownable {
     bytes32 _orderPriority;
     Order memory order;
 
-    for (uint256 orderIndex = 0; orderIndex < orders.length; orderIndex++) {
+    for (uint256 orderIndex = 0; orderIndex < buyyOrders.length; orderIndex++) {
 
-      order = orders[orderIndex];
+      order = buyyOrders[orderIndex];
 
       require(order.originator == ecrecover(
         keccak256(abi.encodePacked(
           anchor,
-          order.orderType,
+          byte(0x00),
           order.priceNumer,
           order.priceDenom,
           order.tokenLimit
@@ -109,6 +109,39 @@ contract Alchemilla is Ownable {
 
     }
 
+    for (uint256 orderIndex = 0; orderIndex < sellOrders.length; orderIndex++) {
+
+      order = sellOrders[orderIndex];
+
+      require(order.originator == ecrecover(
+        keccak256(abi.encodePacked(
+          anchor,
+          byte(0x01),
+          order.priceNumer,
+          order.priceDenom,
+          order.tokenLimit
+        )),
+        order.signatureV,
+        order.signatureR,
+        order.signatureS
+      ), 'originator');
+
+      _orderPriority = keccak256(abi.encodePacked(
+        order.signatureV,
+        order.signatureR,
+        order.signatureS
+      ));
+
+      require(
+        orderPriority != _orderPriority,
+        "Order Priority"
+      );
+
+      /* orderPriority = _orderPriority; */
+
+    }
+
+
     Exchange memory exchange;
     Order memory buyyOrder;
     Order memory sellOrder;
@@ -117,11 +150,8 @@ contract Alchemilla is Ownable {
     for (uint256 exchangeIndex = 0; exchangeIndex < exchanges.length; exchangeIndex++) {
 
       exchange = exchanges[exchangeIndex];
-      buyyOrder = orders[exchange.buyyOrderIndex];
-      sellOrder = orders[exchange.sellOrderIndex];
-
-      require(buyyOrder.orderType == 0, "buyyOrderType");
-      require(sellOrder.orderType == 1, "sellOrderType");
+      buyyOrder = buyyOrders[exchange.buyyOrderIndex];
+      sellOrder = sellOrders[exchange.sellOrderIndex];
 
       quotTokenTotal = exchange.quotTokenTrans + exchange.quotTokenArbit;
 

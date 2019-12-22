@@ -175,7 +175,7 @@ describe('alchemilla.execute', () => {
 
     describe('max', () => {
 
-      const ordersCount = 254
+      const ordersCount = 255
 
       it(`should execute batch of ${ordersCount} orders`, async () => {
         const buyyOrder = new Order({
@@ -184,7 +184,7 @@ describe('alchemilla.execute', () => {
           quotToken: tokens.dai.address,
           variToken: tokens.weth.address,
           originator: fixtures.addresses.alice,
-          tokenLimit: Uint256.fromNumber(ordersCount - 1),
+          tokenLimit: Uint256.fromNumber(1),
           priceNumer: Uint256.fromNumber(1),
           priceDenom: Uint256.fromNumber(1),
           expiration: Uint256.fromNumber(1),
@@ -214,14 +214,16 @@ describe('alchemilla.execute', () => {
           fixtures.keypairs.bob.getSignature(sellOrder.getEncodingHash())
         )
 
+        const signedBuyyOrders = []
         const signedSellOrders = []
         const exchanges = []
 
-        for (let i = 1; i < ordersCount; i++) {
+        for (let i = 0; i < ordersCount; i++) {
+          signedBuyyOrders.push(signedBuyyOrder)
           signedSellOrders.push(signedSellOrder)
           exchanges.push({
-            signedBuyyOrderIndex: Uint8.fromNumber(0),
-            signedSellOrderIndex: Uint8.fromNumber(i),
+            signedBuyyOrderIndex: Uint16.fromNumber(i),
+            signedSellOrderIndex: Uint16.fromNumber(i),
             quotTokenTrans: Uint256.fromNumber(1),
             variTokenTrans: Uint256.fromNumber(1),
             quotTokenArbit: Uint256.fromNumber(0)
@@ -232,7 +234,8 @@ describe('alchemilla.execute', () => {
           prevBlockHash: prevBlockHash,
           quotToken: tokens.dai.address,
           variToken: tokens.weth.address,
-          signedOrders: [signedBuyyOrder, ...signedSellOrders],
+          buyyOrders: signedBuyyOrders,
+          sellOrders: signedSellOrders,
           exchanges: exchanges
         })
 

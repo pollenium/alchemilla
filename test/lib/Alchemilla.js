@@ -60,9 +60,20 @@ module.exports = class Alchemilla extends Contract {
 
     const args = [
       executionRequest.prevBlockHash.getPhex(),
-      executionRequest.quotToken.getPhex(),
-      executionRequest.variToken.getPhex(),
-      executionRequest.signedOrders.map((signedOrder) => {
+      executionRequest.buyyOrders.map((signedOrder) => {
+        return {
+          orderType: signedOrder.type,
+          originator: signedOrder.originator.getPhex(),
+          priceNumer: signedOrder.priceNumer.getPhex(),
+          priceDenom: signedOrder.priceDenom.getPhex(),
+          tokenLimit: signedOrder.tokenLimit.getPhex(),
+          tokenFilled: 0,
+          signatureV: signedOrder.signature.v.getNumber(),
+          signatureR: signedOrder.signature.r.getPhex(),
+          signatureS: signedOrder.signature.s.getPhex()
+        }
+      }),
+      executionRequest.sellOrders.map((signedOrder) => {
         return {
           orderType: signedOrder.type,
           originator: signedOrder.originator.getPhex(),
@@ -83,7 +94,9 @@ module.exports = class Alchemilla extends Contract {
           variTokenTrans: exchange.variTokenTrans.getPhex(),
           quotTokenArbit: exchange.quotTokenArbit.getPhex()
         }
-      })
+      }),
+      executionRequest.quotToken.getPhex(),
+      executionRequest.variToken.getPhex()
     ]
 
     const estimatedGas = await web3Contract.execute.estimateGas(...args, { from: from.getPhex() })
