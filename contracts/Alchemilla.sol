@@ -1,4 +1,5 @@
 pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 
 import './token/ERC20/ERC20.sol';
 import './ownership/Ownable.sol';
@@ -32,23 +33,26 @@ contract Alchemilla is Ownable {
     uint256 priceDenom;
     uint256 tokenLimit;
     uint256 tokenFilled;
+    uint8   signatureV;
+    bytes32 signatureR;
+    bytes32 signatureS;
   }
 
+  struct Exchange {
+    uint8   buyyOrderIndex;
+    uint8   sellOrderIndex;
+    uint256 quotTokenTrans;
+    uint256 variTokenTrans;
+    uint256 quotTokenArbit;
+  }
+
+
   function execute(
-    bytes32   prevBlockHash,
-
-    uint8     ordersLastIndex,
-    uint8     exchangesLastIndex,
-
-    uint8[]   memory orderUint8s,
-    uint256[] memory orderUint256s,
-    bytes32[] memory orderBytes32s,
-
-    uint8[]   memory exchangeUint8s,
-    uint256[] memory exchangeUint256s,
-
-    address quotToken,
-    address variToken
+    bytes32     prevBlockHash,
+    address     quotToken,
+    address     variToken,
+    Order[]     memory orders,
+    Exchange[]  memory exchanges
   ) public onlyExecutorHot() {
 
     require(
@@ -69,24 +73,15 @@ contract Alchemilla is Ownable {
 
     isAnchorExecuted[anchor] = true;
 
-    /*TODO: create execute2, execute4, ... execute256 with different memory sizes */
-    Order[256] memory orders;
-
     bytes32 orderPriority;
+    bytes32 _orderPriority;
+    Order memory order;
 
-    for (uint256 orderIndex = 0; orderIndex <= ordersLastIndex; orderIndex++) {
+    for (uint256 orderIndex = 0; orderIndex < orders.length; orderIndex++) {
 
-      uint256 orderIndexTimes2 = orderIndex * 2;
-      uint256 orderIndexTimes3 = orderIndex * 3;
+      order = orders[orderIndex];
 
-      Order memory order = orders[orderIndex];
-
-      order.orderType  = orderUint8s[orderIndexTimes2];
-      order.priceNumer = orderUint256s[orderIndexTimes3];
-      order.priceDenom = orderUint256s[orderIndexTimes3 + 1];
-      order.tokenLimit = orderUint256s[orderIndexTimes3 + 2];
-
-      order.originator = ecrecover(
+      require(order.originator == ecrecover(
         keccak256(abi.encodePacked(
           anchor,
           order.orderType,
@@ -94,15 +89,15 @@ contract Alchemilla is Ownable {
           order.priceDenom,
           order.tokenLimit
         )),
-        /*signatureV*/ orderUint8s[orderIndexTimes2 + 1],
-        /*signatureR*/ orderBytes32s[orderIndexTimes2],
-        /*signatureS*/ orderBytes32s[orderIndexTimes2 + 1]
-      );
+        order.signatureV,
+        order.signatureR,
+        order.signatureS
+      ), 'originator');
 
-      bytes32 _orderPriority = keccak256(abi.encodePacked(
-        /*signatureV*/ orderUint8s[orderIndexTimes2 + 1],
-        /*signatureR*/ orderBytes32s[orderIndexTimes2],
-        /*signatureS*/ orderBytes32s[orderIndexTimes2 + 1]
+      _orderPriority = keccak256(abi.encodePacked(
+        order.signatureV,
+        order.signatureR,
+        order.signatureS
       ));
 
       require(
@@ -114,35 +109,32 @@ contract Alchemilla is Ownable {
 
     }
 
-    address _quotToken = quotToken;
-    address _variToken = variToken;
+    Exchange memory exchange;
+    Order memory buyyOrder;
+    Order memory sellOrder;
+    uint256 quotTokenTotal;
 
-    for (uint256 exchangeIndex = 0; exchangeIndex <= exchangesLastIndex; exchangeIndex++) {
-      uint256 exchangeUint8Index   = exchangeIndex * 2;
-      uint256 exchangeUint256Index = exchangeIndex * 3;
+    for (uint256 exchangeIndex = 0; exchangeIndex < exchanges.length; exchangeIndex++) {
 
-      Order memory buyyOrder = orders[exchangeUint8s[exchangeUint8Index]];
-      Order memory sellOrder = orders[exchangeUint8s[exchangeUint8Index + 1]];
+      exchange = exchanges[exchangeIndex];
+      buyyOrder = orders[exchange.buyyOrderIndex];
+      sellOrder = orders[exchange.sellOrderIndex];
 
       require(buyyOrder.orderType == 0, "buyyOrderType");
       require(sellOrder.orderType == 1, "sellOrderType");
 
-      uint256 quotTokenTrans = exchangeUint256s[exchangeUint256Index];
-      uint256 variTokenTrans = exchangeUint256s[exchangeUint256Index + 1];
-      uint256 quotTokenArbit = exchangeUint256s[exchangeUint256Index + 2];
-
-      uint256 quotTokenTotal = quotTokenTrans + quotTokenArbit;
+      quotTokenTotal = exchange.quotTokenTrans + exchange.quotTokenArbit;
 
 
       /* Check buy price is lte than or equal to total price */
       require(
-        (buyyOrder.priceNumer * variTokenTrans) <= (buyyOrder.priceDenom * quotTokenTotal),
+        (buyyOrder.priceNumer * exchange.variTokenTrans) <= (buyyOrder.priceDenom * quotTokenTotal),
         "buy price is lte than or equal to total price"
       );
 
       /* Check sell price is gte than or equal to trans price */
       require(
-        (sellOrder.priceNumer * variTokenTrans) >= (sellOrder.priceDenom * quotTokenTrans),
+        (sellOrder.priceNumer * exchange.variTokenTrans) >= (sellOrder.priceDenom * exchange.quotTokenTrans),
         "sell price is gte than or equal to trans price"
       );
 
@@ -156,23 +148,23 @@ contract Alchemilla is Ownable {
       /* Check vari token fillability */
       /* TODO: Determine if balance check is necessary */
       require(
-        variTokenTrans + sellOrder.tokenFilled <= sellOrder.tokenLimit,
+        exchange.variTokenTrans + sellOrder.tokenFilled <= sellOrder.tokenLimit,
         "vari token fillability"
       );
 
       /* Transfer quot token trans from buyer to seller; Transfer quot token arbit from buyer to executor cold*/
-      balances[buyyOrder.originator][_quotToken] -= quotTokenTotal;
-      balances[sellOrder.originator][_quotToken] += quotTokenTrans;
+      balances[buyyOrder.originator][quotToken] -= quotTokenTotal;
+      balances[sellOrder.originator][quotToken] += exchange.quotTokenTrans;
       /* TODO: Transfer to msg.sender or executorCold */
-      balances[msg.sender][_quotToken] += quotTokenArbit;
+      balances[msg.sender][quotToken] += exchange.quotTokenArbit;
 
       /* Transfer vari token trans from buyer to seller */
-      balances[sellOrder.originator][_variToken] -= variTokenTrans;
-      balances[buyyOrder.originator][_variToken] += variTokenTrans;
+      balances[sellOrder.originator][variToken] -= exchange.variTokenTrans;
+      balances[buyyOrder.originator][variToken] += exchange.variTokenTrans;
 
       /* Update token filled */
       buyyOrder.tokenFilled += quotTokenTotal;
-      sellOrder.tokenFilled += variTokenTrans;
+      sellOrder.tokenFilled += exchange.variTokenTrans;
     }
   }
 

@@ -10,6 +10,7 @@ const web3 = require('./lib/web3')
 
 const Uint256 = buttercup.Uint256
 const Uint8 = buttercup.Uint8
+const Uint16 = buttercup.Uint16
 const Bytes32 = buttercup.Bytes32
 
 const ORDER_TYPE = orchid.enums.ORDER_TYPE
@@ -39,7 +40,9 @@ describe('alchemilla.execute', () => {
     })
 
     frangipani.forEach((fixture, index) => {
+
       return
+
       describe(`fixture ${index}`, () => {
 
         after(async () => {
@@ -48,27 +51,27 @@ describe('alchemilla.execute', () => {
         })
 
         it('balances should be startBalance', async () => {
-          const balanceCharlieDai = await alchemilla.fetchBalance(
+          const balanceAliceDai = await alchemilla.fetchBalance(
             fixtures.addresses.alice,
             tokens.dai.address
           )
-          const balanceCharlieWeth = await alchemilla.fetchBalance(
+          const balanceAliceWeth = await alchemilla.fetchBalance(
             fixtures.addresses.bob,
             tokens.dai.address
           )
-          const balanceDaveDai = await alchemilla.fetchBalance(
+          const balanceBobDai = await alchemilla.fetchBalance(
             fixtures.addresses.alice,
             tokens.weth.address
           )
-          const balanceDaveWeth = await alchemilla.fetchBalance(
+          const balanceBobWeth = await alchemilla.fetchBalance(
             fixtures.addresses.bob,
             tokens.weth.address
           )
 
-          balanceCharlieDai.getNumber().should.equal(fixtures.startBalance.getNumber())
-          balanceCharlieWeth.getNumber().should.equal(fixtures.startBalance.getNumber())
-          balanceDaveDai.getNumber().should.equal(fixtures.startBalance.getNumber())
-          balanceDaveWeth.getNumber().should.equal(fixtures.startBalance.getNumber())
+          balanceAliceDai.getNumber().should.equal(fixtures.startBalance.getNumber())
+          balanceAliceWeth.getNumber().should.equal(fixtures.startBalance.getNumber())
+          balanceBobDai.getNumber().should.equal(fixtures.startBalance.getNumber())
+          balanceBobWeth.getNumber().should.equal(fixtures.startBalance.getNumber())
 
         })
 
@@ -119,7 +122,7 @@ describe('alchemilla.execute', () => {
           signedBuyyOrder.getIsValidSignature().should.equal(true)
           signedSellOrder.getIsValidSignature().should.equal(true)
 
-          await alchemilla.broadcastExecute(fixtures.addresses.alice, {
+          await alchemilla.broadcastExecute(fixtures.addresses.monarchHot, {
             prevBlockHash: prevBlockHash,
             quotToken: tokens.dai.address,
             variToken: tokens.weth.address,
@@ -136,48 +139,52 @@ describe('alchemilla.execute', () => {
           })
         })
 
-        it('should have transferred dai from alice to alice and bob', async () => {
+        it('should have transferred dai from alice to bob and monarchHot', async () => {
           const balanceAlice = await alchemilla.fetchBalance(
             fixtures.addresses.alice,
             tokens.dai.address
           )
-          const balanceCharlie = await alchemilla.fetchBalance(
-            fixtures.addresses.alice,
-            tokens.dai.address
-          )
-          const balanceDave = await alchemilla.fetchBalance(
+          const balanceBob = await alchemilla.fetchBalance(
             fixtures.addresses.bob,
             tokens.dai.address
           )
-          balanceAlice.getNumber().should.equal(quotTokenArbit.getNumber())
-          balanceCharlie.getNumber().should.equal(fixtures.startBalance.sub(quotTokenTotal).getNumber())
-          balanceDave.getNumber().should.equal(fixtures.startBalance.add(quotTokenTrans).getNumber())
+          const balanceMonarchHot = await alchemilla.fetchBalance(
+            fixtures.addresses.monarchHot,
+            tokens.dai.address
+          )
+
+          balanceAlice.getNumber().should.equal(fixtures.startBalance.sub(quotTokenTotal).getNumber())
+          balanceBob.getNumber().should.equal(fixtures.startBalance.add(quotTokenTrans).getNumber())
+          balanceMonarchHot.getNumber().should.equal(quotTokenArbit.getNumber())
         })
 
         it('should have transferred weth from bob to alice', async () => {
-          const balanceDave = await alchemilla.fetchBalance(
+          const balanceBob = await alchemilla.fetchBalance(
             fixtures.addresses.bob,
             tokens.weth.address
           )
-          const balanceCharlie = await alchemilla.fetchBalance(
+          const balanceAlice = await alchemilla.fetchBalance(
             fixtures.addresses.alice,
             tokens.weth.address
           )
-          balanceCharlie.getNumber().should.equal(fixtures.startBalance.add(variTokenTrans).getNumber())
-          balanceDave.getNumber().should.equal(fixtures.startBalance.sub(variTokenTrans).getNumber())
+          balanceAlice.getNumber().should.equal(fixtures.startBalance.add(variTokenTrans).getNumber())
+          balanceBob.getNumber().should.equal(fixtures.startBalance.sub(variTokenTrans).getNumber())
         })
       })
     })
 
     describe('max', () => {
-      it('should execute max', async () => {
+
+      const ordersCount = 254
+
+      it(`should execute batch of ${ordersCount} orders`, async () => {
         const buyyOrder = new Order({
           prevBlockHash: prevBlockHash,
           type: ORDER_TYPE.BUYY,
           quotToken: tokens.dai.address,
           variToken: tokens.weth.address,
           originator: fixtures.addresses.alice,
-          tokenLimit: Uint256.fromNumber(255),
+          tokenLimit: Uint256.fromNumber(ordersCount - 1),
           priceNumer: Uint256.fromNumber(1),
           priceDenom: Uint256.fromNumber(1),
           expiration: Uint256.fromNumber(1),
@@ -210,7 +217,7 @@ describe('alchemilla.execute', () => {
         const signedSellOrders = []
         const exchanges = []
 
-        for (let i = 1; i <= 255; i++) {
+        for (let i = 1; i < ordersCount; i++) {
           signedSellOrders.push(signedSellOrder)
           exchanges.push({
             signedBuyyOrderIndex: Uint8.fromNumber(0),
@@ -220,9 +227,6 @@ describe('alchemilla.execute', () => {
             quotTokenArbit: Uint256.fromNumber(0)
           })
         }
-
-        console.log(signedSellOrder)
-        console.log(exchanges)
 
         await alchemilla.broadcastExecute(fixtures.addresses.alice, {
           prevBlockHash: prevBlockHash,

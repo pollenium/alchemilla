@@ -9,6 +9,7 @@ fsExtra.emptyDirSync(artifactsPath)
 const output = require(`${__dirname}/../output`)
 
 async function save() {
+  console.log(output)
   const paths = Object.keys(output.contracts)
   for (let i = 0; i < paths.length; i++) {
     const path = paths[i]

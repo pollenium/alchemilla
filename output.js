@@ -45,9 +45,19 @@ const outputJson = solc.compile(JSON.stringify(input))
 const output = JSON.parse(outputJson)
 
 if (output.errors && output.errors.length > 0) {
-  const errorMessage = output.errors.map((error) => {
-    return `[solc]: ${error.formattedMessage}`
-  }).join('\r\n')
-  throw new Error(errorMessage)
+  const solcErrorishes = output.errors.filter((solcErrorish) => {
+    if (solcErrorish.formattedMessage.indexOf('Warning:') >= 0) {
+      console.log(solcErrorish.formattedMessage)
+      console.log('return false')
+      return false
+    }
+    return true
+  })
+  if (solcErrorishes.length > 0) {
+    const errorMessage = solcErrorishes.map((solcErrorish) => {
+      return `[solc]: ${solcErrorish.formattedMessage}`
+    }).join('\r\n')
+    throw new Error(errorMessage)
+  }
 }
 module.exports = output

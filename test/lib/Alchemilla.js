@@ -43,28 +43,8 @@ module.exports = class Alchemilla extends Contract {
   async broadcastExecute(from, executionRequest) {
     const web3Contract = await this.fetchWeb3Contract()
 
-    const orderUint8s      = []
-    const orderUint256s    = []
-    const orderBytes32s    = []
-
     const exchangeUint8s   = []
     const exchangeUint256s = []
-
-    executionRequest.signedOrders.forEach((signedOrder) => {
-      orderUint8s.push(
-        signedOrder.type,
-        signedOrder.signature.v.getBn()
-      )
-      orderUint256s.push(
-        signedOrder.priceNumer.getBn(),
-        signedOrder.priceDenom.getBn(),
-        signedOrder.tokenLimit.getBn()
-      )
-      orderBytes32s.push(
-        signedOrder.signature.r.getPhex(),
-        signedOrder.signature.s.getPhex(),
-      )
-    })
 
     executionRequest.exchanges.forEach((exchange) => {
       exchangeUint8s.push(
@@ -80,15 +60,30 @@ module.exports = class Alchemilla extends Contract {
 
     const args = [
       executionRequest.prevBlockHash.getPhex(),
-      executionRequest.signedOrders.length - 1,
-      executionRequest.exchanges.length - 1,
-      orderUint8s,
-      orderUint256s,
-      orderBytes32s,
-      exchangeUint8s,
-      exchangeUint256s,
       executionRequest.quotToken.getPhex(),
-      executionRequest.variToken.getPhex()
+      executionRequest.variToken.getPhex(),
+      executionRequest.signedOrders.map((signedOrder) => {
+        return {
+          orderType: signedOrder.type,
+          originator: signedOrder.originator.getPhex(),
+          priceNumer: signedOrder.priceNumer.getPhex(),
+          priceDenom: signedOrder.priceDenom.getPhex(),
+          tokenLimit: signedOrder.tokenLimit.getPhex(),
+          tokenFilled: 0,
+          signatureV: signedOrder.signature.v.getNumber(),
+          signatureR: signedOrder.signature.r.getPhex(),
+          signatureS: signedOrder.signature.s.getPhex()
+        }
+      }),
+      executionRequest.exchanges.map((exchange) => {
+        return {
+          buyyOrderIndex: exchange.signedBuyyOrderIndex.getPhex(),
+          sellOrderIndex: exchange.signedSellOrderIndex.getPhex(),
+          quotTokenTrans: exchange.quotTokenTrans.getPhex(),
+          variTokenTrans: exchange.variTokenTrans.getPhex(),
+          quotTokenArbit: exchange.quotTokenArbit.getPhex()
+        }
+      })
     ]
 
     const estimatedGas = await web3Contract.execute.estimateGas(...args, { from: from.getPhex() })
