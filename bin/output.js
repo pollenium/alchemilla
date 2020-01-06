@@ -2,6 +2,7 @@ const solc = require('solc')
 const fs = require('fs')
 const path = require('path')
 
+const contractsDir = `${__dirname}/../contracts`
 const zeppelinDir = path.dirname(require.resolve('openzeppelin-solidity/package.json'))
 const zeppelinContractsDir = `${zeppelinDir}/contracts`
 
@@ -14,10 +15,10 @@ const sourcePaths = {
   'GSN/Context.sol': `${zeppelinContractsDir}/GSN/Context.sol`,
   'token/ERC20/IERC20.sol': `${zeppelinContractsDir}/token/ERC20/IERC20.sol`,
   'token/ERC20/ERC20.sol': `${zeppelinContractsDir}/token/ERC20/ERC20.sol`,
-  'ExecutorOracle.interface.sol': `${__dirname}/contracts/ExecutorOracle.interface.sol`,
-  'MonarchicExecutorOracle.sol': `${__dirname}/contracts/MonarchicExecutorOracle.sol`,
-  'Alchemilla.sol': `${__dirname}/contracts/Alchemilla.sol`,
-  'Token.sol': `${__dirname}/contracts/Token.sol`,
+  'ExecutorOracle.interface.sol': `${contractsDir}/ExecutorOracle.interface.sol`,
+  'MonarchicExecutorOracle.sol': `${contractsDir}/MonarchicExecutorOracle.sol`,
+  'Alchemilla.sol': `${contractsDir}/Alchemilla.sol`,
+  'Token.sol': `${contractsDir}/Token.sol`,
 }
 
 const sources = {}
