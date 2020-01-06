@@ -1,6 +1,6 @@
 {
   "name": "pollenium-alchemilla",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,7 @@
     "url": "https://github.com/pollenium/alchemilla/issues"
   },
   "homepage": "https://github.com/pollenium/alchemilla#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "fs-extra": "^8.1.0",
     "openzeppelin-solidity": "^2.4.0",
