@@ -3,6 +3,7 @@ const Contract = require('./Contract')
 
 const Address = buttercup.Address
 const Uint256 = buttercup.Uint256
+const Bytes32 = buttercup.Bytes32
 
 module.exports = class Alchemilla extends Contract {
 
@@ -40,6 +41,24 @@ module.exports = class Alchemilla extends Contract {
     ))
   }
 
+  async fetchEncodingHash(prevBlockHash, signedOrder) {
+    const web3Contract = await this.fetchWeb3Contract()
+    return Bytes32.fromHexish(
+      await web3Contract.getEncodingHash(prevBlockHash.getPhex(), {
+        originator: signedOrder.originator.getPhex(),
+        quotToken: signedOrder.quotToken.getPhex(),
+        variToken: signedOrder.variToken.getPhex(),
+        priceNumer: signedOrder.priceNumer.getPhex(),
+        priceDenom: signedOrder.priceDenom.getPhex(),
+        tokenLimit: signedOrder.tokenLimit.getPhex(),
+        tokenFilled: 0,
+        signatureV: signedOrder.signature.v.getNumber(),
+        signatureR: signedOrder.signature.r.getPhex(),
+        signatureS: signedOrder.signature.s.getPhex()
+      })
+    )
+  }
+
   async broadcastExecute(from, executionRequest) {
     const web3Contract = await this.fetchWeb3Contract()
 
@@ -62,8 +81,9 @@ module.exports = class Alchemilla extends Contract {
       executionRequest.prevBlockHash.getPhex(),
       executionRequest.buyyOrders.map((signedOrder) => {
         return {
-          orderType: signedOrder.type,
           originator: signedOrder.originator.getPhex(),
+          quotToken: signedOrder.quotToken.getPhex(),
+          variToken: signedOrder.variToken.getPhex(),
           priceNumer: signedOrder.priceNumer.getPhex(),
           priceDenom: signedOrder.priceDenom.getPhex(),
           tokenLimit: signedOrder.tokenLimit.getPhex(),
@@ -75,8 +95,9 @@ module.exports = class Alchemilla extends Contract {
       }),
       executionRequest.sellOrders.map((signedOrder) => {
         return {
-          orderType: signedOrder.type,
           originator: signedOrder.originator.getPhex(),
+          quotToken: signedOrder.quotToken.getPhex(),
+          variToken: signedOrder.variToken.getPhex(),
           priceNumer: signedOrder.priceNumer.getPhex(),
           priceDenom: signedOrder.priceDenom.getPhex(),
           tokenLimit: signedOrder.tokenLimit.getPhex(),
@@ -94,9 +115,7 @@ module.exports = class Alchemilla extends Contract {
           variTokenTrans: exchange.variTokenTrans.getPhex(),
           quotTokenArbit: exchange.quotTokenArbit.getPhex()
         }
-      }),
-      executionRequest.quotToken.getPhex(),
-      executionRequest.variToken.getPhex()
+      })
     ]
 
     const estimatedGas = await web3Contract.execute.estimateGas(...args, { from: from.getPhex() })

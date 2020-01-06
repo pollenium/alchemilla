@@ -21,6 +21,14 @@ const SignedOrderPair = orchid.SignedOrderPair
 let alchemilla
 let tokens
 
+function arrayOf(length, callback) {
+  const array = []
+  for (let i = 0; i < length; i ++) {
+    array.push(callback(i))
+  }
+  return array
+}
+
 describe('alchemilla.execute', () => {
   before(async () => {
     alchemilla = await alchemillaPromise
@@ -40,8 +48,6 @@ describe('alchemilla.execute', () => {
     })
 
     frangipani.forEach((fixture, index) => {
-
-      return
 
       describe(`fixture ${index}`, () => {
 
@@ -122,18 +128,22 @@ describe('alchemilla.execute', () => {
           signedBuyyOrder.getIsValidSignature().should.equal(true)
           signedSellOrder.getIsValidSignature().should.equal(true)
 
+          const buyyOrderSolidityEncodingHash = await alchemilla.fetchEncodingHash(prevBlockHash, signedBuyyOrder)
+          const buyyOrderJsEncodingHash = signedBuyyOrder.getEncodingHash()
+          const sellOrderSolidityEncodingHash = await alchemilla.fetchEncodingHash(prevBlockHash, signedSellOrder)
+          const sellOrderJsEncodingHash = signedSellOrder.getEncodingHash()
+
           await alchemilla.broadcastExecute(fixtures.addresses.monarchHot, {
             prevBlockHash: prevBlockHash,
-            quotToken: tokens.dai.address,
-            variToken: tokens.weth.address,
-            signedOrders: [signedBuyyOrder, signedSellOrder],
+            buyyOrders: [signedBuyyOrder],
+            sellOrders: [signedSellOrder],
             exchanges: [
               {
                 signedBuyyOrderIndex: Uint8.fromNumber(0),
-                signedSellOrderIndex: Uint8.fromNumber(1),
-                quotTokenTrans: quotTokenTrans,
-                variTokenTrans: variTokenTrans,
-                quotTokenArbit: quotTokenArbit
+                signedSellOrderIndex: Uint8.fromNumber(0),
+                quotTokenTrans,
+                variTokenTrans,
+                quotTokenArbit
               }
             ]
           })
@@ -173,73 +183,134 @@ describe('alchemilla.execute', () => {
       })
     })
 
-    describe('max', () => {
+    describe('multis', () => {
 
-      const ordersCount = 255
-
-      it(`should execute batch of ${ordersCount} orders`, async () => {
-        const buyyOrder = new Order({
-          prevBlockHash: prevBlockHash,
-          type: ORDER_TYPE.BUYY,
-          quotToken: tokens.dai.address,
-          variToken: tokens.weth.address,
-          originator: fixtures.addresses.alice,
-          tokenLimit: Uint256.fromNumber(1),
-          priceNumer: Uint256.fromNumber(1),
-          priceDenom: Uint256.fromNumber(1),
-          expiration: Uint256.fromNumber(1),
-          salt: Uint256.fromNumber(1)
-        })
-
-        const sellOrder = new Order({
-          prevBlockHash: prevBlockHash,
-          type: ORDER_TYPE.SELL,
-          quotToken: tokens.dai.address,
-          variToken: tokens.weth.address,
-          originator: fixtures.addresses.bob,
-          tokenLimit: Uint256.fromNumber(1),
-          priceNumer: Uint256.fromNumber(1),
-          priceDenom: Uint256.fromNumber(1),
-          expiration: Uint256.fromNumber(1),
-          salt: Uint256.fromNumber(1)
-        })
-
-        const signedBuyyOrder = new SignedOrder(
-          buyyOrder,
-          fixtures.keypairs.alice.getSignature(buyyOrder.getEncodingHash())
-        )
-
-        const signedSellOrder = new SignedOrder(
-          sellOrder,
-          fixtures.keypairs.bob.getSignature(sellOrder.getEncodingHash())
-        )
-
-        const signedBuyyOrders = []
-        const signedSellOrders = []
-        const exchanges = []
-
-        for (let i = 0; i < ordersCount; i++) {
-          signedBuyyOrders.push(signedBuyyOrder)
-          signedSellOrders.push(signedSellOrder)
-          exchanges.push({
-            signedBuyyOrderIndex: Uint16.fromNumber(i),
-            signedSellOrderIndex: Uint16.fromNumber(i),
-            quotTokenTrans: Uint256.fromNumber(1),
-            variTokenTrans: Uint256.fromNumber(1),
-            quotTokenArbit: Uint256.fromNumber(0)
+      const multisFixtures = [
+        {
+          buyyOrdersCount: 1,
+          buyyOrderTokenLimit: 1,
+          sellOrdersCount: 1,
+          sellOrderTokenLimit: 1,
+          exchanges: [{
+            buyyOrderIndex: 0,
+            sellOrderIndex: 0
+          }]
+        },
+        {
+          buyyOrdersCount: 1,
+          buyyOrderTokenLimit: 255,
+          sellOrdersCount: 255,
+          sellOrderTokenLimit: 1,
+          exchanges: arrayOf(255, (i) => {
+            return {
+              buyyOrderIndex: 0,
+              sellOrderIndex: i
+            }
           })
-        }
+        },
+        ,
+        {
+          buyyOrdersCount: 1,
+          buyyOrderTokenLimit: 500,
+          sellOrdersCount: 500,
+          sellOrderTokenLimit: 1,
+          exchanges: arrayOf(500, (i) => {
+            return {
+              buyyOrderIndex: 0,
+              sellOrderIndex: i
+            }
+          })
+        },
+        {
+          buyyOrdersCount: 255,
+          buyyOrderTokenLimit: 1,
+          sellOrdersCount: 255,
+          sellOrderTokenLimit: 1,
+          exchanges: arrayOf(255, (i) => {
+            return {
+              buyyOrderIndex: i,
+              sellOrderIndex: i
+            }
+          })
+        },
+      ]
 
-        await alchemilla.broadcastExecute(fixtures.addresses.alice, {
-          prevBlockHash: prevBlockHash,
-          quotToken: tokens.dai.address,
-          variToken: tokens.weth.address,
-          buyyOrders: signedBuyyOrders,
-          sellOrders: signedSellOrders,
-          exchanges: exchanges
+      multisFixtures.forEach((multisFixture, index) => {
+        describe(`multisFixture #${index}: [${multisFixture.buyyOrdersCount}, ${multisFixture.sellOrdersCount}, ${multisFixture.exchanges.length}]`, () => {
+          after(async () => {
+            await restoreSnapshot(snapshotId)
+            snapshotId = await takeSnapshot()
+          })
+          it(`should execute batch of orders`, async () => {
+
+            const buyyOrder = new Order({
+              prevBlockHash: prevBlockHash,
+              type: ORDER_TYPE.BUYY,
+              quotToken: tokens.dai.address,
+              variToken: tokens.weth.address,
+              originator: fixtures.addresses.alice,
+              tokenLimit: Uint256.fromNumber(multisFixture.buyyOrderTokenLimit),
+              priceNumer: Uint256.fromNumber(1),
+              priceDenom: Uint256.fromNumber(1),
+              expiration: Uint256.fromNumber(1),
+              salt: Uint256.fromNumber(1)
+            })
+
+            const sellOrder = new Order({
+              prevBlockHash: prevBlockHash,
+              type: ORDER_TYPE.SELL,
+              quotToken: tokens.dai.address,
+              variToken: tokens.weth.address,
+              originator: fixtures.addresses.bob,
+              tokenLimit: Uint256.fromNumber(multisFixture.sellOrderTokenLimit),
+              priceNumer: Uint256.fromNumber(1),
+              priceDenom: Uint256.fromNumber(1),
+              expiration: Uint256.fromNumber(1),
+              salt: Uint256.fromNumber(1)
+            })
+
+            const signedBuyyOrder = new SignedOrder(
+              buyyOrder,
+              fixtures.keypairs.alice.getSignature(buyyOrder.getEncodingHash())
+            )
+
+            const signedSellOrder = new SignedOrder(
+              sellOrder,
+              fixtures.keypairs.bob.getSignature(sellOrder.getEncodingHash())
+            )
+
+            const signedBuyyOrders = []
+            const signedSellOrders = []
+            const exchanges = []
+
+            for (let i = 0; i < multisFixture.buyyOrdersCount; i++) {
+              signedBuyyOrders.push(signedBuyyOrder)
+            }
+
+            for (let i = 0; i < multisFixture.sellOrdersCount; i++) {
+              signedSellOrders.push(signedSellOrder)
+            }
+
+            for (let i = 0; i < multisFixture.exchanges.length; i++) {
+              const exchangeFixture = multisFixture.exchanges[i]
+              exchanges.push({
+                signedBuyyOrderIndex: Uint16.fromNumber(exchangeFixture.buyyOrderIndex),
+                signedSellOrderIndex: Uint16.fromNumber(exchangeFixture.sellOrderIndex),
+                quotTokenTrans: Uint256.fromNumber(1),
+                variTokenTrans: Uint256.fromNumber(1),
+                quotTokenArbit: Uint256.fromNumber(0)
+              })
+            }
+
+            await alchemilla.broadcastExecute(fixtures.addresses.alice, {
+              prevBlockHash: prevBlockHash,
+              buyyOrders: signedBuyyOrders,
+              sellOrders: signedSellOrders,
+              exchanges: exchanges
+            })
+          })
+
         })
-
-
       })
     })
   })

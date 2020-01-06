@@ -1,15 +1,17 @@
 const Artifactor = require('truffle-artifactor')
 const fsExtra = require('fs-extra')
 
+const indexPath = `${__dirname}/../index.js`
 const artifactsPath = `${__dirname}/../artifacts`
 const artifactor = new Artifactor(artifactsPath)
 
 fsExtra.emptyDirSync(artifactsPath)
 
 const output = require(`${__dirname}/../output`)
+const outputJson = JSON.stringify(output, null, 2)
 
 async function save() {
-  console.log(output)
+  fsExtra.writeFileSync(indexPath, `module.exports.output = ${outputJson}`)
   const paths = Object.keys(output.contracts)
   for (let i = 0; i < paths.length; i++) {
     const path = paths[i]

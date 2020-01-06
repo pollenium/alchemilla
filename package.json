@@ -31,7 +31,7 @@
     "fs-extra": "^8.1.0",
     "ganache-cli": "^6.7.0",
     "mocha": "^6.2.2",
-    "pollenium-orchid": "^5.0.1",
+    "pollenium-orchid": "^6.0.0",
     "truffle-contract": "^4.0.31",
     "truffle-resolver": "^5.0.16",
     "web3": "^1.2.2"
