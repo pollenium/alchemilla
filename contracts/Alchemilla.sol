@@ -5,7 +5,7 @@ import './token/ERC20/ERC20.sol';
 import './ownership/Ownable.sol';
 import './ExecutorOracle.interface.sol';
 
-
+/*ToDo: Rename for clarity */
 contract Alchemilla is Ownable {
 
   address public executorOracle;
@@ -17,10 +17,10 @@ contract Alchemilla is Ownable {
   }
 
   modifier onlyExecutorHot() {
-    /* require(
+    require(
       msg.sender == ExecutorOracleInterface(executorOracle).hot(),
       'Only Executor Hot'
-    ); */
+    );
     _;
   }
 
@@ -100,7 +100,7 @@ contract Alchemilla is Ownable {
         order.signatureS
       ));
 
-      require(
+      require( /*TODO: Should be >= */
         orderPriority != _orderPriority,
         "Order Priority"
       );
@@ -134,7 +134,7 @@ contract Alchemilla is Ownable {
         order.signatureS
       ));
 
-      require(
+      require( /*TODO: Should be >= */
         orderPriority != _orderPriority,
         "Order Priority"
       );
