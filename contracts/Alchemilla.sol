@@ -33,7 +33,6 @@ contract Alchemilla is Ownable {
     uint256 priceNumer;
     uint256 priceDenom;
     uint256 tokenLimit;
-    uint256 tokenFilled;
     uint8   signatureV;
     bytes32 signatureR;
     bytes32 signatureS;
@@ -182,14 +181,14 @@ contract Alchemilla is Ownable {
       /* Check quot token fillability */
       /* TODO: Determine if balance check is necessary */
       require(
-        quotTokenTotal + buyyOrder.tokenFilled <= buyyOrder.tokenLimit,
+        quotTokenTotal <= buyyOrder.tokenLimit,
         "quot token fillability"
       );
 
       /* Check vari token fillability */
       /* TODO: Determine if balance check is necessary */
       require(
-        exchange.variTokenTrans + sellOrder.tokenFilled <= sellOrder.tokenLimit,
+        exchange.variTokenTrans <= sellOrder.tokenLimit,
         "vari token fillability"
       );
 
@@ -203,9 +202,9 @@ contract Alchemilla is Ownable {
       balances[sellOrder.originator][variToken] -= exchange.variTokenTrans;
       balances[buyyOrder.originator][variToken] += exchange.variTokenTrans;
 
-      /* Update token filled */
-      buyyOrder.tokenFilled += quotTokenTotal;
-      sellOrder.tokenFilled += exchange.variTokenTrans;
+      /* Update token limits */
+      buyyOrder.tokenLimit -= quotTokenTotal;
+      sellOrder.tokenLimit -= exchange.variTokenTrans;
     }
   }
 
