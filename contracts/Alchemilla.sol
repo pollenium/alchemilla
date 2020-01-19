@@ -150,6 +150,7 @@ contract Alchemilla is Ownable {
     uint256 quotTokenTotal;
     address quotToken;
     address variToken;
+    address executorCold = ExecutorOracleInterface(executorOracle).cold();
 
     for (uint256 exchangeIndex = 0; exchangeIndex < exchanges.length; exchangeIndex++) {
 
@@ -196,7 +197,7 @@ contract Alchemilla is Ownable {
       balances[buyyOrder.originator][quotToken] -= quotTokenTotal;
       balances[sellOrder.originator][quotToken] += exchange.quotTokenTrans;
       /* TODO: Transfer to executorCold */
-      balances[msg.sender][quotToken] += exchange.quotTokenArbit;
+      balances[executorCold][quotToken] += exchange.quotTokenArbit;
 
       /* Transfer vari token trans from buyer to seller */
       balances[sellOrder.originator][variToken] -= exchange.variTokenTrans;
