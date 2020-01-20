@@ -17,7 +17,7 @@ const sourcePaths = {
   'token/ERC20/ERC20.sol': `${zeppelinContractsDir}/token/ERC20/ERC20.sol`,
   'ExecutorOracle.interface.sol': `${contractsDir}/ExecutorOracle.interface.sol`,
   'MonarchicExecutorOracle.sol': `${contractsDir}/MonarchicExecutorOracle.sol`,
-  'Alchemilla.sol': `${contractsDir}/Alchemilla.sol`,
+  'Engine.sol': `${contractsDir}/Engine.sol`,
   'Token.sol': `${contractsDir}/Token.sol`,
 }
 

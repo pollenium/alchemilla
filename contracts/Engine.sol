@@ -6,7 +6,7 @@ import './ownership/Ownable.sol';
 import './ExecutorOracle.interface.sol';
 
 /*ToDo: Rename for clarity */
-contract Alchemilla is Ownable {
+contract Engine is Ownable {
 
   address public executorOracle;
   mapping(address => mapping(address => uint256)) public balances;
