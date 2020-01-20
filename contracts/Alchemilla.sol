@@ -46,19 +46,6 @@ contract Alchemilla is Ownable {
     uint256 quotTokenArbit;
   }
 
-  function getEncodingHash(bytes32 prevBlockHash, Order memory order) public pure returns(bytes32) {
-    return keccak256(abi.encodePacked(
-      prevBlockHash,
-      byte(0x01),
-      order.quotToken,
-      order.variToken,
-      order.priceNumer,
-      order.priceDenom,
-      order.tokenLimit
-    ));
-  }
-
-
   function execute(
     bytes32     prevBlockHash,
     Order[]     memory buyyOrders,
