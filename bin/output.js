@@ -49,7 +49,6 @@ if (output.errors && output.errors.length > 0) {
   const solcErrorishes = output.errors.filter((solcErrorish) => {
     if (solcErrorish.formattedMessage.indexOf('Warning:') >= 0) {
       console.log(solcErrorish.formattedMessage)
-      console.log('return false')
       return false
     }
     return true

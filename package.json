@@ -20,7 +20,6 @@
   "devDependencies": {
     "fs-extra": "^8.1.0",
     "openzeppelin-solidity": "^2.4.0",
-    "solc": "^0.5.12",
-    "truffle-artifactor": "^4.0.30"
+    "solc": "^0.5.12"
   }
 }
