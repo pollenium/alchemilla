@@ -101,7 +101,7 @@ contract Alchemilla is Ownable {
       ));
 
       require(
-        orderId >= _orderId,
+        orderId > _orderId,
         "Order Id"
       );
 
@@ -137,7 +137,7 @@ contract Alchemilla is Ownable {
       ));
 
       require(
-        orderId >= _orderId,
+        orderId > _orderId,
         "Order Id"
       );
 
