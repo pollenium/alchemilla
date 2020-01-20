@@ -87,7 +87,7 @@ contract Engine is Ownable {
       ));
 
       require(
-        orderId > _orderId,
+        _orderId > orderId,
         "Order Id"
       );
 
@@ -123,7 +123,7 @@ contract Engine is Ownable {
       ));
 
       require(
-        orderId > _orderId,
+        _orderId > orderId,
         "Order Id"
       );
 
