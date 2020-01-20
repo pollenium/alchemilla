@@ -71,8 +71,8 @@ contract Alchemilla is Ownable {
       "Blockhash"
     );
 
-    bytes32 orderPriority;
-    bytes32 _orderPriority;
+    bytes32 orderId;
+    bytes32 _orderId;
     Order memory order;
 
     for (uint256 orderIndex = 0; orderIndex < buyyOrders.length; orderIndex++) {
@@ -94,20 +94,22 @@ contract Alchemilla is Ownable {
         order.signatureS
       ), 'originator');
 
-      _orderPriority = keccak256(abi.encodePacked(
+      _orderId = keccak256(abi.encodePacked(
         order.signatureV,
         order.signatureR,
         order.signatureS
       ));
 
-      require( /*TODO: Should be >= */
-        orderPriority != _orderPriority,
-        "Order Priority"
+      require(
+        orderId >= _orderId,
+        "Order Id"
       );
 
-      /* orderPriority = _orderPriority; */
+      orderId = _orderId;
 
     }
+
+    delete orderId;
 
     for (uint256 orderIndex = 0; orderIndex < sellOrders.length; orderIndex++) {
 
@@ -128,18 +130,18 @@ contract Alchemilla is Ownable {
         order.signatureS
       ), 'originator');
 
-      _orderPriority = keccak256(abi.encodePacked(
+      _orderId = keccak256(abi.encodePacked(
         order.signatureV,
         order.signatureR,
         order.signatureS
       ));
 
-      require( /*TODO: Should be >= */
-        orderPriority != _orderPriority,
-        "Order Priority"
+      require(
+        orderId >= _orderId,
+        "Order Id"
       );
 
-      /* orderPriority = _orderPriority; */
+      orderId = _orderId;
 
     }
 
