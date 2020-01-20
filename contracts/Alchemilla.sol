@@ -10,7 +10,6 @@ contract Alchemilla is Ownable {
 
   address public executorOracle;
   mapping(address => mapping(address => uint256)) public balances;
-  mapping(bytes32 => bool) public isAnchorExecuted;
 
   function setExecutorOracle(address _executorOracle) public onlyOwner() {
     executorOracle = _executorOracle;
