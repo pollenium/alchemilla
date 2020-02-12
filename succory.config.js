@@ -30,5 +30,5 @@ module.exports = {
     fileName: 'MonarchicExecutorOracle.sol',
     contractName: 'MonarchicExecutorOracle'
   }],
-  outPath: './ts/index.ts'
+  tsPath: './ts/index.ts'
 }

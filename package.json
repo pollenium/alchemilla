@@ -18,11 +18,14 @@
     "url": "https://github.com/pollenium/alchemilla/issues"
   },
   "homepage": "https://github.com/pollenium/alchemilla#readme",
-  "dependencies": {},
+  "dependencies": {
+    "pollenium-clover": "^2.0.0",
+    "pollenium-uvaursi": "^8.5.0"
+  },
   "devDependencies": {
     "fs-extra": "^8.1.0",
     "openzeppelin-solidity": "^2.4.0",
-    "pollenium-succory": "^1.0.1",
+    "pollenium-succory": "^3.0.0",
     "solc": "^0.5.12",
     "tsc": "^1.20150623.0",
     "typescript": "^3.7.5"
