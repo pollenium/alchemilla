@@ -2,9 +2,11 @@
   "name": "pollenium-alchemilla",
   "version": "9.0.2",
   "description": "",
-  "main": "index.js",
+  "main": "node/index.js",
   "scripts": {
-    "compile": "node ./bin/compile.js"
+    "compile": "succory && tsc",
+    "tsc": "tsc",
+    "succory": "succory"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,9 @@
   "devDependencies": {
     "fs-extra": "^8.1.0",
     "openzeppelin-solidity": "^2.4.0",
-    "solc": "^0.5.12"
+    "pollenium-succory": "^1.0.1",
+    "solc": "^0.5.12",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.7.5"
   }
 }

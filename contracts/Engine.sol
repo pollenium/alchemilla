@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
-import './token/ERC20/ERC20.sol';
-import './ownership/Ownable.sol';
+import './openzeppelin/token/ERC20/ERC20.sol';
+import './openzeppelin/ownership/Ownable.sol';
 import './ExecutorOracle.interface.sol';
 
 /*ToDo: Rename for clarity */

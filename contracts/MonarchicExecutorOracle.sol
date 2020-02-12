@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import './ownership/Ownable.sol';
+import './openzeppelin/ownership/Ownable.sol';
 import './ExecutorOracle.interface.sol';
 
 contract MonarchicExecutorOracle is ExecutorOracleInterface, Ownable {
