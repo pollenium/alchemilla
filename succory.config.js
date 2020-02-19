@@ -22,13 +22,13 @@ const sources = {
 module.exports = {
   sources,
   outs: [{
-    constName: 'engine',
+    constName: 'engineOutput',
     fileName: 'Engine.sol',
     contractName: 'Engine'
   },{
-    constName: 'monarchicExecutorOracle',
+    constName: 'monarchicExecutorOracleOutput',
     fileName: 'MonarchicExecutorOracle.sol',
     contractName: 'MonarchicExecutorOracle'
   }],
-  tsPath: './ts/index.ts'
+  tsPath: './ts/contractOutputs.ts'
 }

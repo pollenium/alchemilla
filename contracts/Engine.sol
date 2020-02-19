@@ -11,6 +11,9 @@ contract Engine is Ownable {
   address public executorOracle;
   mapping(address => mapping(address => uint256)) public balances;
 
+  mapping(bytes32 => bool) public isDowvsHashSeen;
+  bytes15 public dowvsSalt = 0xf5ee510934b6e8b72969b3ab8217d7;
+
   function setExecutorOracle(address _executorOracle) public onlyOwner() {
     executorOracle = _executorOracle;
   }
@@ -197,22 +200,85 @@ contract Engine is Ownable {
     }
   }
 
-  function deposit(
+  function _deposit(
+    address from,
     address to,
     address token,
     uint256 amount
-  ) public {
-    require(ERC20(token).transferFrom(msg.sender, address(this), amount));
+  ) private {
+    require(ERC20(token).transferFrom(from, address(this), amount));
     balances[to][token] += amount;
   }
 
-  function withdraw(
+  function _withdraw(
+    address from,
+    address to,
+    address token,
+    uint256 amount
+  ) private {
+    require(ERC20(token).transfer(to, amount));
+    balances[from][token] -= amount;
+  }
+
+
+  function depositViaNative(
     address to,
     address token,
     uint256 amount
   ) public {
-    require(ERC20(token).transferFrom(address(this), to, amount));
-    balances[msg.sender][token] -= amount;
+    _deposit(msg.sender, to, token, amount);
+  }
+
+  function depositViaSweep(
+    address toAndFrom,
+    address token
+  ) public {
+    uint256 amount = ERC20(token).balanceOf(toAndFrom);
+    _deposit(toAndFrom, toAndFrom, token, amount);
+  }
+
+  function withdrawViaNative(
+    address to,
+    address token,
+    uint256 amount
+  ) public {
+    _withdraw(msg.sender, to, token, amount);
+  }
+
+  /*Dowvs: [D]eposit [O]r [W]ithdraw [V]ia [S]ignature*/
+  function depositOrWithdrawViaSignature(
+    bool isWithdraw,
+    address to,
+    address token,
+    uint256 amount,
+    bytes8 nonce,
+    uint8 signatureV,
+    bytes32 signatureR,
+    bytes32 signatureS
+  ) public {
+
+    // disable until tested
+    require(false);
+
+    bytes32 hash = keccak256(abi.encodePacked([
+      dowvsSalt,
+      isWithdraw ? byte(0x01) : byte(0x00),
+      bytes20(to),
+      bytes20(token),
+      bytes32(amount),
+      nonce
+    ]));
+    require(isDowvsHashSeen[hash] == false);
+    isDowvsHashSeen[hash] = true;
+
+    address from = ecrecover(hash, signatureV, signatureR, signatureS);
+
+    if (isWithdraw) {
+      _withdraw(from, to, token, amount);
+    } else {
+      _deposit(from, to, token, amount);
+    }
+
   }
 
 }

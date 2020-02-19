@@ -6,7 +6,8 @@
   "scripts": {
     "compile": "succory && tsc",
     "tsc": "tsc",
-    "succory": "succory"
+    "succory": "succory",
+    "jest": "jest"
   },
   "repository": {
     "type": "git",
@@ -19,14 +20,22 @@
   },
   "homepage": "https://github.com/pollenium/alchemilla#readme",
   "dependencies": {
-    "pollenium-clover": "^2.0.0",
+    "pollenium-clover": "^6.1.2",
+    "pollenium-ilex": "^9.3.0",
     "pollenium-uvaursi": "^8.5.0"
   },
   "devDependencies": {
+    "@types/jest": "^25.1.2",
     "fs-extra": "^8.1.0",
+    "jest": "^25.1.0",
     "openzeppelin-solidity": "^2.4.0",
+    "pollenium-frangipani": "^2.0.0",
+    "pollenium-gaillardia": "^2.1.1",
     "pollenium-succory": "^3.0.0",
+    "pollenium-toadflax": "^2.2.0",
     "solc": "^0.5.12",
+    "ts-enum-util": "^4.0.1",
+    "ts-jest": "^25.2.1",
     "tsc": "^1.20150623.0",
     "typescript": "^3.7.5"
   }
