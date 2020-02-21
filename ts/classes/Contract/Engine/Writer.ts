@@ -64,6 +64,21 @@ export class EngineWriter extends ContractWriter {
     )
   }
 
+  async withdrawAndNotifyViaNative(struct: {
+    to: Uish,
+    token: Uish,
+    amount: Uintable
+  }): Promise<void> {
+    const to = new Address(struct.to)
+    const token = new Address(struct.token)
+    const amount = new Uint256(struct.amount)
+    await this.ethersContract.withdrawAndNotifyViaNative(
+      to.uu.toPhex(),
+      token.uu.toPhex(),
+      amount.uu.toPhex()
+    )
+  }
+
   async execute(executionRequest: {
     prevBlockHash: Bytes32,
     buyyOrders: Array<SignedOrder>,

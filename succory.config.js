@@ -15,6 +15,7 @@ const sources = {
   'openzeppelin/token/ERC20/IERC20.sol': `${zeppelinContractsDir}/token/ERC20/IERC20.sol`,
   'openzeppelin/token/ERC20/ERC20.sol': `${zeppelinContractsDir}/token/ERC20/ERC20.sol`,
   'ExecutorOracle.interface.sol': `${alchemillaContractsDir}/ExecutorOracle.interface.sol`,
+  'WithdrawNotificationHandler.interface.sol': `${alchemillaContractsDir}/WithdrawNotificationHandler.interface.sol`,
   'MonarchicExecutorOracle.sol': `${alchemillaContractsDir}/MonarchicExecutorOracle.sol`,
   'Engine.sol': `${alchemillaContractsDir}/Engine.sol`,
 }

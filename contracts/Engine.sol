@@ -4,6 +4,7 @@ pragma experimental ABIEncoderV2;
 import './openzeppelin/token/ERC20/ERC20.sol';
 import './openzeppelin/ownership/Ownable.sol';
 import './ExecutorOracle.interface.sol';
+import './WithdrawNotificationHandler.interface.sol';
 
 /*ToDo: Rename for clarity */
 contract Engine is Ownable {
@@ -220,6 +221,17 @@ contract Engine is Ownable {
     balances[from][token] -= amount;
   }
 
+  function _withdrawAndNotify(
+    address from,
+    address to,
+    address token,
+    uint256 amount
+  ) private {
+    _withdraw(from, to, token, amount);
+    WithdrawNotificationHandlerInterface(to).handleWithdrawNotification(from, token, amount);
+  }
+
+
 
   function depositViaNative(
     address to,
@@ -243,6 +255,14 @@ contract Engine is Ownable {
     uint256 amount
   ) public {
     _withdraw(msg.sender, to, token, amount);
+  }
+
+  function withdrawAndNotifyViaNative(
+    address to,
+    address token,
+    uint256 amount
+  ) public {
+    _withdrawAndNotify(msg.sender, to, token, amount);
   }
 
   /*Dowvs: [D]eposit [O]r [W]ithdraw [V]ia [S]ignature*/
