@@ -20,6 +20,11 @@ export declare class EngineWriter extends ContractWriter {
         token: Uish;
         amount: Uintable;
     }): Promise<void>;
+    withdrawAndNotifyViaNative(struct: {
+        to: Uish;
+        token: Uish;
+        amount: Uintable;
+    }): Promise<void>;
     execute(executionRequest: {
         prevBlockHash: Bytes32;
         buyyOrders: Array<SignedOrder>;

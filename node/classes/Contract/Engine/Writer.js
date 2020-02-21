@@ -142,6 +142,23 @@ var EngineWriter = /** @class */ (function (_super) {
             });
         });
     };
+    EngineWriter.prototype.withdrawAndNotifyViaNative = function (struct) {
+        return __awaiter(this, void 0, void 0, function () {
+            var to, token, amount;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        to = new pollenium_buttercup_1.Address(struct.to);
+                        token = new pollenium_buttercup_1.Address(struct.token);
+                        amount = new pollenium_buttercup_1.Uint256(struct.amount);
+                        return [4 /*yield*/, this.ethersContract.withdrawAndNotifyViaNative(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex())];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     EngineWriter.prototype.execute = function (executionRequest) {
         return __awaiter(this, void 0, void 0, function () {
             var args;
