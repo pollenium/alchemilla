@@ -228,7 +228,10 @@ contract Engine is Ownable {
     uint256 amount
   ) private {
     _withdraw(from, to, token, amount);
-    WithdrawNotificationHandlerInterface(to).handleWithdrawNotification(from, token, amount);
+    require(
+      WithdrawNotificationHandlerInterface(to).handleWithdrawNotification(from, token, amount),
+      'Engine/withdraw-notification-failed'
+    );
   }
 
 

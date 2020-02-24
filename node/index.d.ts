@@ -1,7 +1,7 @@
 export { engineOutput, monarchicExecutorOracleOutput } from './contractOutputs';
 export { ORDER_TYPE } from './enums';
-export { Order } from './classes/Order';
-export { SignedOrder } from './classes/SignedOrder';
+export { Order, OrderStruct } from './classes/Order';
+export { SignedOrder, SignedOrderStruct } from './classes/SignedOrder';
 export { OrderPair } from './classes/OrderPair';
 export { EngineReader } from './classes/Contract/Engine/Reader';
 export { EngineWriter } from './classes/Contract/Engine/Writer';
