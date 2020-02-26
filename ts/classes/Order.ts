@@ -94,6 +94,14 @@ export class Order {
     return this.sugmaHash
   }
 
+  getLimitingToken(): Address {
+    if (this.type === ORDER_TYPE.BUYY) {
+      return this.quotToken
+    } else {
+      return this.variToken
+    }
+  }
+
 
   getTokenUnfilled(tokenFilledUintable: Uintable): Uint256 {
     const tokenFilled = new Uint256(tokenFilledUintable)

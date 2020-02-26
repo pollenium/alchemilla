@@ -24,6 +24,7 @@ export declare class Order {
     constructor(struct: OrderStruct);
     private getSugma;
     getSugmaHash(): Bytes32;
+    getLimitingToken(): Address;
     getTokenUnfilled(tokenFilledUintable: Uintable): Uint256;
     getTokenAvail(struct: {
         tokenFilled: Uintable;
