@@ -161,13 +161,14 @@ var EngineWriter = /** @class */ (function (_super) {
     };
     EngineWriter.prototype.execute = function (executionRequest) {
         return __awaiter(this, void 0, void 0, function () {
-            var args;
+            var prevBlockHash, args;
             var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
+                        prevBlockHash = new pollenium_buttercup_1.Bytes32(executionRequest.prevBlockHash);
                         args = [
-                            executionRequest.prevBlockHash.uu.toPhex(),
+                            prevBlockHash.uu.toPhex(),
                             executionRequest.signedBuyyOrders.map(function (signedOrder) {
                                 return signedOrder.getEthersArg();
                             }),
@@ -175,12 +176,17 @@ var EngineWriter = /** @class */ (function (_super) {
                                 return signedOrder.getEthersArg();
                             }),
                             executionRequest.exchanges.map(function (exchange) {
+                                var buyyOrderIndex = new pollenium_buttercup_1.Uint8(exchange.signedBuyyOrderIndex);
+                                var sellOrderIndex = new pollenium_buttercup_1.Uint8(exchange.signedSellOrderIndex);
+                                var quotTokenTrans = new pollenium_buttercup_1.Uint256(exchange.quotTokenTrans);
+                                var variTokenTrans = new pollenium_buttercup_1.Uint256(exchange.variTokenTrans);
+                                var quotTokenArbit = new pollenium_buttercup_1.Uint256(exchange.quotTokenArbit);
                                 return {
-                                    buyyOrderIndex: exchange.signedBuyyOrderIndex.uu.toPhex(),
-                                    sellOrderIndex: exchange.signedSellOrderIndex.uu.toPhex(),
-                                    quotTokenTrans: exchange.quotTokenTrans.uu.toPhex(),
-                                    variTokenTrans: exchange.variTokenTrans.uu.toPhex(),
-                                    quotTokenArbit: exchange.quotTokenArbit.uu.toPhex()
+                                    buyyOrderIndex: buyyOrderIndex.uu.toPhex(),
+                                    sellOrderIndex: sellOrderIndex.uu.toPhex(),
+                                    quotTokenTrans: quotTokenTrans.uu.toPhex(),
+                                    variTokenTrans: variTokenTrans.uu.toPhex(),
+                                    quotTokenArbit: quotTokenArbit.uu.toPhex()
                                 };
                             })
                         ];

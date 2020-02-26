@@ -6,15 +6,15 @@ import { engineOutput } from '../../../'
 import { SignedOrder } from '../../SignedOrder'
 
 export interface ExecutionRequest {
-  prevBlockHash: Bytes32,
+  prevBlockHash: Uish,
   signedBuyyOrders: Array<SignedOrder>,
   signedSellOrders: Array<SignedOrder>,
   exchanges: Array<{
-    signedBuyyOrderIndex: Uint8,
-    signedSellOrderIndex: Uint8,
-    quotTokenTrans: Uint256,
-    variTokenTrans: Uint256,
-    quotTokenArbit: Uint256
+    signedBuyyOrderIndex: Uintable,
+    signedSellOrderIndex: Uintable,
+    quotTokenTrans: Uintable,
+    variTokenTrans: Uintable,
+    quotTokenArbit: Uintable
   }>
 }
 
@@ -94,8 +94,10 @@ export class EngineWriter extends ContractWriter {
 
   async execute(executionRequest: ExecutionRequest): Promise<void> {
 
+    const prevBlockHash = new Bytes32(executionRequest.prevBlockHash)
+
     const args = [
-      executionRequest.prevBlockHash.uu.toPhex(),
+      prevBlockHash.uu.toPhex(),
       executionRequest.signedBuyyOrders.map((signedOrder) => {
         return signedOrder.getEthersArg()
       }),
@@ -103,12 +105,17 @@ export class EngineWriter extends ContractWriter {
         return signedOrder.getEthersArg()
       }),
       executionRequest.exchanges.map((exchange) => {
+        const buyyOrderIndex = new Uint8(exchange.signedBuyyOrderIndex)
+        const sellOrderIndex = new Uint8(exchange.signedSellOrderIndex)
+        const quotTokenTrans = new Uint256(exchange.quotTokenTrans)
+        const variTokenTrans = new Uint256(exchange.variTokenTrans)
+        const quotTokenArbit = new Uint256(exchange.quotTokenArbit)
         return {
-          buyyOrderIndex: exchange.signedBuyyOrderIndex.uu.toPhex(),
-          sellOrderIndex: exchange.signedSellOrderIndex.uu.toPhex(),
-          quotTokenTrans: exchange.quotTokenTrans.uu.toPhex(),
-          variTokenTrans: exchange.variTokenTrans.uu.toPhex(),
-          quotTokenArbit: exchange.quotTokenArbit.uu.toPhex()
+          buyyOrderIndex: buyyOrderIndex.uu.toPhex(),
+          sellOrderIndex: sellOrderIndex.uu.toPhex(),
+          quotTokenTrans: quotTokenTrans.uu.toPhex(),
+          variTokenTrans: variTokenTrans.uu.toPhex(),
+          quotTokenArbit: quotTokenArbit.uu.toPhex()
         }
       })
     ]
