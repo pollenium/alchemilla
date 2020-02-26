@@ -1,6 +1,7 @@
 import { Address, Uint256, Bytes32, Uintable } from 'pollenium-buttercup';
 import { ORDER_TYPE } from '../enums';
 import { Uish } from 'pollenium-uvaursi';
+import Bignumber from 'bignumber.js';
 export interface OrderStruct {
     type: ORDER_TYPE;
     prevBlockHash: Uish;
@@ -19,11 +20,13 @@ export declare class Order {
     readonly tokenLimit: Uint256;
     readonly priceNumer: Uint256;
     readonly priceDenom: Uint256;
+    private price;
     private sugma;
     private sugmaHash;
     constructor(struct: OrderStruct);
     private getSugma;
     getSugmaHash(): Bytes32;
+    getPrice(): Bignumber;
     getLimitingToken(): Address;
     getTokenUnfilled(tokenFilledUintable: Uintable): Uint256;
     getTokenAvail(struct: {

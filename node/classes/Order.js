@@ -12,11 +12,15 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
 var pollenium_buttercup_1 = require("pollenium-buttercup");
 var enums_1 = require("../enums");
 var web3_utils_1 = require("web3-utils");
 var pollenium_uvaursi_1 = require("pollenium-uvaursi");
+var bignumber_js_1 = __importDefault(require("bignumber.js"));
 var Order = /** @class */ (function () {
     function Order(struct) {
         this.struct = struct;
@@ -70,6 +74,15 @@ var Order = /** @class */ (function () {
             v: this.getSugma().uu.toHex()
         })));
         return this.sugmaHash;
+    };
+    Order.prototype.getPrice = function () {
+        if (this.price) {
+            return this.price;
+        }
+        var priceNumerBignumber = new bignumber_js_1["default"](this.priceNumer.toNumberString(10));
+        var priceDenomBignumber = new bignumber_js_1["default"](this.priceDenom.toNumberString(10));
+        this.price = priceNumerBignumber.div(priceDenomBignumber);
+        return this.price;
     };
     Order.prototype.getLimitingToken = function () {
         if (this.type === enums_1.ORDER_TYPE.BUYY) {

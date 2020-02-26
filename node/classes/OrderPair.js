@@ -33,8 +33,7 @@ var OrderPair = /** @class */ (function () {
         if (!this.buyyOrder.variToken.uu.getIsEqual(this.sellOrder.variToken)) {
             throw new VariTokenMismatchError();
         }
-        if (this.buyyOrder.priceNumer.opMul(this.sellOrder.priceDenom)
-            .compLt(this.buyyOrder.priceDenom.opMul(this.sellOrder.priceNumer))) {
+        if (this.buyyOrder.getPrice().lt(this.sellOrder.getPrice())) {
             throw new PriceConstraintError;
         }
         this.quotToken = this.buyyOrder.quotToken,

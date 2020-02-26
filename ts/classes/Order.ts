@@ -2,6 +2,7 @@ import { Address, Uint256, Bytes, Bytes1, Bytes32, Uint8, Uintable } from 'polle
 import { ORDER_TYPE } from '../enums'
 import { soliditySha3 } from 'web3-utils'
 import { Uu, Uish } from 'pollenium-uvaursi'
+import Bignumber from 'bignumber.js'
 
 export interface OrderStruct {
   type: ORDER_TYPE;
@@ -24,6 +25,7 @@ export class Order {
   readonly priceNumer: Uint256;
   readonly priceDenom: Uint256;
 
+  private price: Bignumber;
   private sugma: Bytes;
   private sugmaHash: Bytes32;
 
@@ -92,6 +94,16 @@ export class Order {
       })
     ))
     return this.sugmaHash
+  }
+
+  getPrice(): Bignumber {
+    if (this.price) {
+      return this.price
+    }
+    const priceNumerBignumber = new Bignumber(this.priceNumer.toNumberString(10))
+    const priceDenomBignumber = new Bignumber(this.priceDenom.toNumberString(10))
+    this.price = priceNumerBignumber.div(priceDenomBignumber)
+    return this.price
   }
 
   getLimitingToken(): Address {
