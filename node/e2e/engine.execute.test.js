@@ -166,8 +166,8 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                 engineWriter = _e.sent();
                                 return [4 /*yield*/, engineWriter.execute({
                                         prevBlockHash: prevBlockHash,
-                                        buyyOrders: [signedBuyyOrder],
-                                        sellOrders: [signedSellOrder],
+                                        signedBuyyOrders: [signedBuyyOrder],
+                                        signedSellOrders: [signedSellOrder],
                                         exchanges: [
                                             {
                                                 signedBuyyOrderIndex: pollenium_buttercup_1.Uint8.fromNumber(0),
@@ -361,8 +361,8 @@ describe('multis', function () {
                             engineWriter = _e.sent();
                             return [4 /*yield*/, engineWriter.execute({
                                     prevBlockHash: prevBlockHash,
-                                    buyyOrders: signedBuyyOrders,
-                                    sellOrders: signedSellOrders,
+                                    signedBuyyOrders: signedBuyyOrders,
+                                    signedSellOrders: signedSellOrders,
                                     exchanges: exchanges
                                 })];
                         case 9:

@@ -168,10 +168,10 @@ var EngineWriter = /** @class */ (function (_super) {
                     case 0:
                         args = [
                             executionRequest.prevBlockHash.uu.toPhex(),
-                            executionRequest.buyyOrders.map(function (signedOrder) {
+                            executionRequest.signedBuyyOrders.map(function (signedOrder) {
                                 return signedOrder.getEthersArg();
                             }),
-                            executionRequest.sellOrders.map(function (signedOrder) {
+                            executionRequest.signedSellOrders.map(function (signedOrder) {
                                 return signedOrder.getEthersArg();
                             }),
                             executionRequest.exchanges.map(function (exchange) {

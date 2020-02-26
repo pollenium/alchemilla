@@ -5,6 +5,19 @@ import { ContractWriter, ContractWriterChildStruct } from 'pollenium-clover'
 import { engineOutput } from '../../../'
 import { SignedOrder } from '../../SignedOrder'
 
+export interface ExecutionRequest {
+  prevBlockHash: Bytes32,
+  signedBuyyOrders: Array<SignedOrder>,
+  signedSellOrders: Array<SignedOrder>,
+  exchanges: Array<{
+    signedBuyyOrderIndex: Uint8,
+    signedSellOrderIndex: Uint8,
+    quotTokenTrans: Uint256,
+    variTokenTrans: Uint256,
+    quotTokenArbit: Uint256
+  }>
+}
+
 export class EngineWriter extends ContractWriter {
 
   constructor(struct: ContractWriterChildStruct) {
@@ -79,25 +92,14 @@ export class EngineWriter extends ContractWriter {
     )
   }
 
-  async execute(executionRequest: {
-    prevBlockHash: Bytes32,
-    buyyOrders: Array<SignedOrder>,
-    sellOrders: Array<SignedOrder>,
-    exchanges: Array<{
-      signedBuyyOrderIndex: Uint8,
-      signedSellOrderIndex: Uint8,
-      quotTokenTrans: Uint256,
-      variTokenTrans: Uint256,
-      quotTokenArbit: Uint256
-    }>
-  }): Promise<void> {
+  async execute(executionRequest: ExecutionRequest): Promise<void> {
 
     const args = [
       executionRequest.prevBlockHash.uu.toPhex(),
-      executionRequest.buyyOrders.map((signedOrder) => {
+      executionRequest.signedBuyyOrders.map((signedOrder) => {
         return signedOrder.getEthersArg()
       }),
-      executionRequest.sellOrders.map((signedOrder) => {
+      executionRequest.signedSellOrders.map((signedOrder) => {
         return signedOrder.getEthersArg()
       }),
       executionRequest.exchanges.map((exchange) => {

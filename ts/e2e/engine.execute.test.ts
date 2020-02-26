@@ -94,8 +94,8 @@ frangipani.forEach(async (fixture, index) => {
         const engineWriter = await fetchEngineWriter(AccountNames.MONARCH_HOT)
         await engineWriter.execute({
           prevBlockHash: prevBlockHash,
-          buyyOrders: [signedBuyyOrder],
-          sellOrders: [signedSellOrder],
+          signedBuyyOrders: [signedBuyyOrder],
+          signedSellOrders: [signedSellOrder],
           exchanges: [
             {
               signedBuyyOrderIndex: Uint8.fromNumber(0),
@@ -235,10 +235,10 @@ describe('multis', () => {
 
         const engineWriter = await fetchEngineWriter(AccountNames.MONARCH_HOT)
         await engineWriter.execute({
-          prevBlockHash: prevBlockHash,
-          buyyOrders: signedBuyyOrders,
-          sellOrders: signedSellOrders,
-          exchanges: exchanges
+          prevBlockHash,
+          signedBuyyOrders,
+          signedSellOrders,
+          exchanges
         })
       })
 
