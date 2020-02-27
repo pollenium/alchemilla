@@ -24,8 +24,8 @@ export declare class EngineWriter extends ContractWriter {
         amount: Uintable;
     }): Promise<void>;
     depositViaSweep(struct: {
-        toAndFrom: Address;
-        token: Address;
+        toAndFrom: Uish;
+        token: Uish;
     }): Promise<void>;
     withdrawViaNative(struct: {
         to: Uish;

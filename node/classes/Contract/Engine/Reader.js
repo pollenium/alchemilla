@@ -100,11 +100,12 @@ var EngineReader = /** @class */ (function (_super) {
     };
     EngineReader.prototype.fetchBalance = function (struct) {
         return __awaiter(this, void 0, void 0, function () {
-            var holder, token, balanceBignumber, _a, _b, _c;
+            var token, holder, balanceBignumber, _a, _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        holder = struct.holder, token = struct.token;
+                        token = new pollenium_buttercup_1.Address(struct.token);
+                        holder = new pollenium_buttercup_1.Address(struct.holder);
                         return [4 /*yield*/, this.ethersContract.balances(holder.uu.toPhex(), token.uu.toPhex())];
                     case 1:
                         balanceBignumber = _d.sent();

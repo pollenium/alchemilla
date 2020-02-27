@@ -51,8 +51,8 @@ export class EngineWriter extends ContractWriter {
   }
 
   async depositViaSweep(struct: {
-    toAndFrom: Address
-    token: Address
+    toAndFrom: Uish
+    token: Uish
   }): Promise<void> {
     const toAndFrom = new Address(struct.toAndFrom)
     const token = new Address(struct.token)

@@ -60,6 +60,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var pollenium_buttercup_1 = require("pollenium-buttercup");
 var pollenium_clover_1 = require("pollenium-clover");
 var __1 = require("../../../");
 var MonarchicExecutorOracleWriter = /** @class */ (function (_super) {
@@ -67,11 +68,14 @@ var MonarchicExecutorOracleWriter = /** @class */ (function (_super) {
     function MonarchicExecutorOracleWriter(struct) {
         return _super.call(this, __assign(__assign({}, __1.monarchicExecutorOracleOutput), struct)) || this;
     }
-    MonarchicExecutorOracleWriter.prototype.setHot = function (hot) {
+    MonarchicExecutorOracleWriter.prototype.setHot = function (hotUish) {
         return __awaiter(this, void 0, void 0, function () {
+            var hot;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.ethersContract.setHot(hot.uu.toPhex())];
+                    case 0:
+                        hot = new pollenium_buttercup_1.Address(hotUish);
+                        return [4 /*yield*/, this.ethersContract.setHot(hot.uu.toPhex())];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -79,11 +83,14 @@ var MonarchicExecutorOracleWriter = /** @class */ (function (_super) {
             });
         });
     };
-    MonarchicExecutorOracleWriter.prototype.setCold = function (cold) {
+    MonarchicExecutorOracleWriter.prototype.setCold = function (coldUish) {
         return __awaiter(this, void 0, void 0, function () {
+            var cold;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.ethersContract.setCold(cold.uu.toPhex())];
+                    case 0:
+                        cold = new pollenium_buttercup_1.Address(coldUish);
+                        return [4 /*yield*/, this.ethersContract.setCold(cold.uu.toPhex())];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
