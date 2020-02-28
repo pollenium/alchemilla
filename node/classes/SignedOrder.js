@@ -17,6 +17,7 @@ var pollenium_buttercup_1 = require("pollenium-buttercup");
 var pollenium_ilex_1 = require("pollenium-ilex");
 var Order_1 = require("./Order");
 var pollenium_uvaursi_1 = require("pollenium-uvaursi");
+var web3_utils_1 = require("web3-utils");
 var SignedOrder = /** @class */ (function (_super) {
     __extends(SignedOrder, _super);
     function SignedOrder(struct) {
@@ -89,6 +90,16 @@ var SignedOrder = /** @class */ (function (_super) {
             s: signatureS
         });
         return new SignedOrder({ order: orderStruct, signature: signature });
+    };
+    SignedOrder.prototype.getPriority = function () {
+        if (this.priority) {
+            return this.priority;
+        }
+        this.priority = new pollenium_buttercup_1.Uint256(pollenium_uvaursi_1.Uu.fromHexish(web3_utils_1.soliditySha3({
+            t: 'bytes',
+            v: this.signature.getEncoding().uu.toHex()
+        })));
+        return this.priority;
     };
     return SignedOrder;
 }(Order_1.Order));

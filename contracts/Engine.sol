@@ -61,8 +61,8 @@ contract Engine is Ownable {
       "Blockhash"
     );
 
-    bytes32 orderId;
-    bytes32 _orderId;
+    bytes32 orderPriority;
+    bytes32 _orderPriority;
     Order memory order;
 
     for (uint256 orderIndex = 0; orderIndex < buyyOrders.length; orderIndex++) {
@@ -84,22 +84,22 @@ contract Engine is Ownable {
         order.signatureS
       ), 'originator');
 
-      _orderId = keccak256(abi.encodePacked(
+      _orderPriority = keccak256(abi.encodePacked(
         order.signatureV,
         order.signatureR,
         order.signatureS
       ));
 
       require(
-        _orderId > orderId,
-        "Order Id"
+        _orderPriority > orderPriority,
+        "Order Priority"
       );
 
-      orderId = _orderId;
+      orderPriority = _orderPriority;
 
     }
 
-    delete orderId;
+    delete orderPriority;
 
     for (uint256 orderIndex = 0; orderIndex < sellOrders.length; orderIndex++) {
 
@@ -120,18 +120,18 @@ contract Engine is Ownable {
         order.signatureS
       ), 'originator');
 
-      _orderId = keccak256(abi.encodePacked(
+      _orderPriority = keccak256(abi.encodePacked(
         order.signatureV,
         order.signatureR,
         order.signatureS
       ));
 
       require(
-        _orderId > orderId,
-        "Order Id"
+        _orderPriority > orderPriority,
+        "Order Priority"
       );
 
-      orderId = _orderId;
+      orderPriority = _orderPriority;
 
     }
 
@@ -228,10 +228,7 @@ contract Engine is Ownable {
     uint256 amount
   ) private {
     _withdraw(from, to, token, amount);
-    require(
-      WithdrawNotificationHandlerInterface(to).handleWithdrawNotification(from, token, amount),
-      'Engine/withdraw-notification-failed'
-    );
+    WithdrawNotificationHandlerInterface(to).handleWithdrawNotification(from, token, amount);
   }
 
 

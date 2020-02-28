@@ -3,6 +3,7 @@ import { Bytes, Address, Bytes32, Uint8, Uint256 } from 'pollenium-buttercup'
 import { Signature, SignatureStruct } from 'pollenium-ilex'
 import { Order, OrderStruct } from './Order'
 import { Uu, Uish } from 'pollenium-uvaursi'
+import { soliditySha3 } from 'web3-utils'
 
 export interface SignedOrderStruct {
   order: Order | OrderStruct,
@@ -15,6 +16,7 @@ export class SignedOrder extends Order {
 
   private trader: Address;
   private ligma: Uu;
+  private priority: Uint256;
 
   constructor(struct: SignedOrderStruct) {
     super(struct.order instanceof Order ? struct.order.struct : struct.order)
@@ -91,6 +93,19 @@ export class SignedOrder extends Order {
       s: signatureS
     })
     return new SignedOrder({ order: orderStruct, signature })
+  }
+
+  getPriority(): Uint256 {
+    if (this.priority) {
+      return this.priority
+    }
+    this.priority = new Uint256(Uu.fromHexish(
+      soliditySha3({
+        t: 'bytes',
+        v: this.signature.getEncoding().uu.toHex()
+      })
+    ))
+    return this.priority
   }
 
 }
