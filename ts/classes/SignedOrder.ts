@@ -102,7 +102,7 @@ export class SignedOrder extends Order {
     this.priority = new Uint256(Uu.fromHexish(
       soliditySha3({
         t: 'bytes',
-        v: this.signature.getEncoding().uu.toHex()
+        v: this.signature.getEncoding().toHex()
       })
     ))
     return this.priority

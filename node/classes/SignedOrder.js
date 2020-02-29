@@ -97,7 +97,7 @@ var SignedOrder = /** @class */ (function (_super) {
         }
         this.priority = new pollenium_buttercup_1.Uint256(pollenium_uvaursi_1.Uu.fromHexish(web3_utils_1.soliditySha3({
             t: 'bytes',
-            v: this.signature.getEncoding().uu.toHex()
+            v: this.signature.getEncoding().toHex()
         })));
         return this.priority;
     };
