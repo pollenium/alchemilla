@@ -19,8 +19,13 @@ test('getLigma/fromLigma', () => {
   const signedOrder1 = SignedOrder.fromLigma(ligma)
 
   expect(
-    signedOrder0.prevBlockHash.uu.getIsEqual(
-      signedOrder1.prevBlockHash.uu
+    signedOrder0.salt.uu.getIsEqual(
+      signedOrder1.salt.uu
+    )
+  ).toBe(true)
+  expect(
+    signedOrder0.blockNumber.uu.getIsEqual(
+      signedOrder1.blockNumber.uu
     )
   ).toBe(true)
   expect(signedOrder0.type).toBe(signedOrder1.type)

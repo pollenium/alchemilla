@@ -70,6 +70,34 @@ var EngineReader = /** @class */ (function (_super) {
     function EngineReader(struct) {
         return _super.call(this, __assign(__assign({}, __1.engineOutput), struct)) || this;
     }
+    EngineReader.prototype.fetchOrderSalt = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _a = pollenium_buttercup_1.Bytes32.bind;
+                        _c = (_b = pollenium_uvaursi_1.Uu).fromHexish;
+                        return [4 /*yield*/, this.ethersContract.orderSalt()];
+                    case 1: return [2 /*return*/, new (_a.apply(pollenium_buttercup_1.Bytes32, [void 0, _c.apply(_b, [_d.sent()])]))()];
+                }
+            });
+        });
+    };
+    EngineReader.prototype.fetchDowvsSalt = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _a = pollenium_buttercup_1.Bytes32.bind;
+                        _c = (_b = pollenium_uvaursi_1.Uu).fromHexish;
+                        return [4 /*yield*/, this.ethersContract.orderSalt()];
+                    case 1: return [2 /*return*/, new (_a.apply(pollenium_buttercup_1.Bytes32, [void 0, _c.apply(_b, [_d.sent()])]))()];
+                }
+            });
+        });
+    };
     EngineReader.prototype.fetchOwner = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b, _c;

@@ -7,6 +7,7 @@ var pollenium_buttercup_1 = require("pollenium-buttercup");
 var enums_1 = require("./enums");
 var crypto_1 = __importDefault(require("crypto"));
 var pollenium_ilex_1 = require("pollenium-ilex");
+var pollenium_uvaursi_1 = require("pollenium-uvaursi");
 exports.alice = new pollenium_buttercup_1.Address(crypto_1["default"].randomBytes(20));
 exports.bob = new pollenium_buttercup_1.Address(crypto_1["default"].randomBytes(20));
 exports.dai = new pollenium_buttercup_1.Address(crypto_1["default"].randomBytes(20));
@@ -18,7 +19,8 @@ exports.uint256Zero = pollenium_buttercup_1.Uint256.fromNumber(0);
 exports.nullBytes32 = new pollenium_buttercup_1.Bytes32((new Uint8Array(32)).fill(0));
 exports.keypair = pollenium_ilex_1.Keypair.generate();
 exports.validOrderStruct = {
-    prevBlockHash: exports.nullBytes32,
+    salt: pollenium_uvaursi_1.Uu.genRandom(32),
+    blockNumber: 0,
     type: enums_1.ORDER_TYPE.BUYY,
     quotToken: exports.usdc,
     variToken: exports.weth,

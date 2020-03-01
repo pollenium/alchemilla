@@ -50,7 +50,8 @@ export class SignedOrder extends Order {
       return this.ligma
     }
     this.ligma = Uu.genConcat([
-      this.prevBlockHash,
+      this.salt,
+      this.blockNumber,
       Uint8.fromNumber(this.type),
       this.quotToken,
       this.variToken,
@@ -67,19 +68,21 @@ export class SignedOrder extends Order {
 
   static fromLigma(uishLigma: Uish): SignedOrder {
     const ligma = Uu.wrap(uishLigma)
-    const prevBlockHash = new Bytes32(ligma.u.slice(0, 32))
-    const type: ORDER_TYPE = ligma.u[32]
-    const quotToken = new Address(ligma.u.slice(33, 53))
-    const variToken = new Address(ligma.u.slice(53, 73))
-    const priceNumer = new Uint256(ligma.u.slice(73, 105))
-    const priceDenom = new Uint256(ligma.u.slice(105, 137))
-    const tokenLimit = new Uint256(ligma.u.slice(137, 169))
-    const signatureV = new Uint8(ligma.u.slice(169, 170))
-    const signatureR = new Bytes32(ligma.u.slice(170, 202))
-    const signatureS = new Bytes32(ligma.u.slice(202, 234))
+    const salt = new Uint256(ligma.u.slice(0, 32))
+    const blockNumber = new Uint256(ligma.u.slice(32, 64))
+    const type: ORDER_TYPE = ligma.u[64]
+    const quotToken = new Address(ligma.u.slice(65, 85))
+    const variToken = new Address(ligma.u.slice(85, 105))
+    const priceNumer = new Uint256(ligma.u.slice(105, 137))
+    const priceDenom = new Uint256(ligma.u.slice(137, 169))
+    const tokenLimit = new Uint256(ligma.u.slice(169, 201))
+    const signatureV = new Uint8(ligma.u.slice(201, 202))
+    const signatureR = new Bytes32(ligma.u.slice(202, 234))
+    const signatureS = new Bytes32(ligma.u.slice(234, 266))
 
     const orderStruct: OrderStruct = {
-      prevBlockHash,
+      salt,
+      blockNumber,
       type,
       quotToken,
       variToken,

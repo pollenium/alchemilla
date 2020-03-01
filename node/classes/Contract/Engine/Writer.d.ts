@@ -3,7 +3,7 @@ import { Uish } from 'pollenium-uvaursi';
 import { ContractWriter, ContractWriterChildStruct } from 'pollenium-clover';
 import { SignedOrder } from '../../SignedOrder';
 export interface ExecutionRequest {
-    prevBlockHash: Uish;
+    blockNumber: Uintable;
     signedBuyyOrders: Array<SignedOrder>;
     signedSellOrders: Array<SignedOrder>;
     exchanges: Array<{

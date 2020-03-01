@@ -1,6 +1,7 @@
 import { Address, Uint256, Bytes32 } from 'pollenium-buttercup';
 import { ORDER_TYPE } from './enums';
 import { Keypair } from 'pollenium-ilex';
+import { Uu } from 'pollenium-uvaursi';
 export declare const alice: Address;
 export declare const bob: Address;
 export declare const dai: Address;
@@ -12,7 +13,8 @@ export declare const uint256Zero: Uint256;
 export declare const nullBytes32: Bytes32;
 export declare const keypair: Keypair;
 export declare const validOrderStruct: {
-    prevBlockHash: Bytes32;
+    salt: Uu;
+    blockNumber: number;
     type: ORDER_TYPE;
     quotToken: Address;
     variToken: Address;

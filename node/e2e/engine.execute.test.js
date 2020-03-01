@@ -49,6 +49,7 @@ var __1 = require("../");
 require('./deposit.test');
 var snapshotId;
 var engineReader;
+var orderSalt;
 function arrayOf(length, callback) {
     var array = [];
     for (var i = 0; i < length; i++) {
@@ -56,12 +57,15 @@ function arrayOf(length, callback) {
     }
     return array;
 }
-test('fetch engineReader', function () { return __awaiter(void 0, void 0, void 0, function () {
+test('fetch engineReader/orderSalt', function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, utils_1.fetchEngineReader()];
             case 1:
                 engineReader = _a.sent();
+                return [4 /*yield*/, engineReader.fetchOrderSalt()];
+            case 2:
+                orderSalt = _a.sent();
                 return [2 /*return*/];
         }
     });
@@ -111,7 +115,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                     }); });
                 });
                 test('execute', function () { return __awaiter(void 0, void 0, void 0, function () {
-                    var prevBlockHash, buyyOrder, _a, _b, sellOrder, _c, _d, signedBuyyOrder, signedSellOrder, engineWriter;
+                    var blockNumber, buyyOrder, _a, _b, sellOrder, _c, _d, signedBuyyOrder, signedSellOrder, engineWriter;
                     return __generator(this, function (_e) {
                         switch (_e.label) {
                             case 0: return [4 /*yield*/, gaillardia_1.gaillardia.restoreSnapshot(snapshotId)];
@@ -120,12 +124,13 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                 return [4 /*yield*/, gaillardia_1.gaillardia.takeSnapshot()];
                             case 2:
                                 snapshotId = _e.sent();
-                                return [4 /*yield*/, gaillardia_1.gaillardia.fetchLatestBlockHash()];
+                                return [4 /*yield*/, gaillardia_1.gaillardia.fetchLatestBlockNumber()];
                             case 3:
-                                prevBlockHash = _e.sent();
+                                blockNumber = _e.sent();
                                 _a = __1.Order.bind;
                                 _b = {
-                                    prevBlockHash: prevBlockHash,
+                                    salt: orderSalt,
+                                    blockNumber: blockNumber + 1,
                                     type: __1.ORDER_TYPE.BUYY
                                 };
                                 return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -140,7 +145,8 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                         _b)]))();
                                 _c = __1.Order.bind;
                                 _d = {
-                                    prevBlockHash: prevBlockHash,
+                                    salt: orderSalt,
+                                    blockNumber: blockNumber + 1,
                                     type: __1.ORDER_TYPE.SELL
                                 };
                                 return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -165,7 +171,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                             case 8:
                                 engineWriter = _e.sent();
                                 return [4 /*yield*/, engineWriter.execute({
-                                        prevBlockHash: prevBlockHash,
+                                        blockNumber: blockNumber + 1,
                                         signedBuyyOrders: [signedBuyyOrder],
                                         signedSellOrders: [signedSellOrder],
                                         exchanges: [
@@ -287,7 +293,7 @@ describe('multis', function () {
         return;
         describe("multisFixture #" + index + ": [" + multisFixture.buyyOrdersCount + ", " + multisFixture.sellOrdersCount + ", " + multisFixture.exchanges.length + "]", function () {
             it("should execute batch of orders", function () { return __awaiter(void 0, void 0, void 0, function () {
-                var prevBlockHash, buyyOrder, _a, _b, sellOrder, _c, _d, signedBuyyOrder, signedSellOrder, signedBuyyOrders, signedSellOrders, exchanges, i, i, i, exchangeFixture, engineWriter;
+                var blockNumber, buyyOrder, _a, _b, sellOrder, _c, _d, signedBuyyOrder, signedSellOrder, signedBuyyOrders, signedSellOrders, exchanges, i, i, i, exchangeFixture, engineWriter;
                 return __generator(this, function (_e) {
                     switch (_e.label) {
                         case 0: return [4 /*yield*/, gaillardia_1.gaillardia.restoreSnapshot(snapshotId)];
@@ -296,12 +302,13 @@ describe('multis', function () {
                             return [4 /*yield*/, gaillardia_1.gaillardia.takeSnapshot()];
                         case 2:
                             snapshotId = _e.sent();
-                            return [4 /*yield*/, gaillardia_1.gaillardia.fetchLatestBlockHash()];
+                            return [4 /*yield*/, gaillardia_1.gaillardia.fetchLatestBlockNumber()];
                         case 3:
-                            prevBlockHash = _e.sent();
+                            blockNumber = _e.sent();
                             _a = __1.Order.bind;
                             _b = {
-                                prevBlockHash: prevBlockHash,
+                                salt: orderSalt,
+                                blockNumber: blockNumber + 1,
                                 type: __1.ORDER_TYPE.BUYY
                             };
                             return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -316,7 +323,8 @@ describe('multis', function () {
                                     _b)]))();
                             _c = __1.Order.bind;
                             _d = {
-                                prevBlockHash: prevBlockHash,
+                                salt: orderSalt,
+                                blockNumber: blockNumber + 1,
                                 type: __1.ORDER_TYPE.SELL
                             };
                             return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -360,7 +368,7 @@ describe('multis', function () {
                         case 8:
                             engineWriter = _e.sent();
                             return [4 /*yield*/, engineWriter.execute({
-                                    prevBlockHash: prevBlockHash,
+                                    blockNumber: blockNumber + 1,
                                     signedBuyyOrders: signedBuyyOrders,
                                     signedSellOrders: signedSellOrders,
                                     exchanges: exchanges

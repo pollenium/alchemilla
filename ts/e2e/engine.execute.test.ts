@@ -18,6 +18,7 @@ require('./deposit.test')
 
 let snapshotId
 let engineReader: EngineReader
+let orderSalt: Bytes32
 
 function arrayOf(length, callback) {
   const array = []
@@ -28,8 +29,9 @@ function arrayOf(length, callback) {
 }
 
 
-test('fetch engineReader', async () => {
+test('fetch engineReader/orderSalt', async () => {
   engineReader = await fetchEngineReader()
+  orderSalt = await engineReader.fetchOrderSalt()
 })
 
 test('snapshot', async () => {
@@ -59,10 +61,11 @@ frangipani.forEach(async (fixture, index) => {
       test('execute', async () => {
         await gaillardia.restoreSnapshot(snapshotId)
         snapshotId = await gaillardia.takeSnapshot()
-        const prevBlockHash = await gaillardia.fetchLatestBlockHash()
+        const blockNumber = await gaillardia.fetchLatestBlockNumber()
 
         const buyyOrder = new Order({
-          prevBlockHash: prevBlockHash,
+          salt: orderSalt,
+          blockNumber: blockNumber + 1,
           type: ORDER_TYPE.BUYY,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -72,7 +75,8 @@ frangipani.forEach(async (fixture, index) => {
         })
 
         const sellOrder = new Order({
-          prevBlockHash: prevBlockHash,
+          salt: orderSalt,
+          blockNumber: blockNumber + 1,
           type: ORDER_TYPE.SELL,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -93,7 +97,7 @@ frangipani.forEach(async (fixture, index) => {
 
         const engineWriter = await fetchEngineWriter(AccountNames.MONARCH_HOT)
         await engineWriter.execute({
-          prevBlockHash: prevBlockHash,
+          blockNumber: blockNumber + 1,
           signedBuyyOrders: [signedBuyyOrder],
           signedSellOrders: [signedSellOrder],
           exchanges: [
@@ -178,10 +182,12 @@ describe('multis', () => {
 
         await gaillardia.restoreSnapshot(snapshotId)
         snapshotId = await gaillardia.takeSnapshot()
-        const prevBlockHash = await gaillardia.fetchLatestBlockHash()
+
+        const blockNumber = await gaillardia.fetchLatestBlockNumber()
 
         const buyyOrder = new Order({
-          prevBlockHash: prevBlockHash,
+          salt: orderSalt,
+          blockNumber: blockNumber + 1,
           type: ORDER_TYPE.BUYY,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -191,7 +197,8 @@ describe('multis', () => {
         })
 
         const sellOrder = new Order({
-          prevBlockHash: prevBlockHash,
+          salt: orderSalt,
+          blockNumber: blockNumber + 1,
           type: ORDER_TYPE.SELL,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -235,7 +242,7 @@ describe('multis', () => {
 
         const engineWriter = await fetchEngineWriter(AccountNames.MONARCH_HOT)
         await engineWriter.execute({
-          prevBlockHash,
+          blockNumber: blockNumber + 1,
           signedBuyyOrders,
           signedSellOrders,
           exchanges

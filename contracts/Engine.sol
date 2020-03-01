@@ -13,7 +13,24 @@ contract Engine is Ownable {
   mapping(address => mapping(address => uint256)) public balances;
 
   mapping(bytes32 => bool) public isDowvsHashSeen;
-  bytes15 public dowvsSalt = 0xf5ee510934b6e8b72969b3ab8217d7;
+
+  bytes32 public orderSalt;
+  bytes32 public dowvsSalt;
+
+
+  constructor() public {
+    orderSalt = keccak256(abi.encodePacked([
+      bytes32(0x45448858f8ed69bb96ea3b54e5a7116ef90c0299d45fa999873b1aa5da32354e),
+      blockhash(block.number - 1),
+      bytes20(address(this))
+    ]));
+
+    dowvsSalt = keccak256(abi.encodePacked([
+      bytes32(0x3a390be7d74e7491004044212317d5f713ae844ddbefe48b63984f6554743110),
+      blockhash(block.number - 1),
+      bytes20(address(this))
+    ]));
+  }
 
   function setExecutorOracle(address _executorOracle) public onlyOwner() {
     executorOracle = _executorOracle;
@@ -22,7 +39,7 @@ contract Engine is Ownable {
   modifier onlyExecutorHot() {
     require(
       msg.sender == ExecutorOracleInterface(executorOracle).hot(),
-      'Only Executor Hot'
+      "pollenium/alchemilla/engine/invalid-executor-hot"
     );
     _;
   }
@@ -50,18 +67,18 @@ contract Engine is Ownable {
   }
 
   function execute(
-    bytes32     prevBlockHash,
+    uint256     blockNumber,
     Order[]     memory buyyOrders,
     Order[]     memory sellOrders,
     Exchange[]  memory exchanges
   ) public onlyExecutorHot() {
 
     require(
-      prevBlockHash == blockhash(block.number - 1),
-      "Blockhash"
+      blockNumber == block.number,
+      "pollenium/alchemilla/engine/invalid-block-number"
     );
 
-    bytes32 orderPriority;
+    bytes32 orderPriority = bytes32(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff);
     bytes32 _orderPriority;
     Order memory order;
 
@@ -71,7 +88,8 @@ contract Engine is Ownable {
 
       require(order.originator == ecrecover(
         keccak256(abi.encodePacked(
-          prevBlockHash,
+          orderSalt,
+          blockNumber,
           byte(0x00),
           order.quotToken,
           order.variToken,
@@ -82,7 +100,7 @@ contract Engine is Ownable {
         order.signatureV,
         order.signatureR,
         order.signatureS
-      ), 'originator');
+      ), 'pollenium/alchemilla/engine/signature-mismatch');
 
       _orderPriority = keccak256(abi.encodePacked(
         order.signatureV,
@@ -91,15 +109,15 @@ contract Engine is Ownable {
       ));
 
       require(
-        _orderPriority > orderPriority,
-        "Order Priority"
+        _orderPriority < orderPriority,
+        "pollenium/alchemilla/engine/invalid-order-priority"
       );
 
       orderPriority = _orderPriority;
 
     }
 
-    delete orderPriority;
+    orderPriority = bytes32(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff);
 
     for (uint256 orderIndex = 0; orderIndex < sellOrders.length; orderIndex++) {
 
@@ -107,7 +125,8 @@ contract Engine is Ownable {
 
       require(order.originator == ecrecover(
         keccak256(abi.encodePacked(
-          prevBlockHash,
+          orderSalt,
+          blockNumber,
           byte(0x01),
           order.quotToken,
           order.variToken,
@@ -118,7 +137,7 @@ contract Engine is Ownable {
         order.signatureV,
         order.signatureR,
         order.signatureS
-      ), 'originator');
+      ), "pollenium/alchemilla/engine/signature-mismatch");
 
       _orderPriority = keccak256(abi.encodePacked(
         order.signatureV,
@@ -127,8 +146,8 @@ contract Engine is Ownable {
       ));
 
       require(
-        _orderPriority > orderPriority,
-        "Order Priority"
+        _orderPriority < orderPriority,
+        "pollenium/alchemilla/engine/invalid-order-priority"
       );
 
       orderPriority = _orderPriority;
@@ -150,8 +169,8 @@ contract Engine is Ownable {
       buyyOrder = buyyOrders[exchange.buyyOrderIndex];
       sellOrder = sellOrders[exchange.sellOrderIndex];
 
-      require(buyyOrder.quotToken == sellOrder.quotToken, 'QuotToken');
-      require(buyyOrder.variToken == sellOrder.variToken, 'VariToken');
+      require(buyyOrder.quotToken == sellOrder.quotToken, "pollenium/alchemilla/engine/quot-token-mismatch");
+      require(buyyOrder.variToken == sellOrder.variToken, "pollenium/alchemilla/engine/vari-token-mismatch");
 
       quotToken = buyyOrder.quotToken;
       variToken = buyyOrder.variToken;
@@ -162,33 +181,32 @@ contract Engine is Ownable {
       /* Check buy price is lte than or equal to total price */
       require(
         (buyyOrder.priceNumer * exchange.variTokenTrans) <= (buyyOrder.priceDenom * quotTokenTotal),
-        "buy price is lte than or equal to total price"
+        "pollenium/alchemilla/engine/buy-price-too-high"
       );
 
       /* Check sell price is gte than or equal to trans price */
       require(
         (sellOrder.priceNumer * exchange.variTokenTrans) >= (sellOrder.priceDenom * exchange.quotTokenTrans),
-        "sell price is gte than or equal to trans price"
+        "pollenium/alchemilla/engine/sell-price-too-low"
       );
 
       /* Check quot token fillability */
       /* TODO: Determine if balance check is necessary */
       require(
         quotTokenTotal <= buyyOrder.tokenLimit,
-        "quot token fillability"
+        "pollenium/alchemilla/engine/quot-token-limit-exceeded"
       );
 
       /* Check vari token fillability */
       /* TODO: Determine if balance check is necessary */
       require(
         exchange.variTokenTrans <= sellOrder.tokenLimit,
-        "vari token fillability"
+        "pollenium/alchemilla/engine/vari-token-limit-exceeded"
       );
 
       /* Transfer quot token trans from buyer to seller; Transfer quot token arbit from buyer to executor cold*/
       balances[buyyOrder.originator][quotToken] -= quotTokenTotal;
       balances[sellOrder.originator][quotToken] += exchange.quotTokenTrans;
-      /* TODO: Transfer to executorCold */
       balances[executorCold][quotToken] += exchange.quotTokenArbit;
 
       /* Transfer vari token trans from buyer to seller */
@@ -230,8 +248,6 @@ contract Engine is Ownable {
     _withdraw(from, to, token, amount);
     WithdrawNotificationHandlerInterface(to).handleWithdrawNotification(from, token, amount);
   }
-
-
 
   function depositViaNative(
     address to,

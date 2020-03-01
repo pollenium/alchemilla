@@ -5,8 +5,9 @@ import { Uu, Uish } from 'pollenium-uvaursi'
 import Bignumber from 'bignumber.js'
 
 export interface OrderStruct {
+  salt: Uish;
   type: ORDER_TYPE;
-  prevBlockHash: Uish;
+  blockNumber: Uintable;
   quotToken: Uish;
   variToken: Uish;
   tokenLimit: Uintable;
@@ -17,8 +18,9 @@ export interface OrderStruct {
 
 export class Order {
 
+  readonly salt: Bytes32;
   readonly type: ORDER_TYPE;
-  readonly prevBlockHash: Bytes32;
+  readonly blockNumber: Uint256;
   readonly quotToken: Address;
   readonly variToken: Address;
   readonly tokenLimit: Uint256;
@@ -32,7 +34,8 @@ export class Order {
   constructor(readonly struct: OrderStruct) {
 
     this.type = struct.type,
-    this.prevBlockHash = new Bytes32(struct.prevBlockHash)
+    this.salt = new Bytes32(struct.salt)
+    this.blockNumber = new Uint256(struct.blockNumber)
     this.quotToken = new Address(struct.quotToken)
     this.variToken = new Address(struct.variToken)
     this.tokenLimit = new Uint256(struct.tokenLimit)
@@ -72,7 +75,8 @@ export class Order {
     }
 
     this.sugma = new Bytes(Uu.genConcat([
-      this.prevBlockHash,
+      this.salt,
+      this.blockNumber,
       Uint8.fromNumber(this.type),
       this.quotToken,
       this.variToken,

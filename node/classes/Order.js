@@ -25,7 +25,8 @@ var Order = /** @class */ (function () {
     function Order(struct) {
         this.struct = struct;
         this.type = struct.type,
-            this.prevBlockHash = new pollenium_buttercup_1.Bytes32(struct.prevBlockHash);
+            this.salt = new pollenium_buttercup_1.Bytes32(struct.salt);
+        this.blockNumber = new pollenium_buttercup_1.Uint256(struct.blockNumber);
         this.quotToken = new pollenium_buttercup_1.Address(struct.quotToken);
         this.variToken = new pollenium_buttercup_1.Address(struct.variToken);
         this.tokenLimit = new pollenium_buttercup_1.Uint256(struct.tokenLimit);
@@ -55,7 +56,8 @@ var Order = /** @class */ (function () {
             return this.sugma;
         }
         this.sugma = new pollenium_buttercup_1.Bytes(pollenium_uvaursi_1.Uu.genConcat([
-            this.prevBlockHash,
+            this.salt,
+            this.blockNumber,
             pollenium_buttercup_1.Uint8.fromNumber(this.type),
             this.quotToken,
             this.variToken,

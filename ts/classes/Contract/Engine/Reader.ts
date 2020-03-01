@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { Address, Uint256 } from 'pollenium-buttercup'
+import { Address, Uint256, Bytes32 } from 'pollenium-buttercup'
 import { Uu, Uish } from 'pollenium-uvaursi'
 import { ContractReader, ContractReaderChildStruct } from 'pollenium-clover'
 import { engineOutput } from '../../../'
@@ -11,6 +11,18 @@ export class EngineReader extends ContractReader {
       ...engineOutput,
       ...struct
     })
+  }
+
+  async fetchOrderSalt(): Promise<Bytes32> {
+    return new Bytes32(Uu.fromHexish(
+      await this.ethersContract.orderSalt()
+    ))
+  }
+
+  async fetchDowvsSalt(): Promise<Bytes32> {
+    return new Bytes32(Uu.fromHexish(
+      await this.ethersContract.orderSalt()
+    ))
   }
 
   async fetchOwner(): Promise<Address> {

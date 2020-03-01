@@ -6,7 +6,7 @@ import { engineOutput } from '../../../'
 import { SignedOrder } from '../../SignedOrder'
 
 export interface ExecutionRequest {
-  prevBlockHash: Uish,
+  blockNumber: Uintable,
   signedBuyyOrders: Array<SignedOrder>,
   signedSellOrders: Array<SignedOrder>,
   exchanges: Array<{
@@ -94,10 +94,10 @@ export class EngineWriter extends ContractWriter {
 
   async execute(executionRequest: ExecutionRequest): Promise<void> {
 
-    const prevBlockHash = new Bytes32(executionRequest.prevBlockHash)
+    const blockNumber = new Uint256(executionRequest.blockNumber)
 
     const args = [
-      prevBlockHash.uu.toPhex(),
+      blockNumber.uu.toPhex(),
       executionRequest.signedBuyyOrders.map((signedOrder) => {
         return signedOrder.getEthersArg()
       }),

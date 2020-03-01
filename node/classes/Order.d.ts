@@ -3,8 +3,9 @@ import { ORDER_TYPE } from '../enums';
 import { Uish } from 'pollenium-uvaursi';
 import Bignumber from 'bignumber.js';
 export interface OrderStruct {
+    salt: Uish;
     type: ORDER_TYPE;
-    prevBlockHash: Uish;
+    blockNumber: Uintable;
     quotToken: Uish;
     variToken: Uish;
     tokenLimit: Uintable;
@@ -13,8 +14,9 @@ export interface OrderStruct {
 }
 export declare class Order {
     readonly struct: OrderStruct;
+    readonly salt: Bytes32;
     readonly type: ORDER_TYPE;
-    readonly prevBlockHash: Bytes32;
+    readonly blockNumber: Uint256;
     readonly quotToken: Address;
     readonly variToken: Address;
     readonly tokenLimit: Uint256;

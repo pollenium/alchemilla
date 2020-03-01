@@ -2,6 +2,7 @@ import { Address, Uint256, Bytes32 } from 'pollenium-buttercup'
 import { ORDER_TYPE } from './enums'
 import crypto from 'crypto'
 import { Keypair } from 'pollenium-ilex'
+import { Uu } from 'pollenium-uvaursi'
 
 export const alice = new Address(crypto.randomBytes(20))
 export const bob = new Address(crypto.randomBytes(20))
@@ -18,7 +19,8 @@ export const nullBytes32 = new Bytes32(
 export const keypair = Keypair.generate()
 
 export const validOrderStruct = {
-  prevBlockHash: nullBytes32,
+  salt: Uu.genRandom(32),
+  blockNumber: 0,
   type: ORDER_TYPE.BUYY,
   quotToken: usdc,
   variToken: weth,

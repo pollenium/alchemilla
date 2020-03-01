@@ -12,6 +12,10 @@ import {
 import crypto from 'crypto'
 import { Uint256, Address } from 'pollenium-buttercup'
 import { weth, mkr, dai, usdc, nullBytes32 } from '../fixtures'
+import { Uu } from 'pollenium-uvaursi'
+
+const salt = Uu.genRandom(32)
+const blockNumber = 0
 
 frangipani.forEach((fixture, index) => {
 
@@ -23,7 +27,8 @@ frangipani.forEach((fixture, index) => {
   }
 
   const buyyOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.BUYY,
     quotToken: dai,
     variToken: weth,
@@ -33,7 +38,8 @@ frangipani.forEach((fixture, index) => {
   })
 
   const sellOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.SELL,
     quotToken: dai,
     variToken: weth,
@@ -59,7 +65,8 @@ frangipani.forEach((fixture, index) => {
 
 test('InvalidBuyyOrderTypeError', () => {
   const buyyOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.SELL,
     quotToken: dai,
     variToken: weth,
@@ -69,7 +76,8 @@ test('InvalidBuyyOrderTypeError', () => {
   })
 
   const sellOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.SELL,
     quotToken: dai,
     variToken: weth,
@@ -85,7 +93,8 @@ test('InvalidBuyyOrderTypeError', () => {
 
 test('InvalidSellOrderTypeError', () => {
   const buyyOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.BUYY,
     quotToken: dai,
     variToken: weth,
@@ -95,7 +104,8 @@ test('InvalidSellOrderTypeError', () => {
   })
 
   const sellOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.BUYY,
     quotToken: dai,
     variToken: weth,
@@ -111,7 +121,8 @@ test('InvalidSellOrderTypeError', () => {
 
 test('QuotTokenMismatchError', () => {
   const buyyOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.BUYY,
     quotToken: dai,
     variToken: weth,
@@ -121,7 +132,8 @@ test('QuotTokenMismatchError', () => {
   })
 
   const sellOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.SELL,
     quotToken: usdc,
     variToken: weth,
@@ -138,7 +150,8 @@ test('QuotTokenMismatchError', () => {
 
 test('VariTokenMismatchError', () => {
   const buyyOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.BUYY,
     quotToken: dai,
     variToken: weth,
@@ -148,7 +161,8 @@ test('VariTokenMismatchError', () => {
   })
 
   const sellOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.SELL,
     quotToken: dai,
     variToken: mkr,
@@ -164,7 +178,8 @@ test('VariTokenMismatchError', () => {
 
 test('PriceConstraintError', () => {
   const buyyOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.BUYY,
     quotToken: dai,
     variToken: weth,
@@ -174,7 +189,8 @@ test('PriceConstraintError', () => {
   })
 
   const sellOrder = new Order({
-    prevBlockHash: nullBytes32,
+    salt,
+    blockNumber,
     type: ORDER_TYPE.SELL,
     quotToken: dai,
     variToken: weth,

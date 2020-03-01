@@ -50,7 +50,8 @@ var SignedOrder = /** @class */ (function (_super) {
             return this.ligma;
         }
         this.ligma = pollenium_uvaursi_1.Uu.genConcat([
-            this.prevBlockHash,
+            this.salt,
+            this.blockNumber,
             pollenium_buttercup_1.Uint8.fromNumber(this.type),
             this.quotToken,
             this.variToken,
@@ -65,18 +66,20 @@ var SignedOrder = /** @class */ (function (_super) {
     };
     SignedOrder.fromLigma = function (uishLigma) {
         var ligma = pollenium_uvaursi_1.Uu.wrap(uishLigma);
-        var prevBlockHash = new pollenium_buttercup_1.Bytes32(ligma.u.slice(0, 32));
-        var type = ligma.u[32];
-        var quotToken = new pollenium_buttercup_1.Address(ligma.u.slice(33, 53));
-        var variToken = new pollenium_buttercup_1.Address(ligma.u.slice(53, 73));
-        var priceNumer = new pollenium_buttercup_1.Uint256(ligma.u.slice(73, 105));
-        var priceDenom = new pollenium_buttercup_1.Uint256(ligma.u.slice(105, 137));
-        var tokenLimit = new pollenium_buttercup_1.Uint256(ligma.u.slice(137, 169));
-        var signatureV = new pollenium_buttercup_1.Uint8(ligma.u.slice(169, 170));
-        var signatureR = new pollenium_buttercup_1.Bytes32(ligma.u.slice(170, 202));
-        var signatureS = new pollenium_buttercup_1.Bytes32(ligma.u.slice(202, 234));
+        var salt = new pollenium_buttercup_1.Uint256(ligma.u.slice(0, 32));
+        var blockNumber = new pollenium_buttercup_1.Uint256(ligma.u.slice(32, 64));
+        var type = ligma.u[64];
+        var quotToken = new pollenium_buttercup_1.Address(ligma.u.slice(65, 85));
+        var variToken = new pollenium_buttercup_1.Address(ligma.u.slice(85, 105));
+        var priceNumer = new pollenium_buttercup_1.Uint256(ligma.u.slice(105, 137));
+        var priceDenom = new pollenium_buttercup_1.Uint256(ligma.u.slice(137, 169));
+        var tokenLimit = new pollenium_buttercup_1.Uint256(ligma.u.slice(169, 201));
+        var signatureV = new pollenium_buttercup_1.Uint8(ligma.u.slice(201, 202));
+        var signatureR = new pollenium_buttercup_1.Bytes32(ligma.u.slice(202, 234));
+        var signatureS = new pollenium_buttercup_1.Bytes32(ligma.u.slice(234, 266));
         var orderStruct = {
-            prevBlockHash: prevBlockHash,
+            salt: salt,
+            blockNumber: blockNumber,
             type: type,
             quotToken: quotToken,
             variToken: variToken,

@@ -161,14 +161,14 @@ var EngineWriter = /** @class */ (function (_super) {
     };
     EngineWriter.prototype.execute = function (executionRequest) {
         return __awaiter(this, void 0, void 0, function () {
-            var prevBlockHash, args;
+            var blockNumber, args;
             var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        prevBlockHash = new pollenium_buttercup_1.Bytes32(executionRequest.prevBlockHash);
+                        blockNumber = new pollenium_buttercup_1.Uint256(executionRequest.blockNumber);
                         args = [
-                            prevBlockHash.uu.toPhex(),
+                            blockNumber.uu.toPhex(),
                             executionRequest.signedBuyyOrders.map(function (signedOrder) {
                                 return signedOrder.getEthersArg();
                             }),
