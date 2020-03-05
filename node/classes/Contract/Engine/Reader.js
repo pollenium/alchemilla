@@ -92,7 +92,7 @@ var EngineReader = /** @class */ (function (_super) {
                     case 0:
                         _a = pollenium_buttercup_1.Bytes32.bind;
                         _c = (_b = pollenium_uvaursi_1.Uu).fromHexish;
-                        return [4 /*yield*/, this.ethersContract.orderSalt()];
+                        return [4 /*yield*/, this.ethersContract.dowvsSalt()];
                     case 1: return [2 /*return*/, new (_a.apply(pollenium_buttercup_1.Bytes32, [void 0, _c.apply(_b, [_d.sent()])]))()];
                 }
             });

@@ -21,7 +21,7 @@ export class EngineReader extends ContractReader {
 
   async fetchDowvsSalt(): Promise<Bytes32> {
     return new Bytes32(Uu.fromHexish(
-      await this.ethersContract.orderSalt()
+      await this.ethersContract.dowvsSalt()
     ))
   }
 
