@@ -1,4 +1,4 @@
-import { Address, Uintable } from 'pollenium-buttercup';
+import { Uintable } from 'pollenium-buttercup';
 import { Uish } from 'pollenium-uvaursi';
 import { ContractWriter, ContractWriterChildStruct } from 'pollenium-clover';
 import { SignedOrder } from '../../SignedOrder';
@@ -16,8 +16,8 @@ export interface ExecutionRequest {
 }
 export declare class EngineWriter extends ContractWriter {
     constructor(struct: ContractWriterChildStruct);
-    setOwner(owner: Address): Promise<void>;
-    setExecutorOracle(executorOracle: Address): Promise<void>;
+    setOwner(ownerUish: Uish): Promise<void>;
+    setExecutorOracle(executorOracleUish: Uish): Promise<void>;
     depositViaNative(struct: {
         to: Uish;
         token: Uish;

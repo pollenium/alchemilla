@@ -27,11 +27,13 @@ export class EngineWriter extends ContractWriter {
     })
   }
 
-  async setOwner(owner: Address): Promise<void> {
+  async setOwner(ownerUish: Uish): Promise<void> {
+    const owner = new Address(ownerUish)
     await this.ethersContract.transferOwnership(owner.uu.toPhex())
   }
 
-  async setExecutorOracle(executorOracle: Address): Promise<void> {
+  async setExecutorOracle(executorOracleUish: Uish): Promise<void> {
+    const executorOracle = new Address(executorOracleUish)
     await this.ethersContract.setExecutorOracle(executorOracle.uu.toPhex())
   }
 

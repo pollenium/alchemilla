@@ -68,11 +68,14 @@ var EngineWriter = /** @class */ (function (_super) {
     function EngineWriter(struct) {
         return _super.call(this, __assign(__assign({}, __1.engineOutput), struct)) || this;
     }
-    EngineWriter.prototype.setOwner = function (owner) {
+    EngineWriter.prototype.setOwner = function (ownerUish) {
         return __awaiter(this, void 0, void 0, function () {
+            var owner;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.ethersContract.transferOwnership(owner.uu.toPhex())];
+                    case 0:
+                        owner = new pollenium_buttercup_1.Address(ownerUish);
+                        return [4 /*yield*/, this.ethersContract.transferOwnership(owner.uu.toPhex())];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -80,11 +83,14 @@ var EngineWriter = /** @class */ (function (_super) {
             });
         });
     };
-    EngineWriter.prototype.setExecutorOracle = function (executorOracle) {
+    EngineWriter.prototype.setExecutorOracle = function (executorOracleUish) {
         return __awaiter(this, void 0, void 0, function () {
+            var executorOracle;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.ethersContract.setExecutorOracle(executorOracle.uu.toPhex())];
+                    case 0:
+                        executorOracle = new pollenium_buttercup_1.Address(executorOracleUish);
+                        return [4 /*yield*/, this.ethersContract.setExecutorOracle(executorOracle.uu.toPhex())];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
