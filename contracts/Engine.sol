@@ -228,6 +228,7 @@ contract Engine is Ownable {
     address token,
     uint256 amount
   ) private {
+    require(amount > 0, "pollenium/alchemilla/engine/deposit/zero-amount");
     balances[to][token] += amount;
     require(ERC20(token).transferFrom(from, address(this), amount));
   }
@@ -238,6 +239,7 @@ contract Engine is Ownable {
     address token,
     uint256 amount
   ) private {
+    require(amount > 0, "pollenium/alchemilla/engine/withdraw/zero-amount");
     require(balances[from][token] >= amount, "pollenium/alchemilla/engine/withdraw/insufficient-balance");
     balances[from][token] -= amount;
     require(ERC20(token).transfer(to, amount));
