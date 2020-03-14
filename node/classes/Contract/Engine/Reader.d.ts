@@ -4,7 +4,9 @@ import { ContractReader, ContractReaderChildStruct } from 'pollenium-clover';
 export declare class EngineReader extends ContractReader {
     constructor(struct: ContractReaderChildStruct);
     fetchOrderSalt(): Promise<Bytes32>;
-    fetchDowvsSalt(): Promise<Bytes32>;
+    fetchDepositSalt(): Promise<Bytes32>;
+    fetchWithdrawSalt(): Promise<Bytes32>;
+    fetchWithdrawAndNotifySalt(): Promise<Bytes32>;
     fetchOwner(): Promise<Address>;
     fetchExecutorOracle(): Promise<Address>;
     fetchBalance(struct: {

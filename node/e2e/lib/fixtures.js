@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-var pollenium_buttercup_1 = require("pollenium-buttercup");
 var AccountNames;
 (function (AccountNames) {
     AccountNames["ALICE"] = "alice";
@@ -31,8 +30,8 @@ var TokenNames;
 // const nullAddress = Address.genNull()
 // const uint256Zero = Uint256.fromNumber(0)
 //
-exports.startBalance = pollenium_buttercup_1.Uint256.fromNumber(1000);
-exports.totalSupply = exports.startBalance.opMul(pollenium_buttercup_1.Uint256.fromNumber(exports.traderNames.length));
+exports.startBalance = 1000;
+exports.totalSupply = exports.startBalance * exports.traderNames.length;
 //
 // const addresses = {}
 // accountNames.forEach((accountName) => {

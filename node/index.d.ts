@@ -1,3 +1,5 @@
+import * as _utils from './utils';
+export declare const utils: typeof _utils;
 export { engineOutput, monarchicExecutorOracleOutput } from './contractOutputs';
 export { ORDER_TYPE } from './enums';
 export { Order, OrderStruct } from './classes/Order';

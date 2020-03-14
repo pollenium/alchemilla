@@ -19,11 +19,24 @@ export class EngineReader extends ContractReader {
     ))
   }
 
-  async fetchDowvsSalt(): Promise<Bytes32> {
+  async fetchDepositSalt(): Promise<Bytes32> {
     return new Bytes32(Uu.fromHexish(
-      await this.ethersContract.dowvsSalt()
+      await this.ethersContract.depositSalt()
     ))
   }
+
+  async fetchWithdrawSalt(): Promise<Bytes32> {
+    return new Bytes32(Uu.fromHexish(
+      await this.ethersContract.withdrawSalt()
+    ))
+  }
+
+  async fetchWithdrawAndNotifySalt(): Promise<Bytes32> {
+    return new Bytes32(Uu.fromHexish(
+      await this.ethersContract.withdrawAndNotifySalt()
+    ))
+  }
+
 
   async fetchOwner(): Promise<Address> {
     return new Address(Uu.fromHexish(

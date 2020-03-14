@@ -48,14 +48,14 @@ frangipani.forEach(async (fixture, index) => {
 
     traderNames.forEach((traderName) => {
       $enum(TokenNames).forEach((tokenName) => {
-        test(`${traderName}'s ${tokenName} balance should be startBalance`, async () => {
+        test(`${traderName}'s ${tokenName} balance should be ${startBalance}`, async () => {
           await gaillardia.restoreSnapshot(snapshotId)
           snapshotId = await gaillardia.takeSnapshot()
           const balance = await engineReader.fetchBalance({
             holder: getAccountAddress(traderName),
             token: await fetchOrDeployTokenAddress(tokenName)
           })
-          expect(balance.uu.getIsEqual(startBalance.uu)).toBe(true)
+          expect(balance.toNumber()).toBe(startBalance)
         })
       })
       test('execute', async () => {
@@ -127,8 +127,8 @@ frangipani.forEach(async (fixture, index) => {
           token: await fetchOrDeployTokenAddress(TokenNames.DAI)
         })
 
-        expect(balanceAlice.toNumber()).toBe(startBalance.opSub(quotTokenTotal).toNumber())
-        expect(balanceBob.toNumber()).toBe(startBalance.opAdd(quotTokenTrans).toNumber())
+        expect(balanceAlice.toNumber()).toBe(startBalance - quotTokenTotal.toNumber())
+        expect(balanceBob.toNumber()).toBe(startBalance + quotTokenTrans.toNumber())
         expect(balanceMonarchCold.toNumber()).toBe(quotTokenArbit.toNumber())
       })
 
@@ -141,8 +141,8 @@ frangipani.forEach(async (fixture, index) => {
           holder: getAccountAddress(AccountNames.BOB),
           token: await fetchOrDeployTokenAddress(TokenNames.WETH)
         })
-        expect(balanceAlice.toNumber()).toBe(startBalance.opAdd(variTokenTrans).toNumber())
-        expect(balanceBob.toNumber()).toBe(startBalance.opSub(variTokenTrans).toNumber())
+        expect(balanceAlice.toNumber()).toBe(startBalance + variTokenTrans.toNumber())
+        expect(balanceBob.toNumber()).toBe(startBalance - variTokenTrans.toNumber())
       })
     })
   })

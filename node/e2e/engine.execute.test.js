@@ -89,7 +89,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
             var quotTokenTotal = quotTokenTrans.opAdd(quotTokenArbit);
             fixtures_1.traderNames.forEach(function (traderName) {
                 ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
-                    test(traderName + "'s " + tokenName + " balance should be startBalance", function () { return __awaiter(void 0, void 0, void 0, function () {
+                    test(traderName + "'s " + tokenName + " balance should be " + fixtures_1.startBalance, function () { return __awaiter(void 0, void 0, void 0, function () {
                         var balance, _a, _b, _c;
                         return __generator(this, function (_d) {
                             switch (_d.label) {
@@ -108,7 +108,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                             _c)])];
                                 case 4:
                                     balance = _d.sent();
-                                    expect(balance.uu.getIsEqual(fixtures_1.startBalance.uu)).toBe(true);
+                                    expect(balance.toNumber()).toBe(fixtures_1.startBalance);
                                     return [2 /*return*/];
                             }
                         });
@@ -222,8 +222,8 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                         _j)])];
                             case 6:
                                 balanceMonarchCold = _k.sent();
-                                expect(balanceAlice.toNumber()).toBe(fixtures_1.startBalance.opSub(quotTokenTotal).toNumber());
-                                expect(balanceBob.toNumber()).toBe(fixtures_1.startBalance.opAdd(quotTokenTrans).toNumber());
+                                expect(balanceAlice.toNumber()).toBe(fixtures_1.startBalance - quotTokenTotal.toNumber());
+                                expect(balanceBob.toNumber()).toBe(fixtures_1.startBalance + quotTokenTrans.toNumber());
                                 expect(balanceMonarchCold.toNumber()).toBe(quotTokenArbit.toNumber());
                                 return [2 /*return*/];
                         }
@@ -252,8 +252,8 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                         _f)])];
                             case 4:
                                 balanceBob = _g.sent();
-                                expect(balanceAlice.toNumber()).toBe(fixtures_1.startBalance.opAdd(variTokenTrans).toNumber());
-                                expect(balanceBob.toNumber()).toBe(fixtures_1.startBalance.opSub(variTokenTrans).toNumber());
+                                expect(balanceAlice.toNumber()).toBe(fixtures_1.startBalance + variTokenTrans.toNumber());
+                                expect(balanceBob.toNumber()).toBe(fixtures_1.startBalance - variTokenTrans.toNumber());
                                 return [2 /*return*/];
                         }
                     });

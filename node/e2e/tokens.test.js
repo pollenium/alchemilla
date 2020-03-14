@@ -59,7 +59,7 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                 case 0: return [4 /*yield*/, tokenReader.fetchBalance(deployerAddress)];
                 case 1:
                     balance = _a.sent();
-                    expect(balance.toNumber()).toBe(fixtures_1.totalSupply.toNumber());
+                    expect(balance.toNumber()).toBe(fixtures_1.totalSupply);
                     return [2 /*return*/];
             }
         });

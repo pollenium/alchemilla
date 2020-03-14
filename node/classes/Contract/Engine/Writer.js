@@ -63,6 +63,7 @@ exports.__esModule = true;
 var pollenium_buttercup_1 = require("pollenium-buttercup");
 var pollenium_clover_1 = require("pollenium-clover");
 var __1 = require("../../../");
+var pollenium_ilex_1 = require("pollenium-ilex");
 var EngineWriter = /** @class */ (function (_super) {
     __extends(EngineWriter, _super);
     function EngineWriter(struct) {
@@ -115,15 +116,11 @@ var EngineWriter = /** @class */ (function (_super) {
             });
         });
     };
-    EngineWriter.prototype.depositViaSweep = function (struct) {
+    EngineWriter.prototype.depositViaSignature = function (struct) {
         return __awaiter(this, void 0, void 0, function () {
-            var toAndFrom, token;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        toAndFrom = new pollenium_buttercup_1.Address(struct.toAndFrom);
-                        token = new pollenium_buttercup_1.Address(struct.token);
-                        return [4 /*yield*/, this.ethersContract.depositViaSweep(toAndFrom.uu.toPhex(), token.uu.toPhex())];
+                    case 0: return [4 /*yield*/, this.actionViaSignature(this.ethersContract.depositViaSignature, struct)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -148,6 +145,18 @@ var EngineWriter = /** @class */ (function (_super) {
             });
         });
     };
+    EngineWriter.prototype.withdrawViaSignature = function (struct) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.actionViaSignature(this.ethersContract.withdrawViaSignature, struct)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     EngineWriter.prototype.withdrawAndNotifyViaNative = function (struct) {
         return __awaiter(this, void 0, void 0, function () {
             var to, token, amount;
@@ -158,6 +167,18 @@ var EngineWriter = /** @class */ (function (_super) {
                         token = new pollenium_buttercup_1.Address(struct.token);
                         amount = new pollenium_buttercup_1.Uint256(struct.amount);
                         return [4 /*yield*/, this.ethersContract.withdrawAndNotifyViaNative(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex())];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EngineWriter.prototype.withdrawAndNotifyViaSignature = function (struct) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.actionViaSignature(this.ethersContract.withdrawAndNotifyViaSignature, struct)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -199,6 +220,26 @@ var EngineWriter = /** @class */ (function (_super) {
                         return [4 /*yield*/, (_a = this.ethersContract).execute.apply(_a, args)];
                     case 1:
                         _b.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EngineWriter.prototype.actionViaSignature = function (ethersContractFunction, struct) {
+        return __awaiter(this, void 0, void 0, function () {
+            var to, token, amount, expiration, nonce, signature;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        to = new pollenium_buttercup_1.Address(struct.to);
+                        token = new pollenium_buttercup_1.Address(struct.token);
+                        amount = new pollenium_buttercup_1.Uint256(struct.amount);
+                        expiration = new pollenium_buttercup_1.Uint256(struct.expiration);
+                        nonce = new pollenium_buttercup_1.Bytes32(struct.nonce);
+                        signature = new pollenium_ilex_1.Signature(struct.signature);
+                        return [4 /*yield*/, ethersContractFunction(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex(), expiration.uu.toPhex(), nonce.uu.toPhex(), signature.v.uu.toPhex(), signature.r.uu.toPhex(), signature.s.uu.toPhex())];
+                    case 1:
+                        _a.sent();
                         return [2 /*return*/];
                 }
             });

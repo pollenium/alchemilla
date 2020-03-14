@@ -2,6 +2,7 @@ import { Uintable } from 'pollenium-buttercup';
 import { Uish } from 'pollenium-uvaursi';
 import { ContractWriter, ContractWriterChildStruct } from 'pollenium-clover';
 import { SignedOrder } from '../../SignedOrder';
+import { SignatureStruct } from 'pollenium-ilex';
 export interface ExecutionRequest {
     blockNumber: Uintable;
     signedBuyyOrders: Array<SignedOrder>;
@@ -14,6 +15,14 @@ export interface ExecutionRequest {
         quotTokenArbit: Uintable;
     }>;
 }
+export interface ActionViaSignatureStruct {
+    to: Uish;
+    token: Uish;
+    amount: Uintable;
+    expiration: Uintable;
+    nonce: Uish;
+    signature: SignatureStruct;
+}
 export declare class EngineWriter extends ContractWriter {
     constructor(struct: ContractWriterChildStruct);
     setOwner(ownerUish: Uish): Promise<void>;
@@ -23,19 +32,19 @@ export declare class EngineWriter extends ContractWriter {
         token: Uish;
         amount: Uintable;
     }): Promise<void>;
-    depositViaSweep(struct: {
-        toAndFrom: Uish;
-        token: Uish;
-    }): Promise<void>;
+    depositViaSignature(struct: ActionViaSignatureStruct): Promise<void>;
     withdrawViaNative(struct: {
         to: Uish;
         token: Uish;
         amount: Uintable;
     }): Promise<void>;
+    withdrawViaSignature(struct: ActionViaSignatureStruct): Promise<void>;
     withdrawAndNotifyViaNative(struct: {
         to: Uish;
         token: Uish;
         amount: Uintable;
     }): Promise<void>;
+    withdrawAndNotifyViaSignature(struct: ActionViaSignatureStruct): Promise<void>;
     execute(executionRequest: ExecutionRequest): Promise<void>;
+    private actionViaSignature;
 }

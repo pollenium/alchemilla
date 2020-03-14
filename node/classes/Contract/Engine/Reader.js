@@ -84,7 +84,7 @@ var EngineReader = /** @class */ (function (_super) {
             });
         });
     };
-    EngineReader.prototype.fetchDowvsSalt = function () {
+    EngineReader.prototype.fetchDepositSalt = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b, _c;
             return __generator(this, function (_d) {
@@ -92,7 +92,35 @@ var EngineReader = /** @class */ (function (_super) {
                     case 0:
                         _a = pollenium_buttercup_1.Bytes32.bind;
                         _c = (_b = pollenium_uvaursi_1.Uu).fromHexish;
-                        return [4 /*yield*/, this.ethersContract.dowvsSalt()];
+                        return [4 /*yield*/, this.ethersContract.depositSalt()];
+                    case 1: return [2 /*return*/, new (_a.apply(pollenium_buttercup_1.Bytes32, [void 0, _c.apply(_b, [_d.sent()])]))()];
+                }
+            });
+        });
+    };
+    EngineReader.prototype.fetchWithdrawSalt = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _a = pollenium_buttercup_1.Bytes32.bind;
+                        _c = (_b = pollenium_uvaursi_1.Uu).fromHexish;
+                        return [4 /*yield*/, this.ethersContract.withdrawSalt()];
+                    case 1: return [2 /*return*/, new (_a.apply(pollenium_buttercup_1.Bytes32, [void 0, _c.apply(_b, [_d.sent()])]))()];
+                }
+            });
+        });
+    };
+    EngineReader.prototype.fetchWithdrawAndNotifySalt = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _a = pollenium_buttercup_1.Bytes32.bind;
+                        _c = (_b = pollenium_uvaursi_1.Uu).fromHexish;
+                        return [4 /*yield*/, this.ethersContract.withdrawAndNotifySalt()];
                     case 1: return [2 /*return*/, new (_a.apply(pollenium_buttercup_1.Bytes32, [void 0, _c.apply(_b, [_d.sent()])]))()];
                 }
             });

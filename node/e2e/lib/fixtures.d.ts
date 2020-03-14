@@ -1,4 +1,3 @@
-import { Uint256 } from 'pollenium-buttercup';
 export declare enum AccountNames {
     ALICE = "alice",
     BOB = "bob",
@@ -17,5 +16,5 @@ export declare enum TokenNames {
     WETH = "weth",
     MKR = "mkr"
 }
-export declare const startBalance: Uint256;
-export declare const totalSupply: Uint256;
+export declare const startBalance = 1000;
+export declare const totalSupply: number;

@@ -20,6 +20,6 @@ $enum(TokenNames).forEach((tokenName) => {
   })
   test('balance of DEPLOYER should be totalSupply', async () => {
     const balance = await tokenReader.fetchBalance(deployerAddress)
-    expect(balance.toNumber()).toBe(totalSupply.toNumber())
+    expect(balance.toNumber()).toBe(totalSupply)
   })
 })

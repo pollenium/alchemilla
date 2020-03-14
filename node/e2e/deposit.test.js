@@ -39,11 +39,17 @@ exports.__esModule = true;
 var fixtures_1 = require("./lib/fixtures");
 var ts_enum_util_1 = require("ts-enum-util");
 var utils_1 = require("./lib/utils");
+var pollenium_uvaursi_1 = require("pollenium-uvaursi");
+var pollenium_ursinia_1 = require("pollenium-ursinia");
+var __1 = require("../");
 require('./engine.test');
 require('./tokens.test');
 var engine;
 var engineReader;
-test('should fetch engine/engineReader', function () { return __awaiter(void 0, void 0, void 0, function () {
+var depositSalt;
+var withdrawSalt;
+var withdrawAndNotifySalt;
+test('should fetch engine/engineReader/salts', function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, utils_1.fetchOrDeployEngineAddress()];
@@ -52,6 +58,15 @@ test('should fetch engine/engineReader', function () { return __awaiter(void 0, 
                 return [4 /*yield*/, utils_1.fetchEngineReader()];
             case 2:
                 engineReader = _a.sent();
+                return [4 /*yield*/, engineReader.fetchDepositSalt()];
+            case 3:
+                depositSalt = _a.sent();
+                return [4 /*yield*/, engineReader.fetchWithdrawSalt()];
+            case 4:
+                withdrawSalt = _a.sent();
+                return [4 /*yield*/, engineReader.fetchWithdrawAndNotifySalt()];
+            case 5:
+                withdrawAndNotifySalt = _a.sent();
                 return [2 /*return*/];
         }
     });
@@ -69,7 +84,7 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                     tokenWriter = _a.sent();
                     return [4 /*yield*/, tokenWriter.setAllowance({
                             spender: engine,
-                            amount: fixtures_1.startBalance.opMul(fixtures_1.traderNames.length)
+                            amount: fixtures_1.startBalance * fixtures_1.traderNames.length
                         })];
                 case 2:
                     _a.sent();
@@ -100,7 +115,7 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
             });
         }); });
     });
-    test("engine's " + tokenName + " balance should be startBalance * " + fixtures_1.traderNames.length, function () { return __awaiter(void 0, void 0, void 0, function () {
+    test("engine's " + tokenName + " balance should be " + fixtures_1.startBalance * fixtures_1.traderNames.length, function () { return __awaiter(void 0, void 0, void 0, function () {
         var tokenReader, balance;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -110,7 +125,7 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                     return [4 /*yield*/, tokenReader.fetchBalance(engine)];
                 case 2:
                     balance = _a.sent();
-                    expect(balance.compEq(fixtures_1.startBalance.opMul(fixtures_1.traderNames.length))).toBe(true);
+                    expect(balance.compEq(fixtures_1.startBalance * fixtures_1.traderNames.length)).toBe(true);
                     return [2 /*return*/];
             }
         });
@@ -129,13 +144,13 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                             _c)])];
                 case 2:
                     balance = _d.sent();
-                    expect(balance.compEq(0)).toBe(true);
+                    expect(balance.toNumber()).toBe(0);
                     return [2 /*return*/];
             }
         });
     }); });
     fixtures_1.traderNames.forEach(function (traderName) {
-        test(traderName + "'s engine balance of " + tokenName + " should be startBalance", function () { return __awaiter(void 0, void 0, void 0, function () {
+        test(traderName + "'s engine balance of " + tokenName + " should be " + fixtures_1.startBalance, function () { return __awaiter(void 0, void 0, void 0, function () {
             var balance, _a, _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
@@ -149,7 +164,7 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                                 _c)])];
                     case 2:
                         balance = _d.sent();
-                        expect(balance.compEq(fixtures_1.startBalance)).toBe(true);
+                        expect(balance.toNumber()).toBe(fixtures_1.startBalance);
                         return [2 /*return*/];
                 }
             });
@@ -188,13 +203,13 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                     return [4 /*yield*/, tokenReader.fetchBalance(utils_1.getAccountAddress(fixtures_1.AccountNames.COINBASE))];
                 case 2:
                     balance = _a.sent();
-                    expect(balance.compEq(fixtures_1.traderNames.length * 10)).toBe(true);
+                    expect(balance.toNumber()).toBe(fixtures_1.traderNames.length * 10);
                     return [2 /*return*/];
             }
         });
     }); });
     fixtures_1.traderNames.forEach(function (traderName) {
-        test(traderName + "'s' engine balance of " + tokenName + " should be startBalance - 10", function () { return __awaiter(void 0, void 0, void 0, function () {
+        test(traderName + "'s' engine balance of " + tokenName + " should be " + (fixtures_1.startBalance - 10), function () { return __awaiter(void 0, void 0, void 0, function () {
             var balance, _a, _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
@@ -208,7 +223,7 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                                 _c)])];
                     case 2:
                         balance = _d.sent();
-                        expect(balance.compEq(fixtures_1.startBalance.opSub(10))).toBe(true);
+                        expect(balance.toNumber()).toBe(fixtures_1.startBalance - 10);
                         return [2 /*return*/];
                 }
             });
@@ -276,20 +291,28 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
         }); });
     });
     fixtures_1.traderNames.forEach(function (traderName) {
-        test("sweeper should depositViaSweep " + traderName + "'s " + tokenName + "'", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var engineWriter, _a, _b, _c;
+        test("sweeper should depositViaSignature 10 of " + traderName + "'s " + tokenName + "'", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var actionViaSignatureStruct, _a, _b, _c, engineWriter;
             return __generator(this, function (_d) {
                 switch (_d.label) {
-                    case 0: return [4 /*yield*/, utils_1.fetchEngineWriter(fixtures_1.AccountNames.SWEEPER)];
-                    case 1:
-                        engineWriter = _d.sent();
-                        _b = (_a = engineWriter).depositViaSweep;
+                    case 0:
+                        _b = (_a = __1.utils).genActionViaSignatureStruct;
                         _c = {
-                            toAndFrom: utils_1.getAccountAddress(traderName)
+                            fromPrivateKey: utils_1.getKeypair(traderName).privateKey,
+                            to: utils_1.getAccountAddress(traderName)
                         };
                         return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(tokenName)];
-                    case 2: return [4 /*yield*/, _b.apply(_a, [(_c.token = _d.sent(),
-                                _c)])];
+                    case 1:
+                        actionViaSignatureStruct = _b.apply(_a, [(_c.token = _d.sent(),
+                                _c.amount = 10,
+                                _c.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
+                                _c.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
+                                _c.actionSalt = depositSalt,
+                                _c)]);
+                        return [4 /*yield*/, utils_1.fetchEngineWriter(fixtures_1.AccountNames.SWEEPER)];
+                    case 2:
+                        engineWriter = _d.sent();
+                        return [4 /*yield*/, engineWriter.depositViaSignature(actionViaSignatureStruct)];
                     case 3:
                         _d.sent();
                         return [2 /*return*/];
@@ -308,14 +331,14 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                         return [4 /*yield*/, tokenReader.fetchBalance(utils_1.getAccountAddress(traderName))];
                     case 2:
                         balance = _a.sent();
-                        expect(balance.compEq(0)).toBe(true);
+                        expect(balance.toNumber()).toBe(0);
                         return [2 /*return*/];
                 }
             });
         }); });
     });
     fixtures_1.traderNames.forEach(function (traderName) {
-        test(traderName + "'s' engine balance of " + tokenName + " should be startBalance", function () { return __awaiter(void 0, void 0, void 0, function () {
+        test(traderName + "'s engine balance of " + tokenName + " should be " + fixtures_1.startBalance, function () { return __awaiter(void 0, void 0, void 0, function () {
             var balance, _a, _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
@@ -329,7 +352,165 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                                 _c)])];
                     case 2:
                         balance = _d.sent();
-                        expect(balance.compEq(fixtures_1.startBalance)).toBe(true);
+                        expect(balance.toNumber()).toBe(fixtures_1.startBalance);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
+    fixtures_1.traderNames.forEach(function (traderName) {
+        test("sweeper should withdrawViaSignature 10 of " + traderName + "'s " + tokenName + "'", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var actionViaSignatureStruct, _a, _b, _c, engineWriter;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _b = (_a = __1.utils).genActionViaSignatureStruct;
+                        _c = {
+                            fromPrivateKey: utils_1.getKeypair(traderName).privateKey,
+                            to: utils_1.getAccountAddress(traderName)
+                        };
+                        return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(tokenName)];
+                    case 1:
+                        actionViaSignatureStruct = _b.apply(_a, [(_c.token = _d.sent(),
+                                _c.amount = 10,
+                                _c.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
+                                _c.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
+                                _c.actionSalt = withdrawSalt,
+                                _c)]);
+                        return [4 /*yield*/, utils_1.fetchEngineWriter(fixtures_1.AccountNames.SWEEPER)];
+                    case 2:
+                        engineWriter = _d.sent();
+                        return [4 /*yield*/, engineWriter.withdrawViaSignature(actionViaSignatureStruct)];
+                    case 3:
+                        _d.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
+    fixtures_1.traderNames.forEach(function (traderName) {
+        test(traderName + "'s " + tokenName + " balance should be 10", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var tokenReader, balance;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, utils_1.fetchTokenReader(tokenName)];
+                    case 1:
+                        tokenReader = _a.sent();
+                        return [4 /*yield*/, tokenReader.fetchBalance(utils_1.getAccountAddress(traderName))];
+                    case 2:
+                        balance = _a.sent();
+                        expect(balance.toNumber()).toBe(10);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
+    fixtures_1.traderNames.forEach(function (traderName) {
+        test(traderName + "'s engine balance of " + tokenName + " should be " + (fixtures_1.startBalance - 10), function () { return __awaiter(void 0, void 0, void 0, function () {
+            var balance, _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _b = (_a = engineReader).fetchBalance;
+                        _c = {
+                            holder: utils_1.getAccountAddress(traderName)
+                        };
+                        return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(tokenName)];
+                    case 1: return [4 /*yield*/, _b.apply(_a, [(_c.token = _d.sent(),
+                                _c)])];
+                    case 2:
+                        balance = _d.sent();
+                        expect(balance.toNumber()).toBe(fixtures_1.startBalance - 10);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
+    fixtures_1.traderNames.forEach(function (traderName) {
+        test(traderName + " should approve engine to transfer 10 " + tokenName, function () { return __awaiter(void 0, void 0, void 0, function () {
+            var tokenWriter;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, utils_1.fetchTokenWriter({
+                            accountName: traderName,
+                            tokenName: tokenName
+                        })];
+                    case 1:
+                        tokenWriter = _a.sent();
+                        return [4 /*yield*/, tokenWriter.setAllowance({
+                                spender: engine,
+                                amount: 10
+                            })];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
+    fixtures_1.traderNames.forEach(function (traderName) {
+        test("sweeper should depositViaSignature 10 of " + traderName + "'s " + tokenName + "'", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var actionViaSignatureStruct, _a, _b, _c, engineWriter;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _b = (_a = __1.utils).genActionViaSignatureStruct;
+                        _c = {
+                            fromPrivateKey: utils_1.getKeypair(traderName).privateKey,
+                            to: utils_1.getAccountAddress(traderName)
+                        };
+                        return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(tokenName)];
+                    case 1:
+                        actionViaSignatureStruct = _b.apply(_a, [(_c.token = _d.sent(),
+                                _c.amount = 10,
+                                _c.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
+                                _c.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
+                                _c.actionSalt = depositSalt,
+                                _c)]);
+                        return [4 /*yield*/, utils_1.fetchEngineWriter(fixtures_1.AccountNames.SWEEPER)];
+                    case 2:
+                        engineWriter = _d.sent();
+                        return [4 /*yield*/, engineWriter.depositViaSignature(actionViaSignatureStruct)];
+                    case 3:
+                        _d.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
+    fixtures_1.traderNames.forEach(function (traderName) {
+        test(traderName + "'s " + tokenName + " balance should be 0", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var tokenReader, balance;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, utils_1.fetchTokenReader(tokenName)];
+                    case 1:
+                        tokenReader = _a.sent();
+                        return [4 /*yield*/, tokenReader.fetchBalance(utils_1.getAccountAddress(traderName))];
+                    case 2:
+                        balance = _a.sent();
+                        expect(balance.toNumber()).toBe(0);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
+    fixtures_1.traderNames.forEach(function (traderName) {
+        test(traderName + "'s' engine balance of " + tokenName + " should be " + fixtures_1.startBalance, function () { return __awaiter(void 0, void 0, void 0, function () {
+            var balance, _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _b = (_a = engineReader).fetchBalance;
+                        _c = {
+                            holder: utils_1.getAccountAddress(traderName)
+                        };
+                        return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(tokenName)];
+                    case 1: return [4 /*yield*/, _b.apply(_a, [(_c.token = _d.sent(),
+                                _c)])];
+                    case 2:
+                        balance = _d.sent();
+                        expect(balance.toNumber()).toBe(fixtures_1.startBalance);
                         return [2 /*return*/];
                 }
             });

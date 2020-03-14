@@ -12,21 +12,24 @@ contract Engine is Ownable {
   address public executorOracle;
   mapping(address => mapping(address => uint256)) public balances;
 
-  mapping(bytes32 => bool) public isDowvsHashSeen;
+  mapping(bytes32 => bool) public isHashUsed;
 
   bytes32 public orderSalt;
-  bytes32 public dowvsSalt;
-
+  bytes32 public depositSalt;
+  bytes32 public withdrawSalt;
+  bytes32 public withdrawAndNotifySalt;
 
   constructor() public {
-    orderSalt = keccak256(abi.encodePacked([
-      bytes32(0x45448858f8ed69bb96ea3b54e5a7116ef90c0299d45fa999873b1aa5da32354e),
-      blockhash(block.number - 1),
-      bytes20(address(this))
-    ]));
+    orderSalt = genSalt(0x45448858f8ed69bb96ea3b54e5a7116ef90c0299d45fa999873b1aa5da32354e);
+    depositSalt = genSalt(0x3a390be7d74e7491004044212317d5f713ae844ddbefe48b63984f6554743110);
+    withdrawSalt = genSalt(0x7e2ebcfb1ca871cba79813ccecc9cd6e1d00ddc99b0be067304fd894bbbb70e2);
+    withdrawAndNotifySalt = genSalt(0xd92b07381a16dcb4e94d1c35863c076e14ee3a830349326a830606d334b9a934);
+  }
 
-    dowvsSalt = keccak256(abi.encodePacked([
-      bytes32(0x3a390be7d74e7491004044212317d5f713ae844ddbefe48b63984f6554743110),
+
+  function genSalt(bytes32 pepper) private view returns(bytes32) {
+    return keccak256(abi.encodePacked([
+      pepper,
       blockhash(block.number - 1),
       bytes20(address(this))
     ]));
@@ -225,8 +228,8 @@ contract Engine is Ownable {
     address token,
     uint256 amount
   ) private {
-    require(ERC20(token).transferFrom(from, address(this), amount));
     balances[to][token] += amount;
+    require(ERC20(token).transferFrom(from, address(this), amount));
   }
 
   function _withdraw(
@@ -235,8 +238,9 @@ contract Engine is Ownable {
     address token,
     uint256 amount
   ) private {
-    require(ERC20(token).transfer(to, amount));
+    require(balances[from][token] >= amount, "pollenium/alchemilla/engine/withdraw/insufficient-balance");
     balances[from][token] -= amount;
+    require(ERC20(token).transfer(to, amount));
   }
 
   function _withdrawAndNotify(
@@ -257,14 +261,6 @@ contract Engine is Ownable {
     _deposit(msg.sender, to, token, amount);
   }
 
-  function depositViaSweep(
-    address toAndFrom,
-    address token
-  ) public {
-    uint256 amount = ERC20(token).balanceOf(toAndFrom);
-    _deposit(toAndFrom, toAndFrom, token, amount);
-  }
-
   function withdrawViaNative(
     address to,
     address token,
@@ -281,40 +277,110 @@ contract Engine is Ownable {
     _withdrawAndNotify(msg.sender, to, token, amount);
   }
 
-  /*Dowvs: [D]eposit [O]r [W]ithdraw [V]ia [S]ignature*/
-  function depositOrWithdrawViaSignature(
-    bool isWithdraw,
+  function _actionViaSignature(
     address to,
     address token,
     uint256 amount,
-    bytes8 nonce,
-    uint8 signatureV,
+    uint256 expiration,
+    bytes32 nonce,
+    uint8   signatureV,
     bytes32 signatureR,
-    bytes32 signatureS
-  ) public {
-
-    // disable until tested
-    require(false);
+    bytes32 signatureS,
+    bytes32 actionSalt
+  ) private {
+    require(now <= expiration, "pollenium/alchemilla/engine/actionViaSignature/expired");
 
     bytes32 hash = keccak256(abi.encodePacked([
-      dowvsSalt,
-      isWithdraw ? byte(0x01) : byte(0x00),
       bytes20(to),
       bytes20(token),
       bytes32(amount),
-      nonce
+      bytes32(expiration),
+      nonce,
+      actionSalt
     ]));
-    require(isDowvsHashSeen[hash] == false);
-    isDowvsHashSeen[hash] = true;
+
+    require(!isHashUsed[hash], "pollenium/alchemilla/engine/actionViaSignature/hash-duplicate");
+    isHashUsed[hash] = true;
 
     address from = ecrecover(hash, signatureV, signatureR, signatureS);
 
-    if (isWithdraw) {
-      _withdraw(from, to, token, amount);
-    } else {
+    if (actionSalt == depositSalt) {
       _deposit(from, to, token, amount);
+    } else if (actionSalt == withdrawSalt) {
+      _withdraw(from, to, token, amount);
+    } else if (actionSalt == withdrawAndNotifySalt) {
+      _withdrawAndNotify(from, to, token, amount);
     }
 
+  }
+
+  function depositViaSignature(
+    address to,
+    address token,
+    uint256 amount,
+    uint256 expiration,
+    bytes32 nonce,
+    uint8   signatureV,
+    bytes32 signatureR,
+    bytes32 signatureS
+  ) public {
+    _actionViaSignature(
+      to,
+      token,
+      amount,
+      expiration,
+      nonce,
+      signatureV,
+      signatureR,
+      signatureS,
+      depositSalt
+    );
+  }
+
+  function withdrawViaSignature(
+    address to,
+    address token,
+    uint256 amount,
+    uint256 expiration,
+    bytes32 nonce,
+    uint8   signatureV,
+    bytes32 signatureR,
+    bytes32 signatureS
+  ) public {
+    _actionViaSignature(
+      to,
+      token,
+      amount,
+      expiration,
+      nonce,
+      signatureV,
+      signatureR,
+      signatureS,
+      withdrawSalt
+    );
+  }
+
+  function withdrawAndNotifyViaSignature(
+    address to,
+    address token,
+    uint256 amount,
+    uint256 expiration,
+    bytes32 nonce,
+    uint8   signatureV,
+    bytes32 signatureR,
+    bytes32 signatureS
+  ) public {
+    _actionViaSignature(
+      to,
+      token,
+      amount,
+      expiration,
+      nonce,
+      signatureV,
+      signatureR,
+      signatureS,
+      withdrawAndNotifySalt
+    );
   }
 
 }

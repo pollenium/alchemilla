@@ -34,8 +34,8 @@ export enum TokenNames {
 // const nullAddress = Address.genNull()
 // const uint256Zero = Uint256.fromNumber(0)
 //
-export const startBalance = Uint256.fromNumber(1000)
-export const totalSupply = startBalance.opMul(Uint256.fromNumber(traderNames.length))
+export const startBalance = 1000
+export const totalSupply = startBalance * traderNames.length
 //
 // const addresses = {}
 

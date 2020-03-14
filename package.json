@@ -21,6 +21,7 @@
   "homepage": "https://github.com/pollenium/alchemilla#readme",
   "dependencies": {
     "bignumber.js": "^9.0.0",
+    "ethereumjs-abi": "^0.6.8",
     "openzeppelin-solidity": "^2.5.0",
     "pollenium-clover": "^6.1.2",
     "pollenium-ilex": "^9.3.0",
