@@ -1,6 +1,4 @@
-import * as _utils from './utils'
-
-export const utils = _utils
+export { genActionViaSignatureStruct, GenActionViaSignatureStructStruct } from './utils/genActionViaSignatureStruct'
 
 export { engineOutput, monarchicExecutorOracleOutput } from './contractOutputs'
 

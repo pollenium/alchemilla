@@ -292,29 +292,29 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
     });
     fixtures_1.traderNames.forEach(function (traderName) {
         test("sweeper should depositViaSignature 10 of " + traderName + "'s " + tokenName + "'", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var actionViaSignatureStruct, _a, _b, _c, engineWriter;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var actionViaSignatureStruct, _a, _b, engineWriter;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _b = (_a = __1.utils).genActionViaSignatureStruct;
-                        _c = {
+                        _a = __1.genActionViaSignatureStruct;
+                        _b = {
                             fromPrivateKey: utils_1.getKeypair(traderName).privateKey,
                             to: utils_1.getAccountAddress(traderName)
                         };
                         return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(tokenName)];
                     case 1:
-                        actionViaSignatureStruct = _b.apply(_a, [(_c.token = _d.sent(),
-                                _c.amount = 10,
-                                _c.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
-                                _c.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
-                                _c.actionSalt = depositSalt,
-                                _c)]);
+                        actionViaSignatureStruct = _a.apply(void 0, [(_b.token = _c.sent(),
+                                _b.amount = 10,
+                                _b.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
+                                _b.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
+                                _b.actionSalt = depositSalt,
+                                _b)]);
                         return [4 /*yield*/, utils_1.fetchEngineWriter(fixtures_1.AccountNames.SWEEPER)];
                     case 2:
-                        engineWriter = _d.sent();
+                        engineWriter = _c.sent();
                         return [4 /*yield*/, engineWriter.depositViaSignature(actionViaSignatureStruct)];
                     case 3:
-                        _d.sent();
+                        _c.sent();
                         return [2 /*return*/];
                 }
             });
@@ -360,29 +360,29 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
     });
     fixtures_1.traderNames.forEach(function (traderName) {
         test("sweeper should withdrawViaSignature 10 of " + traderName + "'s " + tokenName + "'", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var actionViaSignatureStruct, _a, _b, _c, engineWriter;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var actionViaSignatureStruct, _a, _b, engineWriter;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _b = (_a = __1.utils).genActionViaSignatureStruct;
-                        _c = {
+                        _a = __1.genActionViaSignatureStruct;
+                        _b = {
                             fromPrivateKey: utils_1.getKeypair(traderName).privateKey,
                             to: utils_1.getAccountAddress(traderName)
                         };
                         return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(tokenName)];
                     case 1:
-                        actionViaSignatureStruct = _b.apply(_a, [(_c.token = _d.sent(),
-                                _c.amount = 10,
-                                _c.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
-                                _c.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
-                                _c.actionSalt = withdrawSalt,
-                                _c)]);
+                        actionViaSignatureStruct = _a.apply(void 0, [(_b.token = _c.sent(),
+                                _b.amount = 10,
+                                _b.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
+                                _b.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
+                                _b.actionSalt = withdrawSalt,
+                                _b)]);
                         return [4 /*yield*/, utils_1.fetchEngineWriter(fixtures_1.AccountNames.SWEEPER)];
                     case 2:
-                        engineWriter = _d.sent();
+                        engineWriter = _c.sent();
                         return [4 /*yield*/, engineWriter.withdrawViaSignature(actionViaSignatureStruct)];
                     case 3:
-                        _d.sent();
+                        _c.sent();
                         return [2 /*return*/];
                 }
             });
@@ -450,29 +450,29 @@ ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
     });
     fixtures_1.traderNames.forEach(function (traderName) {
         test("sweeper should depositViaSignature 10 of " + traderName + "'s " + tokenName + "'", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var actionViaSignatureStruct, _a, _b, _c, engineWriter;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var actionViaSignatureStruct, _a, _b, engineWriter;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _b = (_a = __1.utils).genActionViaSignatureStruct;
-                        _c = {
+                        _a = __1.genActionViaSignatureStruct;
+                        _b = {
                             fromPrivateKey: utils_1.getKeypair(traderName).privateKey,
                             to: utils_1.getAccountAddress(traderName)
                         };
                         return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(tokenName)];
                     case 1:
-                        actionViaSignatureStruct = _b.apply(_a, [(_c.token = _d.sent(),
-                                _c.amount = 10,
-                                _c.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
-                                _c.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
-                                _c.actionSalt = depositSalt,
-                                _c)]);
+                        actionViaSignatureStruct = _a.apply(void 0, [(_b.token = _c.sent(),
+                                _b.amount = 10,
+                                _b.expiration = new Date().getTime() + (10 * pollenium_ursinia_1.THOUSAND),
+                                _b.nonce = pollenium_uvaursi_1.Uu.genRandom(32),
+                                _b.actionSalt = depositSalt,
+                                _b)]);
                         return [4 /*yield*/, utils_1.fetchEngineWriter(fixtures_1.AccountNames.SWEEPER)];
                     case 2:
-                        engineWriter = _d.sent();
+                        engineWriter = _c.sent();
                         return [4 /*yield*/, engineWriter.depositViaSignature(actionViaSignatureStruct)];
                     case 3:
-                        _d.sent();
+                        _c.sent();
                         return [2 /*return*/];
                 }
             });

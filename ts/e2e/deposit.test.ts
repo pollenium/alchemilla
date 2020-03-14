@@ -14,7 +14,7 @@ import { EngineReader } from '../'
 import { Uu } from 'pollenium-uvaursi'
 import { Address, Bytes32 } from 'pollenium-buttercup'
 import { THOUSAND } from 'pollenium-ursinia'
-import { utils } from '../'
+import { genActionViaSignatureStruct } from '../'
 
 require('./engine.test')
 require('./tokens.test')
@@ -134,7 +134,7 @@ $enum(TokenNames).forEach((tokenName) => {
   })
   traderNames.forEach((traderName) => {
     test(`sweeper should depositViaSignature 10 of ${traderName}'s ${tokenName}'`, async () => {
-      const actionViaSignatureStruct = utils.genActionViaSignatureStruct({
+      const actionViaSignatureStruct = genActionViaSignatureStruct({
         fromPrivateKey: getKeypair(traderName).privateKey,
         to: getAccountAddress(traderName),
         token: await fetchOrDeployTokenAddress(tokenName),
@@ -166,7 +166,7 @@ $enum(TokenNames).forEach((tokenName) => {
 
   traderNames.forEach((traderName) => {
     test(`sweeper should withdrawViaSignature 10 of ${traderName}'s ${tokenName}'`, async () => {
-      const actionViaSignatureStruct = utils.genActionViaSignatureStruct({
+      const actionViaSignatureStruct = genActionViaSignatureStruct({
         fromPrivateKey: getKeypair(traderName).privateKey,
         to: getAccountAddress(traderName),
         token: await fetchOrDeployTokenAddress(tokenName),
@@ -209,7 +209,7 @@ $enum(TokenNames).forEach((tokenName) => {
   })
   traderNames.forEach((traderName) => {
     test(`sweeper should depositViaSignature 10 of ${traderName}'s ${tokenName}'`, async () => {
-      const actionViaSignatureStruct = utils.genActionViaSignatureStruct({
+      const actionViaSignatureStruct = genActionViaSignatureStruct({
         fromPrivateKey: getKeypair(traderName).privateKey,
         to: getAccountAddress(traderName),
         token: await fetchOrDeployTokenAddress(tokenName),

@@ -1,14 +1,7 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 exports.__esModule = true;
-var _utils = __importStar(require("./utils"));
-exports.utils = _utils;
+var genActionViaSignatureStruct_1 = require("./utils/genActionViaSignatureStruct");
+exports.genActionViaSignatureStruct = genActionViaSignatureStruct_1.genActionViaSignatureStruct;
 var contractOutputs_1 = require("./contractOutputs");
 exports.engineOutput = contractOutputs_1.engineOutput;
 exports.monarchicExecutorOracleOutput = contractOutputs_1.monarchicExecutorOracleOutput;
