@@ -1,11 +1,11 @@
 import { Uish, Uu } from 'pollenium-uvaursi'
 import { Uint256, Address, Bytes32 } from 'pollenium-buttercup'
-import { ActionViaSignatureStruct } from '../classes/Contract/Engine/Writer'
+import { ActionViaSignatureStruct } from '../'
 import { Keypair, Signature } from 'pollenium-ilex'
 import abi from 'ethereumjs-abi'
 import web3Utils from 'web3-utils'
 
-interface GenActionViaSignatureStructStruct extends Omit<ActionViaSignatureStruct, 'signature'> {
+export interface GenActionViaSignatureStructStruct extends Omit<ActionViaSignatureStruct, 'signature'> {
   fromPrivateKey: Uish,
   actionSalt: Uish
 }

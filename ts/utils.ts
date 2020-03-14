@@ -1,1 +1,1 @@
-export { genActionViaSignatureStruct } from './utils/genActionViaSignatureStruct'
+export { genActionViaSignatureStruct, GenActionViaSignatureStructStruct } from './utils/genActionViaSignatureStruct'

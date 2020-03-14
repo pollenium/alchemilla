@@ -6,7 +6,7 @@ export { Order, OrderStruct } from './classes/Order';
 export { SignedOrder, SignedOrderStruct } from './classes/SignedOrder';
 export { OrderPair } from './classes/OrderPair';
 export { EngineReader } from './classes/Contract/Engine/Reader';
-export { EngineWriter, ExecutionRequest } from './classes/Contract/Engine/Writer';
+export { EngineWriter, ExecutionRequest, ActionViaSignatureStruct } from './classes/Contract/Engine/Writer';
 export { EngineDeployer } from './classes/Contract/Engine/Deployer';
 export { MonarchicExecutorOracleReader } from './classes/Contract/MonarchicExecutorOracle/Reader';
 export { MonarchicExecutorOracleWriter } from './classes/Contract/MonarchicExecutorOracle/Writer';
