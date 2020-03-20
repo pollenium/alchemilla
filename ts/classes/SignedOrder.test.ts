@@ -24,8 +24,8 @@ test('getLigma/fromLigma', () => {
     )
   ).toBe(true)
   expect(
-    signedOrder0.blockNumber.uu.getIsEqual(
-      signedOrder1.blockNumber.uu
+    signedOrder0.target.uu.getIsEqual(
+      signedOrder1.target.uu
     )
   ).toBe(true)
   expect(signedOrder0.type).toBe(signedOrder1.type)

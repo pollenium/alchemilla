@@ -4,7 +4,7 @@ import { ContractWriter, ContractWriterChildStruct } from 'pollenium-clover';
 import { SignedOrder } from '../../SignedOrder';
 import { SignatureStruct } from 'pollenium-ilex';
 export interface ExecutionRequest {
-    blockNumber: Uintable;
+    target: Uintable;
     signedBuyyOrders: Array<SignedOrder>;
     signedSellOrders: Array<SignedOrder>;
     exchanges: Array<{

@@ -14,7 +14,7 @@ export declare const nullBytes32: Bytes32;
 export declare const keypair: Keypair;
 export declare const validOrderStruct: {
     salt: Uu;
-    blockNumber: number;
+    target: number;
     type: ORDER_TYPE;
     quotToken: Address;
     variToken: Address;

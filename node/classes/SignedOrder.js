@@ -42,7 +42,8 @@ var SignedOrder = /** @class */ (function (_super) {
             this.tokenLimit.uu.toPhex(),
             this.signature.v.toNumber(),
             this.signature.r.uu.toPhex(),
-            this.signature.s.uu.toPhex()
+            this.signature.s.uu.toPhex(),
+            this.getSignatureHash().uu.toPhex()
         ];
     };
     SignedOrder.prototype.getLigma = function () {
@@ -51,7 +52,7 @@ var SignedOrder = /** @class */ (function (_super) {
         }
         this.ligma = pollenium_uvaursi_1.Uu.genConcat([
             this.salt,
-            this.blockNumber,
+            this.target,
             pollenium_buttercup_1.Uint8.fromNumber(this.type),
             this.quotToken,
             this.variToken,
@@ -67,7 +68,7 @@ var SignedOrder = /** @class */ (function (_super) {
     SignedOrder.fromLigma = function (uishLigma) {
         var ligma = pollenium_uvaursi_1.Uu.wrap(uishLigma);
         var salt = new pollenium_buttercup_1.Uint256(ligma.u.slice(0, 32));
-        var blockNumber = new pollenium_buttercup_1.Uint256(ligma.u.slice(32, 64));
+        var target = new pollenium_buttercup_1.Uint256(ligma.u.slice(32, 64));
         var type = ligma.u[64];
         var quotToken = new pollenium_buttercup_1.Address(ligma.u.slice(65, 85));
         var variToken = new pollenium_buttercup_1.Address(ligma.u.slice(85, 105));
@@ -79,7 +80,7 @@ var SignedOrder = /** @class */ (function (_super) {
         var signatureS = new pollenium_buttercup_1.Bytes32(ligma.u.slice(234, 266));
         var orderStruct = {
             salt: salt,
-            blockNumber: blockNumber,
+            target: target,
             type: type,
             quotToken: quotToken,
             variToken: variToken,
@@ -94,14 +95,21 @@ var SignedOrder = /** @class */ (function (_super) {
         });
         return new SignedOrder({ order: orderStruct, signature: signature });
     };
+    SignedOrder.prototype.getSignatureHash = function () {
+        if (this.signatureHash) {
+            return this.signatureHash;
+        }
+        this.signatureHash = new pollenium_buttercup_1.Bytes32(pollenium_uvaursi_1.Uu.fromHexish(web3_utils_1.soliditySha3({
+            t: 'bytes',
+            v: this.signature.getEncoding().toHex()
+        })));
+        return this.signatureHash;
+    };
     SignedOrder.prototype.getPriority = function () {
         if (this.priority) {
             return this.priority;
         }
-        this.priority = new pollenium_buttercup_1.Uint256(pollenium_uvaursi_1.Uu.fromHexish(web3_utils_1.soliditySha3({
-            t: 'bytes',
-            v: this.signature.getEncoding().toHex()
-        })));
+        this.priority = new pollenium_buttercup_1.Uint256(this.getSignatureHash().u.slice().reverse());
         return this.priority;
     };
     return SignedOrder;

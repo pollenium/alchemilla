@@ -19,6 +19,10 @@ contract Engine is Ownable {
   bytes32 public withdrawSalt;
   bytes32 public withdrawAndNotifySalt;
 
+  event BuyyFill(bytes32 indexed signatureHash, uint256 amount);
+  event SellFill(bytes32 indexed signatureHash, uint256 amount);
+  event Arbit(bytes32 indexed buyySignatureHash, bytes32 indexed sellSignatureHash, uint256 amount);
+
   constructor() public {
     orderSalt = genSalt(0x45448858f8ed69bb96ea3b54e5a7116ef90c0299d45fa999873b1aa5da32354e);
     depositSalt = genSalt(0x3a390be7d74e7491004044212317d5f713ae844ddbefe48b63984f6554743110);
@@ -50,7 +54,7 @@ contract Engine is Ownable {
   /* TODO: events? */
 
   struct Order {
-    address originator;
+    address trader;
     address quotToken;
     address variToken;
     uint256 priceNumer;
@@ -59,6 +63,7 @@ contract Engine is Ownable {
     uint8   signatureV;
     bytes32 signatureR;
     bytes32 signatureS;
+    bytes32 signatureHash;
   }
 
   struct Exchange {
@@ -70,29 +75,29 @@ contract Engine is Ownable {
   }
 
   function execute(
-    uint256     blockNumber,
+    uint256     target,
     Order[]     memory buyyOrders,
     Order[]     memory sellOrders,
     Exchange[]  memory exchanges
   ) public onlyExecutorHot() {
 
     require(
-      blockNumber == block.number,
-      "pollenium/alchemilla/engine/invalid-block-number"
+      target == block.number,
+      "pollenium/alchemilla/engine/invalid-target"
     );
 
-    bytes32 orderPriority = bytes32(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff);
-    bytes32 _orderPriority;
+    bytes32 signatureHash;
     Order memory order;
 
     for (uint256 orderIndex = 0; orderIndex < buyyOrders.length; orderIndex++) {
 
       order = buyyOrders[orderIndex];
 
-      require(order.originator == ecrecover(
+      require(order.trader == ecrecover(
+        // sugmaHash
         keccak256(abi.encodePacked(
           orderSalt,
-          blockNumber,
+          target,
           byte(0x00),
           order.quotToken,
           order.variToken,
@@ -103,33 +108,35 @@ contract Engine is Ownable {
         order.signatureV,
         order.signatureR,
         order.signatureS
-      ), 'pollenium/alchemilla/engine/signature-mismatch');
+      ), "pollenium/alchemilla/engine/invalid-trader");
 
-      _orderPriority = keccak256(abi.encodePacked(
+      require(order.signatureHash == keccak256(abi.encodePacked(
         order.signatureV,
         order.signatureR,
         order.signatureS
-      ));
+      )), "pollenium/alchemilla/engine/invalid-signatureHash");
 
       require(
-        _orderPriority < orderPriority,
-        "pollenium/alchemilla/engine/invalid-order-priority"
+        order.signatureHash > signatureHash,
+        "pollenium/alchemilla/engine/invalid-signatureHash-order"
       );
 
-      orderPriority = _orderPriority;
+      signatureHash = order.signatureHash;
+
 
     }
 
-    orderPriority = bytes32(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff);
+    delete signatureHash;
 
     for (uint256 orderIndex = 0; orderIndex < sellOrders.length; orderIndex++) {
 
       order = sellOrders[orderIndex];
 
-      require(order.originator == ecrecover(
+      require(order.trader == ecrecover(
+        // sugmaHash
         keccak256(abi.encodePacked(
           orderSalt,
-          blockNumber,
+          target,
           byte(0x01),
           order.quotToken,
           order.variToken,
@@ -140,20 +147,21 @@ contract Engine is Ownable {
         order.signatureV,
         order.signatureR,
         order.signatureS
-      ), "pollenium/alchemilla/engine/signature-mismatch");
+      ), "pollenium/alchemilla/engine/invalid-trader");
 
-      _orderPriority = keccak256(abi.encodePacked(
+
+      require(order.signatureHash == keccak256(abi.encodePacked(
         order.signatureV,
         order.signatureR,
         order.signatureS
-      ));
+      )), "pollenium/alchemilla/engine/invalid-signatureHash");
 
       require(
-        _orderPriority < orderPriority,
-        "pollenium/alchemilla/engine/invalid-order-priority"
+        order.signatureHash > signatureHash,
+        "pollenium/alchemilla/engine/invalid-signatureHash-order"
       );
 
-      orderPriority = _orderPriority;
+      signatureHash = order.signatureHash;
 
     }
 
@@ -208,17 +216,21 @@ contract Engine is Ownable {
       );
 
       /* Transfer quot token trans from buyer to seller; Transfer quot token arbit from buyer to executor cold*/
-      balances[buyyOrder.originator][quotToken] -= quotTokenTotal;
-      balances[sellOrder.originator][quotToken] += exchange.quotTokenTrans;
+      balances[buyyOrder.trader][quotToken] -= quotTokenTotal;
+      balances[sellOrder.trader][quotToken] += exchange.quotTokenTrans;
       balances[executorCold][quotToken] += exchange.quotTokenArbit;
 
       /* Transfer vari token trans from buyer to seller */
-      balances[sellOrder.originator][variToken] -= exchange.variTokenTrans;
-      balances[buyyOrder.originator][variToken] += exchange.variTokenTrans;
+      balances[sellOrder.trader][variToken] -= exchange.variTokenTrans;
+      balances[buyyOrder.trader][variToken] += exchange.variTokenTrans;
 
       /* Update token limits */
       buyyOrder.tokenLimit -= quotTokenTotal;
       sellOrder.tokenLimit -= exchange.variTokenTrans;
+
+      emit BuyyFill(buyyOrder.signatureHash, quotTokenTotal);
+      emit SellFill(sellOrder.signatureHash, exchange.variTokenTrans);
+      emit Arbit(buyyOrder.signatureHash, sellOrder.signatureHash, exchange.quotTokenArbit);
     }
   }
 

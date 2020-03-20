@@ -65,7 +65,7 @@ frangipani.forEach(async (fixture, index) => {
 
         const buyyOrder = new Order({
           salt: orderSalt,
-          blockNumber: blockNumber + 1,
+          target: blockNumber + 1,
           type: ORDER_TYPE.BUYY,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -76,7 +76,7 @@ frangipani.forEach(async (fixture, index) => {
 
         const sellOrder = new Order({
           salt: orderSalt,
-          blockNumber: blockNumber + 1,
+          target: blockNumber + 1,
           type: ORDER_TYPE.SELL,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -97,7 +97,7 @@ frangipani.forEach(async (fixture, index) => {
 
         const engineWriter = await fetchEngineWriter(AccountNames.MONARCH_HOT)
         await engineWriter.execute({
-          blockNumber: blockNumber + 1,
+          target: blockNumber + 1,
           signedBuyyOrders: [signedBuyyOrder],
           signedSellOrders: [signedSellOrder],
           exchanges: [
@@ -187,7 +187,7 @@ describe('multis', () => {
 
         const buyyOrder = new Order({
           salt: orderSalt,
-          blockNumber: blockNumber + 1,
+          target: blockNumber + 1,
           type: ORDER_TYPE.BUYY,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -198,7 +198,7 @@ describe('multis', () => {
 
         const sellOrder = new Order({
           salt: orderSalt,
-          blockNumber: blockNumber + 1,
+          target: blockNumber + 1,
           type: ORDER_TYPE.SELL,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -242,7 +242,7 @@ describe('multis', () => {
 
         const engineWriter = await fetchEngineWriter(AccountNames.MONARCH_HOT)
         await engineWriter.execute({
-          blockNumber: blockNumber + 1,
+          target: blockNumber + 1,
           signedBuyyOrders,
           signedSellOrders,
           exchanges

@@ -130,7 +130,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                 _a = __1.Order.bind;
                                 _b = {
                                     salt: orderSalt,
-                                    blockNumber: blockNumber + 1,
+                                    target: blockNumber + 1,
                                     type: __1.ORDER_TYPE.BUYY
                                 };
                                 return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -146,7 +146,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                 _c = __1.Order.bind;
                                 _d = {
                                     salt: orderSalt,
-                                    blockNumber: blockNumber + 1,
+                                    target: blockNumber + 1,
                                     type: __1.ORDER_TYPE.SELL
                                 };
                                 return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -171,7 +171,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                             case 8:
                                 engineWriter = _e.sent();
                                 return [4 /*yield*/, engineWriter.execute({
-                                        blockNumber: blockNumber + 1,
+                                        target: blockNumber + 1,
                                         signedBuyyOrders: [signedBuyyOrder],
                                         signedSellOrders: [signedSellOrder],
                                         exchanges: [
@@ -308,7 +308,7 @@ describe('multis', function () {
                             _a = __1.Order.bind;
                             _b = {
                                 salt: orderSalt,
-                                blockNumber: blockNumber + 1,
+                                target: blockNumber + 1,
                                 type: __1.ORDER_TYPE.BUYY
                             };
                             return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -324,7 +324,7 @@ describe('multis', function () {
                             _c = __1.Order.bind;
                             _d = {
                                 salt: orderSalt,
-                                blockNumber: blockNumber + 1,
+                                target: blockNumber + 1,
                                 type: __1.ORDER_TYPE.SELL
                             };
                             return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -368,7 +368,7 @@ describe('multis', function () {
                         case 8:
                             engineWriter = _e.sent();
                             return [4 /*yield*/, engineWriter.execute({
-                                    blockNumber: blockNumber + 1,
+                                    target: blockNumber + 1,
                                     signedBuyyOrders: signedBuyyOrders,
                                     signedSellOrders: signedSellOrders,
                                     exchanges: exchanges

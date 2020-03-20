@@ -16,6 +16,7 @@ export class SignedOrder extends Order {
 
   private trader: Address;
   private ligma: Uu;
+  private signatureHash: Bytes32;
   private priority: Uint256;
 
   constructor(struct: SignedOrderStruct) {
@@ -41,7 +42,8 @@ export class SignedOrder extends Order {
       this.tokenLimit.uu.toPhex(),
       this.signature.v.toNumber(),
       this.signature.r.uu.toPhex(),
-      this.signature.s.uu.toPhex()
+      this.signature.s.uu.toPhex(),
+      this.getSignatureHash().uu.toPhex()
     ]
   }
 
@@ -51,7 +53,7 @@ export class SignedOrder extends Order {
     }
     this.ligma = Uu.genConcat([
       this.salt,
-      this.blockNumber,
+      this.target,
       Uint8.fromNumber(this.type),
       this.quotToken,
       this.variToken,
@@ -69,7 +71,7 @@ export class SignedOrder extends Order {
   static fromLigma(uishLigma: Uish): SignedOrder {
     const ligma = Uu.wrap(uishLigma)
     const salt = new Uint256(ligma.u.slice(0, 32))
-    const blockNumber = new Uint256(ligma.u.slice(32, 64))
+    const target = new Uint256(ligma.u.slice(32, 64))
     const type: ORDER_TYPE = ligma.u[64]
     const quotToken = new Address(ligma.u.slice(65, 85))
     const variToken = new Address(ligma.u.slice(85, 105))
@@ -82,7 +84,7 @@ export class SignedOrder extends Order {
 
     const orderStruct: OrderStruct = {
       salt,
-      blockNumber,
+      target,
       type,
       quotToken,
       variToken,
@@ -98,16 +100,24 @@ export class SignedOrder extends Order {
     return new SignedOrder({ order: orderStruct, signature })
   }
 
-  getPriority(): Uint256 {
-    if (this.priority) {
-      return this.priority
+  getSignatureHash(): Bytes32 {
+    if (this.signatureHash) {
+      return this.signatureHash
     }
-    this.priority = new Uint256(Uu.fromHexish(
+    this.signatureHash = new Bytes32(Uu.fromHexish(
       soliditySha3({
         t: 'bytes',
         v: this.signature.getEncoding().toHex()
       })
     ))
+    return this.signatureHash
+  }
+
+  getPriority(): Uint256 {
+    if (this.priority) {
+      return this.priority
+    }
+    this.priority = new Uint256(this.getSignatureHash().u.slice().reverse())
     return this.priority
   }
 

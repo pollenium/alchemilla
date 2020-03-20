@@ -193,7 +193,7 @@ var EngineWriter = /** @class */ (function (_super) {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        blockNumber = new pollenium_buttercup_1.Uint256(executionRequest.blockNumber);
+                        blockNumber = new pollenium_buttercup_1.Uint256(executionRequest.target);
                         args = [
                             blockNumber.uu.toPhex(),
                             executionRequest.signedBuyyOrders.map(function (signedOrder) {

@@ -20,7 +20,7 @@ exports.nullBytes32 = new pollenium_buttercup_1.Bytes32((new Uint8Array(32)).fil
 exports.keypair = pollenium_ilex_1.Keypair.generate();
 exports.validOrderStruct = {
     salt: pollenium_uvaursi_1.Uu.genRandom(32),
-    blockNumber: 0,
+    target: 0,
     type: enums_1.ORDER_TYPE.BUYY,
     quotToken: exports.usdc,
     variToken: exports.weth,
