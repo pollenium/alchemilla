@@ -11,7 +11,7 @@ import { Bytes32, Uint256, Uint8 } from 'pollenium-buttercup'
 import frangipani from 'pollenium-frangipani'
 import { traderNames, TokenNames, AccountNames, startBalance } from './lib/fixtures'
 import { $enum } from 'ts-enum-util'
-import { ORDER_TYPE, Order, SignedOrder } from '../'
+import { OrderDirection, Order, SignedOrder } from '../'
 import { EngineReader } from '../'
 
 require('./deposit.test')
@@ -69,7 +69,7 @@ frangipani.forEach(async (fixture, index) => {
         const buyyOrder = new Order({
           salt: orderSalt,
           expiration: block.number.opAdd(10),
-          type: ORDER_TYPE.BUYY,
+          type: OrderDirection.BUYY,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
           tokenLimit: Uint256.fromNumber(fixture.orders.buyy.tokenLimit),
@@ -80,7 +80,7 @@ frangipani.forEach(async (fixture, index) => {
         const sellOrder = new Order({
           salt: orderSalt,
           expiration: block.number.opAdd(10),
-          type: ORDER_TYPE.SELL,
+          type: OrderDirection.SELL,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
           tokenLimit: Uint256.fromNumber(fixture.orders.sell.tokenLimit),

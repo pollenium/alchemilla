@@ -1,10 +1,10 @@
 import { Address, Uint256, Bytes32, Uintable } from 'pollenium-buttercup';
-import { ORDER_TYPE } from '../enums';
+import { OrderDirection } from '../enums';
 import { Uish } from 'pollenium-uvaursi';
 import Bignumber from 'bignumber.js';
 export interface OrderStruct {
     salt: Uish;
-    type: ORDER_TYPE;
+    type: OrderDirection;
     expiration: Uintable;
     quotToken: Uish;
     variToken: Uish;
@@ -15,7 +15,7 @@ export interface OrderStruct {
 export declare class Order {
     readonly struct: OrderStruct;
     readonly salt: Bytes32;
-    readonly type: ORDER_TYPE;
+    readonly type: OrderDirection;
     readonly expiration: Uint256;
     readonly quotToken: Address;
     readonly variToken: Address;

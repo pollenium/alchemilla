@@ -1,4 +1,4 @@
-import { ORDER_TYPE } from '../enums'
+import { OrderDirection } from '../enums'
 import { Address, Uint256, Bytes32, Uintable } from 'pollenium-buttercup'
 import { Order, OrderStruct } from './Order'
 import Bn from 'bn.js'
@@ -21,11 +21,11 @@ export class OrderPair {
 
     Object.assign(this, struct)
 
-    if (this.buyyOrder.type !== ORDER_TYPE.BUYY) {
+    if (this.buyyOrder.type !== OrderDirection.BUYY) {
       throw new InvalidBuyyOrderTypeError()
     }
 
-    if (this.sellOrder.type !== ORDER_TYPE.SELL) {
+    if (this.sellOrder.type !== OrderDirection.SELL) {
       throw new InvalidSellOrderTypeError()
     }
 

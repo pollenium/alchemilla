@@ -1,5 +1,5 @@
 import { Address, Uint256, Bytes32 } from 'pollenium-buttercup';
-import { ORDER_TYPE } from './enums';
+import { OrderDirection } from './enums';
 import { Keypair } from 'pollenium-ilex';
 import { Uu } from 'pollenium-uvaursi';
 export declare const alice: Address;
@@ -15,7 +15,7 @@ export declare const keypair: Keypair;
 export declare const validOrderStruct: {
     salt: Uu;
     expiration: number;
-    type: ORDER_TYPE;
+    type: OrderDirection;
     quotToken: Address;
     variToken: Address;
     originator: Address;

@@ -87,7 +87,7 @@ var Order = /** @class */ (function () {
         return this.price;
     };
     Order.prototype.getLimitingToken = function () {
-        if (this.type === enums_1.ORDER_TYPE.BUYY) {
+        if (this.type === enums_1.OrderDirection.BUYY) {
             return this.quotToken;
         }
         else {

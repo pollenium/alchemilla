@@ -1,12 +1,12 @@
 import { Address, Uint256, Bytes, Bytes1, Bytes32, Uint8, Uintable } from 'pollenium-buttercup'
-import { ORDER_TYPE } from '../enums'
+import { OrderDirection } from '../enums'
 import { soliditySha3 } from 'web3-utils'
 import { Uu, Uish } from 'pollenium-uvaursi'
 import Bignumber from 'bignumber.js'
 
 export interface OrderStruct {
   salt: Uish;
-  type: ORDER_TYPE;
+  type: OrderDirection;
   expiration: Uintable;
   quotToken: Uish;
   variToken: Uish;
@@ -19,7 +19,7 @@ export interface OrderStruct {
 export class Order {
 
   readonly salt: Bytes32;
-  readonly type: ORDER_TYPE;
+  readonly type: OrderDirection;
   readonly expiration: Uint256;
   readonly quotToken: Address;
   readonly variToken: Address;
@@ -111,7 +111,7 @@ export class Order {
   }
 
   getLimitingToken(): Address {
-    if (this.type === ORDER_TYPE.BUYY) {
+    if (this.type === OrderDirection.BUYY) {
       return this.quotToken
     } else {
       return this.variToken

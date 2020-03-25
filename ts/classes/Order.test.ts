@@ -7,7 +7,7 @@ import {
   validOrderStruct
 } from '../fixtures'
 import { Uint256 } from 'pollenium-buttercup'
-import { ORDER_TYPE } from '../enums'
+import { OrderDirection } from '../enums'
 import {
   Order,
   QuotVariTokenMatchError,

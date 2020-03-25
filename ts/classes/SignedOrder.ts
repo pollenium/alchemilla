@@ -1,4 +1,4 @@
-import { ORDER_TYPE } from '../enums'
+import { OrderDirection } from '../enums'
 import { Bytes, Address, Bytes32, Uint8, Uint256 } from 'pollenium-buttercup'
 import { Signature, SignatureStruct } from 'pollenium-ilex'
 import { Order, OrderStruct } from './Order'
@@ -75,7 +75,7 @@ export class SignedOrder extends Order {
     const ligma = Uu.wrap(uishLigma)
     const salt = new Uint256(ligma.u.slice(0, 32))
     const expiration = new Uint256(ligma.u.slice(32, 64))
-    const type: ORDER_TYPE = ligma.u[64]
+    const type: OrderDirection = ligma.u[64]
     const quotToken = new Address(ligma.u.slice(65, 85))
     const variToken = new Address(ligma.u.slice(85, 105))
     const priceNumer = new Uint256(ligma.u.slice(105, 137))

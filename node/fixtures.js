@@ -21,7 +21,7 @@ exports.keypair = pollenium_ilex_1.Keypair.generate();
 exports.validOrderStruct = {
     salt: pollenium_uvaursi_1.Uu.genRandom(32),
     expiration: 0,
-    type: enums_1.ORDER_TYPE.BUYY,
+    type: enums_1.OrderDirection.BUYY,
     quotToken: exports.usdc,
     variToken: exports.weth,
     originator: exports.keypair.getAddress(),

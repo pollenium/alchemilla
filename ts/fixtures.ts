@@ -1,5 +1,5 @@
 import { Address, Uint256, Bytes32 } from 'pollenium-buttercup'
-import { ORDER_TYPE } from './enums'
+import { OrderDirection } from './enums'
 import crypto from 'crypto'
 import { Keypair } from 'pollenium-ilex'
 import { Uu } from 'pollenium-uvaursi'
@@ -21,7 +21,7 @@ export const keypair = Keypair.generate()
 export const validOrderStruct = {
   salt: Uu.genRandom(32),
   expiration: 0,
-  type: ORDER_TYPE.BUYY,
+  type: OrderDirection.BUYY,
   quotToken: usdc,
   variToken: weth,
   originator: keypair.getAddress(),

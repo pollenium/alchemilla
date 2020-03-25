@@ -1,6 +1,6 @@
 export { genActionViaSignatureStruct, GenActionViaSignatureStructStruct } from './utils/genActionViaSignatureStruct';
 export { engineOutput, monarchicExecutorOracleOutput } from './contractOutputs';
-export { ORDER_TYPE } from './enums';
+export { OrderDirection } from './enums';
 export { Order, OrderStruct } from './classes/Order';
 export { SignedOrder, SignedOrderStruct } from './classes/SignedOrder';
 export { OrderPair } from './classes/OrderPair';
