@@ -13,4 +13,5 @@ export declare class EngineReader extends ContractReader {
         token: Uish;
         holder: Uish;
     }): Promise<Uint256>;
+    fetchFill(signatureHash: Uish): Promise<Uint256>;
 }

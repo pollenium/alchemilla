@@ -13,7 +13,7 @@ test('getLigma/fromLigma', function () {
     var ligma = signedOrder0.getLigma();
     var signedOrder1 = SignedOrder_1.SignedOrder.fromLigma(ligma);
     expect(signedOrder0.salt.uu.getIsEqual(signedOrder1.salt.uu)).toBe(true);
-    expect(signedOrder0.target.uu.getIsEqual(signedOrder1.target.uu)).toBe(true);
+    expect(signedOrder0.expiration.uu.getIsEqual(signedOrder1.expiration.uu)).toBe(true);
     expect(signedOrder0.type).toBe(signedOrder1.type);
     expect(signedOrder0.quotToken.uu.getIsEqual(signedOrder1.quotToken.uu)).toBe(true);
     expect(signedOrder0.variToken.uu.getIsEqual(signedOrder1.variToken.uu)).toBe(true);

@@ -26,7 +26,7 @@ var Order = /** @class */ (function () {
         this.struct = struct;
         this.type = struct.type,
             this.salt = new pollenium_buttercup_1.Bytes32(struct.salt);
-        this.target = new pollenium_buttercup_1.Uint256(struct.target);
+        this.expiration = new pollenium_buttercup_1.Uint256(struct.expiration);
         this.quotToken = new pollenium_buttercup_1.Address(struct.quotToken);
         this.variToken = new pollenium_buttercup_1.Address(struct.variToken);
         this.tokenLimit = new pollenium_buttercup_1.Uint256(struct.tokenLimit);
@@ -57,13 +57,13 @@ var Order = /** @class */ (function () {
         }
         this.sugma = new pollenium_buttercup_1.Bytes(pollenium_uvaursi_1.Uu.genConcat([
             this.salt,
-            this.target,
-            pollenium_buttercup_1.Uint8.fromNumber(this.type),
-            this.quotToken,
-            this.variToken,
+            this.expiration,
             this.priceNumer,
             this.priceDenom,
             this.tokenLimit,
+            this.quotToken,
+            this.variToken,
+            pollenium_buttercup_1.Uint8.fromNumber(this.type),
         ]));
         return this.sugma;
     };

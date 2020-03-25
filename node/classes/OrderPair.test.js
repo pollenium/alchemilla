@@ -12,7 +12,7 @@ var pollenium_buttercup_1 = require("pollenium-buttercup");
 var fixtures_1 = require("../fixtures");
 var pollenium_uvaursi_1 = require("pollenium-uvaursi");
 var salt = pollenium_uvaursi_1.Uu.genRandom(32);
-var target = 0;
+var expiration = new pollenium_buttercup_1.Bytes32(pollenium_uvaursi_1.Uu.genFill({ length: 32, fill: 255 }));
 pollenium_frangipani_1["default"].forEach(function (fixture, index) {
     var chainState = {
         buyyOrderTokenFilled: pollenium_buttercup_1.Uint256.fromNumber(fixture.chainState.buyyOrderTokenFilled),
@@ -22,7 +22,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) {
     };
     var buyyOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.BUYY,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -32,7 +32,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) {
     });
     var sellOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.SELL,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -55,7 +55,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) {
 test('InvalidBuyyOrderTypeError', function () {
     var buyyOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.SELL,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -65,7 +65,7 @@ test('InvalidBuyyOrderTypeError', function () {
     });
     var sellOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.SELL,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -80,7 +80,7 @@ test('InvalidBuyyOrderTypeError', function () {
 test('InvalidSellOrderTypeError', function () {
     var buyyOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.BUYY,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -90,7 +90,7 @@ test('InvalidSellOrderTypeError', function () {
     });
     var sellOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.BUYY,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -105,7 +105,7 @@ test('InvalidSellOrderTypeError', function () {
 test('QuotTokenMismatchError', function () {
     var buyyOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.BUYY,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -115,7 +115,7 @@ test('QuotTokenMismatchError', function () {
     });
     var sellOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.SELL,
         quotToken: fixtures_1.usdc,
         variToken: fixtures_1.weth,
@@ -130,7 +130,7 @@ test('QuotTokenMismatchError', function () {
 test('VariTokenMismatchError', function () {
     var buyyOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.BUYY,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -140,7 +140,7 @@ test('VariTokenMismatchError', function () {
     });
     var sellOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.SELL,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.mkr,
@@ -155,7 +155,7 @@ test('VariTokenMismatchError', function () {
 test('PriceConstraintError', function () {
     var buyyOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.BUYY,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,
@@ -165,7 +165,7 @@ test('PriceConstraintError', function () {
     });
     var sellOrder = new __1.Order({
         salt: salt,
-        target: target,
+        expiration: expiration,
         type: enums_1.ORDER_TYPE.SELL,
         quotToken: fixtures_1.dai,
         variToken: fixtures_1.weth,

@@ -9,8 +9,11 @@ import './WithdrawNotificationHandler.interface.sol';
 /*ToDo: Rename for clarity */
 contract Engine is Ownable {
 
+  enum OrderDirection { BUYY, SELL }
+
   address public executorOracle;
   mapping(address => mapping(address => uint256)) public balances;
+  mapping(bytes32 => uint256) public fills;
 
   mapping(bytes32 => bool) public isHashUsed;
 
@@ -54,16 +57,18 @@ contract Engine is Ownable {
   /* TODO: events? */
 
   struct Order {
-    address trader;
-    address quotToken;
-    address variToken;
-    uint256 priceNumer;
-    uint256 priceDenom;
-    uint256 tokenLimit;
-    uint8   signatureV;
-    bytes32 signatureR;
-    bytes32 signatureS;
-    bytes32 signatureHash;
+    uint256   expiration;
+    uint256   priceNumer;
+    uint256   priceDenom;
+    uint256   tokenLimit;
+    bytes32   signatureR;
+    bytes32   signatureS;
+    bytes32   signatureHash;
+    address   trader;
+    address   quotToken;
+    address   variToken;
+    OrderDirection direction;
+    uint8     signatureV;
   }
 
   struct Exchange {
@@ -75,93 +80,40 @@ contract Engine is Ownable {
   }
 
   function execute(
-    uint256     target,
-    Order[]     memory buyyOrders,
-    Order[]     memory sellOrders,
+    Order[]     memory orders,
     Exchange[]  memory exchanges
   ) public onlyExecutorHot() {
 
-    require(
-      target == block.number,
-      "pollenium/alchemilla/engine/invalid-target"
-    );
-
-    bytes32 signatureHash;
     Order memory order;
 
-    for (uint256 orderIndex = 0; orderIndex < buyyOrders.length; orderIndex++) {
+    for (uint256 orderIndex = 0; orderIndex < orders.length; orderIndex++) {
 
-      order = buyyOrders[orderIndex];
+      order = orders[orderIndex];
 
-      require(order.trader == ecrecover(
-        // sugmaHash
-        keccak256(abi.encodePacked(
-          orderSalt,
-          target,
-          byte(0x00),
-          order.quotToken,
-          order.variToken,
-          order.priceNumer,
-          order.priceDenom,
-          order.tokenLimit
-        )),
-        order.signatureV,
-        order.signatureR,
-        order.signatureS
-      ), "pollenium/alchemilla/engine/invalid-trader");
-
-      require(order.signatureHash == keccak256(abi.encodePacked(
-        order.signatureV,
-        order.signatureR,
-        order.signatureS
-      )), "pollenium/alchemilla/engine/invalid-signatureHash");
-
-      require(
-        order.signatureHash > signatureHash,
-        "pollenium/alchemilla/engine/invalid-signatureHash-order"
-      );
-
-      signatureHash = order.signatureHash;
-
-
-    }
-
-    delete signatureHash;
-
-    for (uint256 orderIndex = 0; orderIndex < sellOrders.length; orderIndex++) {
-
-      order = sellOrders[orderIndex];
+      require(block.number <= order.expiration, "pollenium/alchemilla/engine/execute/expired");
 
       require(order.trader == ecrecover(
         // sugmaHash
         keccak256(abi.encodePacked(
           orderSalt,
-          target,
-          byte(0x01),
-          order.quotToken,
-          order.variToken,
+          order.expiration,
           order.priceNumer,
           order.priceDenom,
-          order.tokenLimit
+          order.tokenLimit,
+          order.quotToken,
+          order.variToken,
+          order.direction
         )),
         order.signatureV,
         order.signatureR,
         order.signatureS
-      ), "pollenium/alchemilla/engine/invalid-trader");
-
+      ), "pollenium/alchemilla/engine/execute/invalid-trader");
 
       require(order.signatureHash == keccak256(abi.encodePacked(
         order.signatureV,
         order.signatureR,
         order.signatureS
-      )), "pollenium/alchemilla/engine/invalid-signatureHash");
-
-      require(
-        order.signatureHash > signatureHash,
-        "pollenium/alchemilla/engine/invalid-signatureHash-order"
-      );
-
-      signatureHash = order.signatureHash;
+      )), "pollenium/alchemilla/engine/execute/invalid-signatureHash");
 
     }
 
@@ -177,11 +129,14 @@ contract Engine is Ownable {
     for (uint256 exchangeIndex = 0; exchangeIndex < exchanges.length; exchangeIndex++) {
 
       exchange = exchanges[exchangeIndex];
-      buyyOrder = buyyOrders[exchange.buyyOrderIndex];
-      sellOrder = sellOrders[exchange.sellOrderIndex];
+      buyyOrder = orders[exchange.buyyOrderIndex];
+      sellOrder = orders[exchange.sellOrderIndex];
 
-      require(buyyOrder.quotToken == sellOrder.quotToken, "pollenium/alchemilla/engine/quot-token-mismatch");
-      require(buyyOrder.variToken == sellOrder.variToken, "pollenium/alchemilla/engine/vari-token-mismatch");
+      require(buyyOrder.direction == OrderDirection.BUYY, "pollenium/alchemilla/engine/execute/invalid-buyyOrder-type");
+      require(sellOrder.direction == OrderDirection.SELL, "pollenium/alchemilla/engine/execute/invalid-sellOrder-type");
+
+      require(buyyOrder.quotToken == sellOrder.quotToken, "pollenium/alchemilla/engine/execute/quot-token-mismatch");
+      require(buyyOrder.variToken == sellOrder.variToken, "pollenium/alchemilla/engine/execute/vari-token-mismatch");
 
       quotToken = buyyOrder.quotToken;
       variToken = buyyOrder.variToken;
@@ -192,27 +147,27 @@ contract Engine is Ownable {
       /* Check buy price is lte than or equal to total price */
       require(
         (buyyOrder.priceNumer * exchange.variTokenTrans) <= (buyyOrder.priceDenom * quotTokenTotal),
-        "pollenium/alchemilla/engine/buy-price-too-high"
+        "pollenium/alchemilla/engine/execute/buy-price-too-high"
       );
 
       /* Check sell price is gte than or equal to trans price */
       require(
         (sellOrder.priceNumer * exchange.variTokenTrans) >= (sellOrder.priceDenom * exchange.quotTokenTrans),
-        "pollenium/alchemilla/engine/sell-price-too-low"
+        "pollenium/alchemilla/engine/execute/sell-price-too-low"
       );
 
       /* Check quot token fillability */
       /* TODO: Determine if balance check is necessary */
       require(
-        quotTokenTotal <= buyyOrder.tokenLimit,
-        "pollenium/alchemilla/engine/quot-token-limit-exceeded"
+        quotTokenTotal <= (buyyOrder.tokenLimit - fills[buyyOrder.signatureHash]),
+        "pollenium/alchemilla/engine/execute/quot-token-limit-exceeded"
       );
 
       /* Check vari token fillability */
       /* TODO: Determine if balance check is necessary */
       require(
-        exchange.variTokenTrans <= sellOrder.tokenLimit,
-        "pollenium/alchemilla/engine/vari-token-limit-exceeded"
+        exchange.variTokenTrans <= (sellOrder.tokenLimit - fills[sellOrder.signatureHash]),
+        "pollenium/alchemilla/engine/execute/vari-token-limit-exceeded"
       );
 
       /* Transfer quot token trans from buyer to seller; Transfer quot token arbit from buyer to executor cold*/
@@ -225,8 +180,8 @@ contract Engine is Ownable {
       balances[buyyOrder.trader][variToken] += exchange.variTokenTrans;
 
       /* Update token limits */
-      buyyOrder.tokenLimit -= quotTokenTotal;
-      sellOrder.tokenLimit -= exchange.variTokenTrans;
+      fills[buyyOrder.signatureHash] += quotTokenTotal;
+      fills[sellOrder.signatureHash] += exchange.variTokenTrans;
 
       emit BuyyFill(buyyOrder.signatureHash, quotTokenTotal);
       emit SellFill(sellOrder.signatureHash, exchange.variTokenTrans);
@@ -240,7 +195,7 @@ contract Engine is Ownable {
     address token,
     uint256 amount
   ) private {
-    require(amount > 0, "pollenium/alchemilla/engine/deposit/zero-amount");
+    require(amount > 0, "pollenium/alchemilla/engine/_deposit/zero-amount");
     balances[to][token] += amount;
     require(ERC20(token).transferFrom(from, address(this), amount));
   }
@@ -251,8 +206,8 @@ contract Engine is Ownable {
     address token,
     uint256 amount
   ) private {
-    require(amount > 0, "pollenium/alchemilla/engine/withdraw/zero-amount");
-    require(balances[from][token] >= amount, "pollenium/alchemilla/engine/withdraw/insufficient-balance");
+    require(amount > 0, "pollenium/alchemilla/engine/_withdraw/zero-amount");
+    require(balances[from][token] >= amount, "pollenium/alchemilla/engine/_withdraw/insufficient-balance");
     balances[from][token] -= amount;
     require(ERC20(token).transfer(to, amount));
   }
@@ -302,7 +257,7 @@ contract Engine is Ownable {
     bytes32 signatureS,
     bytes32 actionSalt
   ) private {
-    require(now <= expiration, "pollenium/alchemilla/engine/actionViaSignature/expired");
+    require(block.number <= expiration, "pollenium/alchemilla/engine/_actionViaSignature/expired");
 
     bytes32 hash = keccak256(abi.encodePacked([
       bytes20(to),
@@ -313,7 +268,7 @@ contract Engine is Ownable {
       actionSalt
     ]));
 
-    require(!isHashUsed[hash], "pollenium/alchemilla/engine/actionViaSignature/hash-duplicate");
+    require(!isHashUsed[hash], "pollenium/alchemilla/engine/_actionViaSignature/hash-duplicate");
     isHashUsed[hash] = true;
 
     address from = ecrecover(hash, signatureV, signatureR, signatureS);

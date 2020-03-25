@@ -66,4 +66,11 @@ export class EngineReader extends ContractReader {
 
   }
 
+  async fetchFill(signatureHash: Uish): Promise<Uint256> {
+    const fillBignumber = await this.ethersContract.fills(Uu.wrap(signatureHash).toPhex())
+    return new Uint256(Uu.fromHexish(
+      await ethers.utils.hexlify(fillBignumber)
+    ))
+  }
+
 }

@@ -173,6 +173,22 @@ var EngineReader = /** @class */ (function (_super) {
             });
         });
     };
+    EngineReader.prototype.fetchFill = function (signatureHash) {
+        return __awaiter(this, void 0, void 0, function () {
+            var fillBignumber, _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0: return [4 /*yield*/, this.ethersContract.fills(pollenium_uvaursi_1.Uu.wrap(signatureHash).toPhex())];
+                    case 1:
+                        fillBignumber = _d.sent();
+                        _a = pollenium_buttercup_1.Uint256.bind;
+                        _c = (_b = pollenium_uvaursi_1.Uu).fromHexish;
+                        return [4 /*yield*/, ethers_1.ethers.utils.hexlify(fillBignumber)];
+                    case 2: return [2 /*return*/, new (_a.apply(pollenium_buttercup_1.Uint256, [void 0, _c.apply(_b, [_d.sent()])]))()];
+                }
+            });
+        });
+    };
     return EngineReader;
 }(pollenium_clover_1.ContractReader));
 exports.EngineReader = EngineReader;

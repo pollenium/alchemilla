@@ -7,9 +7,7 @@ import { SignedOrder } from '../../SignedOrder'
 import { SignatureStruct, Signature } from 'pollenium-ilex'
 
 export interface ExecutionRequest {
-  target: Uintable,
-  signedBuyyOrders: Array<SignedOrder>,
-  signedSellOrders: Array<SignedOrder>,
+  signedOrders: Array<SignedOrder>,
   exchanges: Array<{
     signedBuyyOrderIndex: Uintable,
     signedSellOrderIndex: Uintable,
@@ -106,14 +104,8 @@ export class EngineWriter extends ContractWriter {
 
   async execute(executionRequest: ExecutionRequest): Promise<void> {
 
-    const blockNumber = new Uint256(executionRequest.target)
-
     const args = [
-      blockNumber.uu.toPhex(),
-      executionRequest.signedBuyyOrders.map((signedOrder) => {
-        return signedOrder.getEthersArg()
-      }),
-      executionRequest.signedSellOrders.map((signedOrder) => {
+      executionRequest.signedOrders.map((signedOrder) => {
         return signedOrder.getEthersArg()
       }),
       executionRequest.exchanges.map((exchange) => {

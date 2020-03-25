@@ -34,16 +34,18 @@ var SignedOrder = /** @class */ (function (_super) {
     };
     SignedOrder.prototype.getEthersArg = function () {
         return [
-            this.getTrader().uu.toPhex(),
-            this.quotToken.uu.toPhex(),
-            this.variToken.uu.toPhex(),
+            this.expiration.uu.toPhex(),
             this.priceNumer.uu.toPhex(),
             this.priceDenom.uu.toPhex(),
             this.tokenLimit.uu.toPhex(),
-            this.signature.v.toNumber(),
             this.signature.r.uu.toPhex(),
             this.signature.s.uu.toPhex(),
-            this.getSignatureHash().uu.toPhex()
+            this.getSignatureHash().uu.toPhex(),
+            this.getTrader().uu.toPhex(),
+            this.quotToken.uu.toPhex(),
+            this.variToken.uu.toPhex(),
+            pollenium_buttercup_1.Uint8.fromNumber(this.type).uu.toPhex(),
+            this.signature.v.toNumber(),
         ];
     };
     SignedOrder.prototype.getLigma = function () {
@@ -52,7 +54,7 @@ var SignedOrder = /** @class */ (function (_super) {
         }
         this.ligma = pollenium_uvaursi_1.Uu.genConcat([
             this.salt,
-            this.target,
+            this.expiration,
             pollenium_buttercup_1.Uint8.fromNumber(this.type),
             this.quotToken,
             this.variToken,
@@ -68,7 +70,7 @@ var SignedOrder = /** @class */ (function (_super) {
     SignedOrder.fromLigma = function (uishLigma) {
         var ligma = pollenium_uvaursi_1.Uu.wrap(uishLigma);
         var salt = new pollenium_buttercup_1.Uint256(ligma.u.slice(0, 32));
-        var target = new pollenium_buttercup_1.Uint256(ligma.u.slice(32, 64));
+        var expiration = new pollenium_buttercup_1.Uint256(ligma.u.slice(32, 64));
         var type = ligma.u[64];
         var quotToken = new pollenium_buttercup_1.Address(ligma.u.slice(65, 85));
         var variToken = new pollenium_buttercup_1.Address(ligma.u.slice(85, 105));
@@ -80,7 +82,7 @@ var SignedOrder = /** @class */ (function (_super) {
         var signatureS = new pollenium_buttercup_1.Bytes32(ligma.u.slice(234, 266));
         var orderStruct = {
             salt: salt,
-            target: target,
+            expiration: expiration,
             type: type,
             quotToken: quotToken,
             variToken: variToken,

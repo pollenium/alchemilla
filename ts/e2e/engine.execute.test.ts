@@ -46,6 +46,9 @@ frangipani.forEach(async (fixture, index) => {
     const quotTokenArbit = Uint256.fromNumber(fixture.solution.quotTokenArbit)
     const quotTokenTotal = quotTokenTrans.opAdd(quotTokenArbit)
 
+    let signedBuyyOrder: SignedOrder
+    let signedSellOrder
+
     traderNames.forEach((traderName) => {
       $enum(TokenNames).forEach((tokenName) => {
         test(`${traderName}'s ${tokenName} balance should be ${startBalance}`, async () => {
@@ -61,11 +64,11 @@ frangipani.forEach(async (fixture, index) => {
       test('execute', async () => {
         await gaillardia.restoreSnapshot(snapshotId)
         snapshotId = await gaillardia.takeSnapshot()
-        const blockNumber = await gaillardia.fetchLatestBlockNumber()
+        const block = await gaillardia.bellflower.fetchLatestBlock()
 
         const buyyOrder = new Order({
           salt: orderSalt,
-          target: blockNumber + 1,
+          expiration: block.number.opAdd(10),
           type: ORDER_TYPE.BUYY,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -76,7 +79,7 @@ frangipani.forEach(async (fixture, index) => {
 
         const sellOrder = new Order({
           salt: orderSalt,
-          target: blockNumber + 1,
+          expiration: block.number.opAdd(10),
           type: ORDER_TYPE.SELL,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
@@ -85,25 +88,23 @@ frangipani.forEach(async (fixture, index) => {
           priceDenom: Uint256.fromNumber(fixture.orders.sell.priceDenom)
         })
 
-        const signedBuyyOrder = new SignedOrder({
+        signedBuyyOrder = new SignedOrder({
           order: buyyOrder,
           signature: getKeypair(AccountNames.ALICE).getSignature(buyyOrder.getSugmaHash())
         })
 
-        const signedSellOrder = new SignedOrder({
+        signedSellOrder = new SignedOrder({
           order: sellOrder,
           signature: getKeypair(AccountNames.BOB).getSignature(sellOrder.getSugmaHash())
         })
 
         const engineWriter = await fetchEngineWriter(AccountNames.MONARCH_HOT)
         await engineWriter.execute({
-          target: blockNumber + 1,
-          signedBuyyOrders: [signedBuyyOrder],
-          signedSellOrders: [signedSellOrder],
+          signedOrders: [signedBuyyOrder, signedSellOrder],
           exchanges: [
             {
-              signedBuyyOrderIndex: Uint8.fromNumber(0),
-              signedSellOrderIndex: Uint8.fromNumber(0),
+              signedBuyyOrderIndex: 0,
+              signedSellOrderIndex: 1,
               quotTokenTrans,
               variTokenTrans,
               quotTokenArbit
@@ -144,111 +145,13 @@ frangipani.forEach(async (fixture, index) => {
         expect(balanceAlice.toNumber()).toBe(startBalance + variTokenTrans.toNumber())
         expect(balanceBob.toNumber()).toBe(startBalance - variTokenTrans.toNumber())
       })
-    })
-  })
-})
-describe('multis', () => {
 
-  const multisFixtures = [
-    {
-      buyyOrdersCount: 1,
-      buyyOrderTokenLimit: 1,
-      sellOrdersCount: 1,
-      sellOrderTokenLimit: 1,
-      exchanges: [{
-        buyyOrderIndex: 0,
-        sellOrderIndex: 0
-      }]
-    },
-    {
-      buyyOrdersCount: 1,
-      buyyOrderTokenLimit: 5,
-      sellOrdersCount: 5,
-      sellOrderTokenLimit: 1,
-      exchanges: arrayOf(5, (i) => {
-        return {
-          buyyOrderIndex: 0,
-          sellOrderIndex: i
-        }
+      test('fills', async () => {
+        const buyyOrderFill = await engineReader.fetchFill(signedBuyyOrder.getSignatureHash())
+        const sellOrderFill = await engineReader.fetchFill(signedSellOrder.getSignatureHash())
+        expect(buyyOrderFill.toNumber()).toBe(quotTokenTotal.toNumber())
+        expect(sellOrderFill.toNumber()).toBe(variTokenTrans.toNumber())
       })
-    }
-  ]
-
-  multisFixtures.forEach((multisFixture, index) => {
-    /*TODO: Add back */
-    return
-    describe(`multisFixture #${index}: [${multisFixture.buyyOrdersCount}, ${multisFixture.sellOrdersCount}, ${multisFixture.exchanges.length}]`, () => {
-      it(`should execute batch of orders`, async () => {
-
-        await gaillardia.restoreSnapshot(snapshotId)
-        snapshotId = await gaillardia.takeSnapshot()
-
-        const blockNumber = await gaillardia.fetchLatestBlockNumber()
-
-        const buyyOrder = new Order({
-          salt: orderSalt,
-          target: blockNumber + 1,
-          type: ORDER_TYPE.BUYY,
-          quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
-          variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
-          tokenLimit: Uint256.fromNumber(multisFixture.buyyOrderTokenLimit),
-          priceNumer: Uint256.fromNumber(1),
-          priceDenom: Uint256.fromNumber(1)
-        })
-
-        const sellOrder = new Order({
-          salt: orderSalt,
-          target: blockNumber + 1,
-          type: ORDER_TYPE.SELL,
-          quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
-          variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
-          tokenLimit: Uint256.fromNumber(multisFixture.sellOrderTokenLimit),
-          priceNumer: Uint256.fromNumber(1),
-          priceDenom: Uint256.fromNumber(1)
-        })
-
-        const signedBuyyOrder = new SignedOrder({
-          order: buyyOrder,
-          signature: getKeypair(AccountNames.ALICE).getSignature(buyyOrder.getSugmaHash())
-        })
-
-        const signedSellOrder = new SignedOrder({
-          order: sellOrder,
-          signature: getKeypair(AccountNames.BOB).getSignature(sellOrder.getSugmaHash())
-        })
-
-        const signedBuyyOrders = []
-        const signedSellOrders = []
-        const exchanges = []
-
-        for (let i = 0; i < multisFixture.buyyOrdersCount; i++) {
-          signedBuyyOrders.push(signedBuyyOrder)
-        }
-
-        for (let i = 0; i < multisFixture.sellOrdersCount; i++) {
-          signedSellOrders.push(signedSellOrder)
-        }
-
-        for (let i = 0; i < multisFixture.exchanges.length; i++) {
-          const exchangeFixture = multisFixture.exchanges[i]
-          exchanges.push({
-            signedBuyyOrderIndex: Uint8.fromNumber(exchangeFixture.buyyOrderIndex),
-            signedSellOrderIndex: Uint8.fromNumber(exchangeFixture.sellOrderIndex),
-            quotTokenTrans: Uint256.fromNumber(1),
-            variTokenTrans: Uint256.fromNumber(1),
-            quotTokenArbit: Uint256.fromNumber(0)
-          })
-        }
-
-        const engineWriter = await fetchEngineWriter(AccountNames.MONARCH_HOT)
-        await engineWriter.execute({
-          target: blockNumber + 1,
-          signedBuyyOrders,
-          signedSellOrders,
-          exchanges
-        })
-      })
-
     })
   })
 })

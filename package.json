@@ -25,7 +25,7 @@
     "openzeppelin-solidity": "^2.5.0",
     "pollenium-clover": "^6.1.2",
     "pollenium-ilex": "^9.3.0",
-    "pollenium-uvaursi": "^8.5.0",
+    "pollenium-uvaursi": "^8.7.0",
     "web3-utils": "^1.2.6"
   },
   "devDependencies": {
@@ -33,7 +33,7 @@
     "fs-extra": "^8.1.0",
     "jest": "^25.1.0",
     "pollenium-frangipani": "^2.0.0",
-    "pollenium-gaillardia": "^2.1.1",
+    "pollenium-gaillardia": "^4.1.1",
     "pollenium-succory": "^3.0.0",
     "pollenium-toadflax": "^2.2.0",
     "solc": "^0.5.12",

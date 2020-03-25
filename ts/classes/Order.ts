@@ -7,7 +7,7 @@ import Bignumber from 'bignumber.js'
 export interface OrderStruct {
   salt: Uish;
   type: ORDER_TYPE;
-  target: Uintable;
+  expiration: Uintable;
   quotToken: Uish;
   variToken: Uish;
   tokenLimit: Uintable;
@@ -20,7 +20,7 @@ export class Order {
 
   readonly salt: Bytes32;
   readonly type: ORDER_TYPE;
-  readonly target: Uint256;
+  readonly expiration: Uint256;
   readonly quotToken: Address;
   readonly variToken: Address;
   readonly tokenLimit: Uint256;
@@ -35,7 +35,7 @@ export class Order {
 
     this.type = struct.type,
     this.salt = new Bytes32(struct.salt)
-    this.target = new Uint256(struct.target)
+    this.expiration = new Uint256(struct.expiration)
     this.quotToken = new Address(struct.quotToken)
     this.variToken = new Address(struct.variToken)
     this.tokenLimit = new Uint256(struct.tokenLimit)
@@ -76,13 +76,13 @@ export class Order {
 
     this.sugma = new Bytes(Uu.genConcat([
       this.salt,
-      this.target,
-      Uint8.fromNumber(this.type),
-      this.quotToken,
-      this.variToken,
+      this.expiration,
       this.priceNumer,
       this.priceDenom,
       this.tokenLimit,
+      this.quotToken,
+      this.variToken,
+      Uint8.fromNumber(this.type),
     ]))
     return this.sugma
   }

@@ -34,16 +34,19 @@ export class SignedOrder extends Order {
 
   public getEthersArg(): any {
     return [
-      this.getTrader().uu.toPhex(),
-      this.quotToken.uu.toPhex(),
-      this.variToken.uu.toPhex(),
+      this.expiration.uu.toPhex(),
       this.priceNumer.uu.toPhex(),
       this.priceDenom.uu.toPhex(),
       this.tokenLimit.uu.toPhex(),
-      this.signature.v.toNumber(),
       this.signature.r.uu.toPhex(),
       this.signature.s.uu.toPhex(),
-      this.getSignatureHash().uu.toPhex()
+      this.getSignatureHash().uu.toPhex(),
+      this.getTrader().uu.toPhex(),
+      this.quotToken.uu.toPhex(),
+      this.variToken.uu.toPhex(),
+      Uint8.fromNumber(this.type).uu.toPhex(),
+      this.signature.v.toNumber(),
+
     ]
   }
 
@@ -53,7 +56,7 @@ export class SignedOrder extends Order {
     }
     this.ligma = Uu.genConcat([
       this.salt,
-      this.target,
+      this.expiration,
       Uint8.fromNumber(this.type),
       this.quotToken,
       this.variToken,
@@ -71,7 +74,7 @@ export class SignedOrder extends Order {
   static fromLigma(uishLigma: Uish): SignedOrder {
     const ligma = Uu.wrap(uishLigma)
     const salt = new Uint256(ligma.u.slice(0, 32))
-    const target = new Uint256(ligma.u.slice(32, 64))
+    const expiration = new Uint256(ligma.u.slice(32, 64))
     const type: ORDER_TYPE = ligma.u[64]
     const quotToken = new Address(ligma.u.slice(65, 85))
     const variToken = new Address(ligma.u.slice(85, 105))
@@ -84,7 +87,7 @@ export class SignedOrder extends Order {
 
     const orderStruct: OrderStruct = {
       salt,
-      target,
+      expiration,
       type,
       quotToken,
       variToken,

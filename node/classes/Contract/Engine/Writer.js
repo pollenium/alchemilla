@@ -188,18 +188,13 @@ var EngineWriter = /** @class */ (function (_super) {
     };
     EngineWriter.prototype.execute = function (executionRequest) {
         return __awaiter(this, void 0, void 0, function () {
-            var blockNumber, args;
+            var args;
             var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        blockNumber = new pollenium_buttercup_1.Uint256(executionRequest.target);
                         args = [
-                            blockNumber.uu.toPhex(),
-                            executionRequest.signedBuyyOrders.map(function (signedOrder) {
-                                return signedOrder.getEthersArg();
-                            }),
-                            executionRequest.signedSellOrders.map(function (signedOrder) {
+                            executionRequest.signedOrders.map(function (signedOrder) {
                                 return signedOrder.getEthersArg();
                             }),
                             executionRequest.exchanges.map(function (exchange) {

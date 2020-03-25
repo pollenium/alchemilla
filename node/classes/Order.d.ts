@@ -5,7 +5,7 @@ import Bignumber from 'bignumber.js';
 export interface OrderStruct {
     salt: Uish;
     type: ORDER_TYPE;
-    target: Uintable;
+    expiration: Uintable;
     quotToken: Uish;
     variToken: Uish;
     tokenLimit: Uintable;
@@ -16,7 +16,7 @@ export declare class Order {
     readonly struct: OrderStruct;
     readonly salt: Bytes32;
     readonly type: ORDER_TYPE;
-    readonly target: Uint256;
+    readonly expiration: Uint256;
     readonly quotToken: Address;
     readonly variToken: Address;
     readonly tokenLimit: Uint256;

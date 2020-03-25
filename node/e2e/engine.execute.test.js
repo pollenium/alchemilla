@@ -87,6 +87,8 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
             var variTokenTrans = pollenium_buttercup_1.Uint256.fromNumber(fixture.solution.variTokenTrans);
             var quotTokenArbit = pollenium_buttercup_1.Uint256.fromNumber(fixture.solution.quotTokenArbit);
             var quotTokenTotal = quotTokenTrans.opAdd(quotTokenArbit);
+            var signedBuyyOrder;
+            var signedSellOrder;
             fixtures_1.traderNames.forEach(function (traderName) {
                 ts_enum_util_1.$enum(fixtures_1.TokenNames).forEach(function (tokenName) {
                     test(traderName + "'s " + tokenName + " balance should be " + fixtures_1.startBalance, function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -115,7 +117,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                     }); });
                 });
                 test('execute', function () { return __awaiter(void 0, void 0, void 0, function () {
-                    var blockNumber, buyyOrder, _a, _b, sellOrder, _c, _d, signedBuyyOrder, signedSellOrder, engineWriter;
+                    var block, buyyOrder, _a, _b, sellOrder, _c, _d, engineWriter;
                     return __generator(this, function (_e) {
                         switch (_e.label) {
                             case 0: return [4 /*yield*/, gaillardia_1.gaillardia.restoreSnapshot(snapshotId)];
@@ -124,13 +126,13 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                 return [4 /*yield*/, gaillardia_1.gaillardia.takeSnapshot()];
                             case 2:
                                 snapshotId = _e.sent();
-                                return [4 /*yield*/, gaillardia_1.gaillardia.fetchLatestBlockNumber()];
+                                return [4 /*yield*/, gaillardia_1.gaillardia.bellflower.fetchLatestBlock()];
                             case 3:
-                                blockNumber = _e.sent();
+                                block = _e.sent();
                                 _a = __1.Order.bind;
                                 _b = {
                                     salt: orderSalt,
-                                    target: blockNumber + 1,
+                                    expiration: block.number.opAdd(10),
                                     type: __1.ORDER_TYPE.BUYY
                                 };
                                 return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -146,7 +148,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                 _c = __1.Order.bind;
                                 _d = {
                                     salt: orderSalt,
-                                    target: blockNumber + 1,
+                                    expiration: block.number.opAdd(10),
                                     type: __1.ORDER_TYPE.SELL
                                 };
                                 return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
@@ -171,13 +173,11 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                             case 8:
                                 engineWriter = _e.sent();
                                 return [4 /*yield*/, engineWriter.execute({
-                                        target: blockNumber + 1,
-                                        signedBuyyOrders: [signedBuyyOrder],
-                                        signedSellOrders: [signedSellOrder],
+                                        signedOrders: [signedBuyyOrder, signedSellOrder],
                                         exchanges: [
                                             {
-                                                signedBuyyOrderIndex: pollenium_buttercup_1.Uint8.fromNumber(0),
-                                                signedSellOrderIndex: pollenium_buttercup_1.Uint8.fromNumber(0),
+                                                signedBuyyOrderIndex: 0,
+                                                signedSellOrderIndex: 1,
                                                 quotTokenTrans: quotTokenTrans,
                                                 variTokenTrans: variTokenTrans,
                                                 quotTokenArbit: quotTokenArbit
@@ -258,127 +258,24 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                         }
                     });
                 }); });
+                test('fills', function () { return __awaiter(void 0, void 0, void 0, function () {
+                    var buyyOrderFill, sellOrderFill;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, engineReader.fetchFill(signedBuyyOrder.getSignatureHash())];
+                            case 1:
+                                buyyOrderFill = _a.sent();
+                                return [4 /*yield*/, engineReader.fetchFill(signedSellOrder.getSignatureHash())];
+                            case 2:
+                                sellOrderFill = _a.sent();
+                                expect(buyyOrderFill.toNumber()).toBe(quotTokenTotal.toNumber());
+                                expect(sellOrderFill.toNumber()).toBe(variTokenTrans.toNumber());
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
             });
         });
         return [2 /*return*/];
     });
 }); });
-describe('multis', function () {
-    var multisFixtures = [
-        {
-            buyyOrdersCount: 1,
-            buyyOrderTokenLimit: 1,
-            sellOrdersCount: 1,
-            sellOrderTokenLimit: 1,
-            exchanges: [{
-                    buyyOrderIndex: 0,
-                    sellOrderIndex: 0
-                }]
-        },
-        {
-            buyyOrdersCount: 1,
-            buyyOrderTokenLimit: 5,
-            sellOrdersCount: 5,
-            sellOrderTokenLimit: 1,
-            exchanges: arrayOf(5, function (i) {
-                return {
-                    buyyOrderIndex: 0,
-                    sellOrderIndex: i
-                };
-            })
-        }
-    ];
-    multisFixtures.forEach(function (multisFixture, index) {
-        /*TODO: Add back */
-        return;
-        describe("multisFixture #" + index + ": [" + multisFixture.buyyOrdersCount + ", " + multisFixture.sellOrdersCount + ", " + multisFixture.exchanges.length + "]", function () {
-            it("should execute batch of orders", function () { return __awaiter(void 0, void 0, void 0, function () {
-                var blockNumber, buyyOrder, _a, _b, sellOrder, _c, _d, signedBuyyOrder, signedSellOrder, signedBuyyOrders, signedSellOrders, exchanges, i, i, i, exchangeFixture, engineWriter;
-                return __generator(this, function (_e) {
-                    switch (_e.label) {
-                        case 0: return [4 /*yield*/, gaillardia_1.gaillardia.restoreSnapshot(snapshotId)];
-                        case 1:
-                            _e.sent();
-                            return [4 /*yield*/, gaillardia_1.gaillardia.takeSnapshot()];
-                        case 2:
-                            snapshotId = _e.sent();
-                            return [4 /*yield*/, gaillardia_1.gaillardia.fetchLatestBlockNumber()];
-                        case 3:
-                            blockNumber = _e.sent();
-                            _a = __1.Order.bind;
-                            _b = {
-                                salt: orderSalt,
-                                target: blockNumber + 1,
-                                type: __1.ORDER_TYPE.BUYY
-                            };
-                            return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
-                        case 4:
-                            _b.quotToken = _e.sent();
-                            return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.WETH)];
-                        case 5:
-                            buyyOrder = new (_a.apply(__1.Order, [void 0, (_b.variToken = _e.sent(),
-                                    _b.tokenLimit = pollenium_buttercup_1.Uint256.fromNumber(multisFixture.buyyOrderTokenLimit),
-                                    _b.priceNumer = pollenium_buttercup_1.Uint256.fromNumber(1),
-                                    _b.priceDenom = pollenium_buttercup_1.Uint256.fromNumber(1),
-                                    _b)]))();
-                            _c = __1.Order.bind;
-                            _d = {
-                                salt: orderSalt,
-                                target: blockNumber + 1,
-                                type: __1.ORDER_TYPE.SELL
-                            };
-                            return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
-                        case 6:
-                            _d.quotToken = _e.sent();
-                            return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.WETH)];
-                        case 7:
-                            sellOrder = new (_c.apply(__1.Order, [void 0, (_d.variToken = _e.sent(),
-                                    _d.tokenLimit = pollenium_buttercup_1.Uint256.fromNumber(multisFixture.sellOrderTokenLimit),
-                                    _d.priceNumer = pollenium_buttercup_1.Uint256.fromNumber(1),
-                                    _d.priceDenom = pollenium_buttercup_1.Uint256.fromNumber(1),
-                                    _d)]))();
-                            signedBuyyOrder = new __1.SignedOrder({
-                                order: buyyOrder,
-                                signature: utils_1.getKeypair(fixtures_1.AccountNames.ALICE).getSignature(buyyOrder.getSugmaHash())
-                            });
-                            signedSellOrder = new __1.SignedOrder({
-                                order: sellOrder,
-                                signature: utils_1.getKeypair(fixtures_1.AccountNames.BOB).getSignature(sellOrder.getSugmaHash())
-                            });
-                            signedBuyyOrders = [];
-                            signedSellOrders = [];
-                            exchanges = [];
-                            for (i = 0; i < multisFixture.buyyOrdersCount; i++) {
-                                signedBuyyOrders.push(signedBuyyOrder);
-                            }
-                            for (i = 0; i < multisFixture.sellOrdersCount; i++) {
-                                signedSellOrders.push(signedSellOrder);
-                            }
-                            for (i = 0; i < multisFixture.exchanges.length; i++) {
-                                exchangeFixture = multisFixture.exchanges[i];
-                                exchanges.push({
-                                    signedBuyyOrderIndex: pollenium_buttercup_1.Uint8.fromNumber(exchangeFixture.buyyOrderIndex),
-                                    signedSellOrderIndex: pollenium_buttercup_1.Uint8.fromNumber(exchangeFixture.sellOrderIndex),
-                                    quotTokenTrans: pollenium_buttercup_1.Uint256.fromNumber(1),
-                                    variTokenTrans: pollenium_buttercup_1.Uint256.fromNumber(1),
-                                    quotTokenArbit: pollenium_buttercup_1.Uint256.fromNumber(0)
-                                });
-                            }
-                            return [4 /*yield*/, utils_1.fetchEngineWriter(fixtures_1.AccountNames.MONARCH_HOT)];
-                        case 8:
-                            engineWriter = _e.sent();
-                            return [4 /*yield*/, engineWriter.execute({
-                                    target: blockNumber + 1,
-                                    signedBuyyOrders: signedBuyyOrders,
-                                    signedSellOrders: signedSellOrders,
-                                    exchanges: exchanges
-                                })];
-                        case 9:
-                            _e.sent();
-                            return [2 /*return*/];
-                    }
-                });
-            }); });
-        });
-    });
-});

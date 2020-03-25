@@ -15,6 +15,7 @@ import { Uu } from 'pollenium-uvaursi'
 import { Address, Bytes32 } from 'pollenium-buttercup'
 import { THOUSAND } from 'pollenium-ursinia'
 import { genActionViaSignatureStruct } from '../'
+import { gaillardia } from './lib/gaillardia'
 
 require('./engine.test')
 require('./tokens.test')
@@ -134,12 +135,13 @@ $enum(TokenNames).forEach((tokenName) => {
   })
   traderNames.forEach((traderName) => {
     test(`sweeper should depositViaSignature 10 of ${traderName}'s ${tokenName}'`, async () => {
+      const block = await gaillardia.bellflower.fetchLatestBlock()
       const actionViaSignatureStruct = genActionViaSignatureStruct({
         fromPrivateKey: getKeypair(traderName).privateKey,
         to: getAccountAddress(traderName),
         token: await fetchOrDeployTokenAddress(tokenName),
         amount: 10,
-        expiration: new Date().getTime() + (10 * THOUSAND),
+        expiration: block.number.opAdd(10),
         nonce: Uu.genRandom(32),
         actionSalt: depositSalt
       })
@@ -166,12 +168,13 @@ $enum(TokenNames).forEach((tokenName) => {
 
   traderNames.forEach((traderName) => {
     test(`sweeper should withdrawViaSignature 10 of ${traderName}'s ${tokenName}'`, async () => {
+      const block = await gaillardia.bellflower.fetchLatestBlock()
       const actionViaSignatureStruct = genActionViaSignatureStruct({
         fromPrivateKey: getKeypair(traderName).privateKey,
         to: getAccountAddress(traderName),
         token: await fetchOrDeployTokenAddress(tokenName),
         amount: 10,
-        expiration: new Date().getTime() + (10 * THOUSAND),
+        expiration: block.number.opAdd(10),
         nonce: Uu.genRandom(32),
         actionSalt: withdrawSalt
       })
@@ -209,12 +212,13 @@ $enum(TokenNames).forEach((tokenName) => {
   })
   traderNames.forEach((traderName) => {
     test(`sweeper should depositViaSignature 10 of ${traderName}'s ${tokenName}'`, async () => {
+      const block = await gaillardia.bellflower.fetchLatestBlock()
       const actionViaSignatureStruct = genActionViaSignatureStruct({
         fromPrivateKey: getKeypair(traderName).privateKey,
         to: getAccountAddress(traderName),
         token: await fetchOrDeployTokenAddress(tokenName),
         amount: 10,
-        expiration: new Date().getTime() + (10 * THOUSAND),
+        expiration: block.number.opAdd(10),
         nonce: Uu.genRandom(32),
         actionSalt: depositSalt
       })

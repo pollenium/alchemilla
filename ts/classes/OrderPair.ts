@@ -1,5 +1,5 @@
 import { ORDER_TYPE } from '../enums'
-import { Address, Uint256, Uintable } from 'pollenium-buttercup'
+import { Address, Uint256, Bytes32, Uintable } from 'pollenium-buttercup'
 import { Order, OrderStruct } from './Order'
 import Bn from 'bn.js'
 
