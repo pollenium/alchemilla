@@ -133,7 +133,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                 _b = {
                                     salt: orderSalt,
                                     expiration: block.number.opAdd(10),
-                                    type: __1.OrderDirection.BUYY
+                                    direction: __1.OrderDirection.BUYY
                                 };
                                 return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
                             case 4:
@@ -149,7 +149,7 @@ pollenium_frangipani_1["default"].forEach(function (fixture, index) { return __a
                                 _d = {
                                     salt: orderSalt,
                                     expiration: block.number.opAdd(10),
-                                    type: __1.OrderDirection.SELL
+                                    direction: __1.OrderDirection.SELL
                                 };
                                 return [4 /*yield*/, utils_1.fetchOrDeployTokenAddress(fixtures_1.TokenNames.DAI)];
                             case 6:

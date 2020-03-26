@@ -21,10 +21,10 @@ var OrderPair = /** @class */ (function () {
         this.buyyOrder = struct.buyyOrder instanceof Order_1.Order ? this.buyyOrder : new Order_1.Order(this.buyyOrder);
         this.sellOrder = struct.sellOrder instanceof Order_1.Order ? this.sellOrder : new Order_1.Order(this.sellOrder);
         Object.assign(this, struct);
-        if (this.buyyOrder.type !== enums_1.OrderDirection.BUYY) {
+        if (this.buyyOrder.direction !== enums_1.OrderDirection.BUYY) {
             throw new InvalidBuyyOrderTypeError();
         }
-        if (this.sellOrder.type !== enums_1.OrderDirection.SELL) {
+        if (this.sellOrder.direction !== enums_1.OrderDirection.SELL) {
             throw new InvalidSellOrderTypeError();
         }
         if (!this.buyyOrder.quotToken.uu.getIsEqual(this.sellOrder.quotToken)) {

@@ -24,7 +24,7 @@ var bignumber_js_1 = __importDefault(require("bignumber.js"));
 var Order = /** @class */ (function () {
     function Order(struct) {
         this.struct = struct;
-        this.type = struct.type,
+        this.direction = struct.direction,
             this.salt = new pollenium_buttercup_1.Bytes32(struct.salt);
         this.expiration = new pollenium_buttercup_1.Uint256(struct.expiration);
         this.quotToken = new pollenium_buttercup_1.Address(struct.quotToken);
@@ -63,7 +63,7 @@ var Order = /** @class */ (function () {
             this.tokenLimit,
             this.quotToken,
             this.variToken,
-            pollenium_buttercup_1.Uint8.fromNumber(this.type),
+            pollenium_buttercup_1.Uint8.fromNumber(this.direction),
         ]));
         return this.sugma;
     };
@@ -87,7 +87,7 @@ var Order = /** @class */ (function () {
         return this.price;
     };
     Order.prototype.getLimitingToken = function () {
-        if (this.type === enums_1.OrderDirection.BUYY) {
+        if (this.direction === enums_1.OrderDirection.BUYY) {
             return this.quotToken;
         }
         else {

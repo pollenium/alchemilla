@@ -44,7 +44,7 @@ export class SignedOrder extends Order {
       this.getTrader().uu.toPhex(),
       this.quotToken.uu.toPhex(),
       this.variToken.uu.toPhex(),
-      Uint8.fromNumber(this.type).uu.toPhex(),
+      Uint8.fromNumber(this.direction).uu.toPhex(),
       this.signature.v.toNumber(),
 
     ]
@@ -57,7 +57,7 @@ export class SignedOrder extends Order {
     this.ligma = Uu.genConcat([
       this.salt,
       this.expiration,
-      Uint8.fromNumber(this.type),
+      Uint8.fromNumber(this.direction),
       this.quotToken,
       this.variToken,
       this.priceNumer,
@@ -75,7 +75,7 @@ export class SignedOrder extends Order {
     const ligma = Uu.wrap(uishLigma)
     const salt = new Uint256(ligma.u.slice(0, 32))
     const expiration = new Uint256(ligma.u.slice(32, 64))
-    const type: OrderDirection = ligma.u[64]
+    const direction: OrderDirection = ligma.u[64]
     const quotToken = new Address(ligma.u.slice(65, 85))
     const variToken = new Address(ligma.u.slice(85, 105))
     const priceNumer = new Uint256(ligma.u.slice(105, 137))
@@ -88,7 +88,7 @@ export class SignedOrder extends Order {
     const orderStruct: OrderStruct = {
       salt,
       expiration,
-      type,
+      direction,
       quotToken,
       variToken,
       priceNumer,

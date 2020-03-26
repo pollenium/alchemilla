@@ -44,7 +44,7 @@ var SignedOrder = /** @class */ (function (_super) {
             this.getTrader().uu.toPhex(),
             this.quotToken.uu.toPhex(),
             this.variToken.uu.toPhex(),
-            pollenium_buttercup_1.Uint8.fromNumber(this.type).uu.toPhex(),
+            pollenium_buttercup_1.Uint8.fromNumber(this.direction).uu.toPhex(),
             this.signature.v.toNumber(),
         ];
     };
@@ -55,7 +55,7 @@ var SignedOrder = /** @class */ (function (_super) {
         this.ligma = pollenium_uvaursi_1.Uu.genConcat([
             this.salt,
             this.expiration,
-            pollenium_buttercup_1.Uint8.fromNumber(this.type),
+            pollenium_buttercup_1.Uint8.fromNumber(this.direction),
             this.quotToken,
             this.variToken,
             this.priceNumer,
@@ -71,7 +71,7 @@ var SignedOrder = /** @class */ (function (_super) {
         var ligma = pollenium_uvaursi_1.Uu.wrap(uishLigma);
         var salt = new pollenium_buttercup_1.Uint256(ligma.u.slice(0, 32));
         var expiration = new pollenium_buttercup_1.Uint256(ligma.u.slice(32, 64));
-        var type = ligma.u[64];
+        var direction = ligma.u[64];
         var quotToken = new pollenium_buttercup_1.Address(ligma.u.slice(65, 85));
         var variToken = new pollenium_buttercup_1.Address(ligma.u.slice(85, 105));
         var priceNumer = new pollenium_buttercup_1.Uint256(ligma.u.slice(105, 137));
@@ -83,7 +83,7 @@ var SignedOrder = /** @class */ (function (_super) {
         var orderStruct = {
             salt: salt,
             expiration: expiration,
-            type: type,
+            direction: direction,
             quotToken: quotToken,
             variToken: variToken,
             priceNumer: priceNumer,

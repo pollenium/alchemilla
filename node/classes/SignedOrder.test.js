@@ -14,7 +14,7 @@ test('getLigma/fromLigma', function () {
     var signedOrder1 = SignedOrder_1.SignedOrder.fromLigma(ligma);
     expect(signedOrder0.salt.uu.getIsEqual(signedOrder1.salt.uu)).toBe(true);
     expect(signedOrder0.expiration.uu.getIsEqual(signedOrder1.expiration.uu)).toBe(true);
-    expect(signedOrder0.type).toBe(signedOrder1.type);
+    expect(signedOrder0.direction).toBe(signedOrder1.direction);
     expect(signedOrder0.quotToken.uu.getIsEqual(signedOrder1.quotToken.uu)).toBe(true);
     expect(signedOrder0.variToken.uu.getIsEqual(signedOrder1.variToken.uu)).toBe(true);
     expect(signedOrder0.priceNumer.uu.getIsEqual(signedOrder1.priceNumer.uu)).toBe(true);

@@ -6,7 +6,7 @@ import Bignumber from 'bignumber.js'
 
 export interface OrderStruct {
   salt: Uish;
-  type: OrderDirection;
+  direction: OrderDirection;
   expiration: Uintable;
   quotToken: Uish;
   variToken: Uish;
@@ -19,7 +19,7 @@ export interface OrderStruct {
 export class Order {
 
   readonly salt: Bytes32;
-  readonly type: OrderDirection;
+  readonly direction: OrderDirection;
   readonly expiration: Uint256;
   readonly quotToken: Address;
   readonly variToken: Address;
@@ -33,7 +33,7 @@ export class Order {
 
   constructor(readonly struct: OrderStruct) {
 
-    this.type = struct.type,
+    this.direction = struct.direction,
     this.salt = new Bytes32(struct.salt)
     this.expiration = new Uint256(struct.expiration)
     this.quotToken = new Address(struct.quotToken)
@@ -82,7 +82,7 @@ export class Order {
       this.tokenLimit,
       this.quotToken,
       this.variToken,
-      Uint8.fromNumber(this.type),
+      Uint8.fromNumber(this.direction),
     ]))
     return this.sugma
   }
@@ -111,7 +111,7 @@ export class Order {
   }
 
   getLimitingToken(): Address {
-    if (this.type === OrderDirection.BUYY) {
+    if (this.direction === OrderDirection.BUYY) {
       return this.quotToken
     } else {
       return this.variToken

@@ -29,7 +29,7 @@ frangipani.forEach((fixture, index) => {
   const buyyOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.BUYY,
+    direction: OrderDirection.BUYY,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(fixture.orders.buyy.tokenLimit),
@@ -40,7 +40,7 @@ frangipani.forEach((fixture, index) => {
   const sellOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.SELL,
+    direction: OrderDirection.SELL,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(fixture.orders.sell.tokenLimit),
@@ -67,7 +67,7 @@ test('InvalidBuyyOrderTypeError', () => {
   const buyyOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.SELL,
+    direction: OrderDirection.SELL,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),
@@ -78,7 +78,7 @@ test('InvalidBuyyOrderTypeError', () => {
   const sellOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.SELL,
+    direction: OrderDirection.SELL,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),
@@ -95,7 +95,7 @@ test('InvalidSellOrderTypeError', () => {
   const buyyOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.BUYY,
+    direction: OrderDirection.BUYY,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),
@@ -106,7 +106,7 @@ test('InvalidSellOrderTypeError', () => {
   const sellOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.BUYY,
+    direction: OrderDirection.BUYY,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),
@@ -123,7 +123,7 @@ test('QuotTokenMismatchError', () => {
   const buyyOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.BUYY,
+    direction: OrderDirection.BUYY,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),
@@ -134,7 +134,7 @@ test('QuotTokenMismatchError', () => {
   const sellOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.SELL,
+    direction: OrderDirection.SELL,
     quotToken: usdc,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),
@@ -152,7 +152,7 @@ test('VariTokenMismatchError', () => {
   const buyyOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.BUYY,
+    direction: OrderDirection.BUYY,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),
@@ -163,7 +163,7 @@ test('VariTokenMismatchError', () => {
   const sellOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.SELL,
+    direction: OrderDirection.SELL,
     quotToken: dai,
     variToken: mkr,
     tokenLimit: Uint256.fromNumber(1),
@@ -180,7 +180,7 @@ test('PriceConstraintError', () => {
   const buyyOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.BUYY,
+    direction: OrderDirection.BUYY,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),
@@ -191,7 +191,7 @@ test('PriceConstraintError', () => {
   const sellOrder = new Order({
     salt,
     expiration,
-    type: OrderDirection.SELL,
+    direction: OrderDirection.SELL,
     quotToken: dai,
     variToken: weth,
     tokenLimit: Uint256.fromNumber(1),

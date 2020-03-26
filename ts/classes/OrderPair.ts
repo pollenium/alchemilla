@@ -21,11 +21,11 @@ export class OrderPair {
 
     Object.assign(this, struct)
 
-    if (this.buyyOrder.type !== OrderDirection.BUYY) {
+    if (this.buyyOrder.direction !== OrderDirection.BUYY) {
       throw new InvalidBuyyOrderTypeError()
     }
 
-    if (this.sellOrder.type !== OrderDirection.SELL) {
+    if (this.sellOrder.direction !== OrderDirection.SELL) {
       throw new InvalidSellOrderTypeError()
     }
 

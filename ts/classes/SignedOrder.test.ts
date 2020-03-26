@@ -28,7 +28,7 @@ test('getLigma/fromLigma', () => {
       signedOrder1.expiration.uu
     )
   ).toBe(true)
-  expect(signedOrder0.type).toBe(signedOrder1.type)
+  expect(signedOrder0.direction).toBe(signedOrder1.direction)
   expect(
     signedOrder0.quotToken.uu.getIsEqual(
       signedOrder1.quotToken.uu

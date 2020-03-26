@@ -15,7 +15,7 @@ export declare const keypair: Keypair;
 export declare const validOrderStruct: {
     salt: Uu;
     expiration: number;
-    type: OrderDirection;
+    direction: OrderDirection;
     quotToken: Address;
     variToken: Address;
     originator: Address;

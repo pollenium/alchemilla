@@ -69,7 +69,7 @@ frangipani.forEach(async (fixture, index) => {
         const buyyOrder = new Order({
           salt: orderSalt,
           expiration: block.number.opAdd(10),
-          type: OrderDirection.BUYY,
+          direction: OrderDirection.BUYY,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
           tokenLimit: Uint256.fromNumber(fixture.orders.buyy.tokenLimit),
@@ -80,7 +80,7 @@ frangipani.forEach(async (fixture, index) => {
         const sellOrder = new Order({
           salt: orderSalt,
           expiration: block.number.opAdd(10),
-          type: OrderDirection.SELL,
+          direction: OrderDirection.SELL,
           quotToken: await fetchOrDeployTokenAddress(TokenNames.DAI),
           variToken: await fetchOrDeployTokenAddress(TokenNames.WETH),
           tokenLimit: Uint256.fromNumber(fixture.orders.sell.tokenLimit),

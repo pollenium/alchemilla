@@ -21,7 +21,7 @@ export const keypair = Keypair.generate()
 export const validOrderStruct = {
   salt: Uu.genRandom(32),
   expiration: 0,
-  type: OrderDirection.BUYY,
+  direction: OrderDirection.BUYY,
   quotToken: usdc,
   variToken: weth,
   originator: keypair.getAddress(),
