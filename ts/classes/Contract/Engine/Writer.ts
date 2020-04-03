@@ -6,15 +6,17 @@ import { engineOutput } from '../../../'
 import { SignedOrder } from '../../SignedOrder'
 import { SignatureStruct, Signature } from 'pollenium-ilex'
 
+export interface Exchange {
+  signedBuyyOrderIndex: Uintable,
+  signedSellOrderIndex: Uintable,
+  quotTokenTrans: Uintable,
+  variTokenTrans: Uintable,
+  quotTokenArbit: Uintable
+}
+
 export interface ExecutionRequest {
   signedOrders: Array<SignedOrder>,
-  exchanges: Array<{
-    signedBuyyOrderIndex: Uintable,
-    signedSellOrderIndex: Uintable,
-    quotTokenTrans: Uintable,
-    variTokenTrans: Uintable,
-    quotTokenArbit: Uintable
-  }>
+  exchanges: Array<Exchange>
 }
 
 export interface ActionViaSignatureStruct {

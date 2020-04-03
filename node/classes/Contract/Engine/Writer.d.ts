@@ -3,15 +3,16 @@ import { Uish } from 'pollenium-uvaursi';
 import { ContractWriter, ContractWriterChildStruct } from 'pollenium-clover';
 import { SignedOrder } from '../../SignedOrder';
 import { SignatureStruct } from 'pollenium-ilex';
+export interface Exchange {
+    signedBuyyOrderIndex: Uintable;
+    signedSellOrderIndex: Uintable;
+    quotTokenTrans: Uintable;
+    variTokenTrans: Uintable;
+    quotTokenArbit: Uintable;
+}
 export interface ExecutionRequest {
     signedOrders: Array<SignedOrder>;
-    exchanges: Array<{
-        signedBuyyOrderIndex: Uintable;
-        signedSellOrderIndex: Uintable;
-        quotTokenTrans: Uintable;
-        variTokenTrans: Uintable;
-        quotTokenArbit: Uintable;
-    }>;
+    exchanges: Array<Exchange>;
 }
 export interface ActionViaSignatureStruct {
     to: Uish;
