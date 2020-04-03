@@ -5,7 +5,7 @@ import { OrderPair } from './OrderPair'
 import { StateFetcher } from './StateFetcher'
 import Bn from 'bn.js'
 
-interface Solution {
+export interface Solution {
   quotTokenTrans: Uint256,
   variTokenTrans: Uint256,
   quotTokenArbit: Uint256

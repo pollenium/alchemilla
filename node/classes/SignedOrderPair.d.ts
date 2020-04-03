@@ -2,7 +2,7 @@ import { Address, Uint256 } from 'pollenium-buttercup';
 import { SignedOrder } from './SignedOrder';
 import { OrderPair } from './OrderPair';
 import { StateFetcher } from './StateFetcher';
-interface Solution {
+export interface Solution {
     quotTokenTrans: Uint256;
     variTokenTrans: Uint256;
     quotTokenArbit: Uint256;
@@ -18,4 +18,3 @@ export declare class SignedOrderPair extends OrderPair {
     });
     calcSolution(stateFetcher: StateFetcher): Promise<Solution>;
 }
-export {};

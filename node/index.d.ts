@@ -4,7 +4,7 @@ export { OrderDirection } from './enums';
 export { Order, OrderStruct } from './classes/Order';
 export { SignedOrder, SignedOrderStruct } from './classes/SignedOrder';
 export { OrderPair } from './classes/OrderPair';
-export { SignedOrderPair } from './classes/SignedOrderPair';
+export { SignedOrderPair, Solution } from './classes/SignedOrderPair';
 export { StateFetcher } from './classes/StateFetcher';
 export { EngineReader } from './classes/Contract/Engine/Reader';
 export { EngineWriter, ExecutionRequest, ActionViaSignatureStruct } from './classes/Contract/Engine/Writer';
