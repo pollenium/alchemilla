@@ -2,9 +2,9 @@ import { ethers } from 'ethers'
 import { Address, Uint256, Bytes32 } from 'pollenium-buttercup'
 import { Uu, Uish } from 'pollenium-uvaursi'
 import { ContractReader, ContractReaderChildStruct } from 'pollenium-clover'
-import { engineOutput } from '../../../'
+import { engineOutput, StateFetcher } from '../../../'
 
-export class EngineReader extends ContractReader {
+export class EngineReader extends ContractReader implements StateFetcher {
 
   constructor(struct: ContractReaderChildStruct) {
     super({

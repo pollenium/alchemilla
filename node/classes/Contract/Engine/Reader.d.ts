@@ -1,7 +1,8 @@
 import { Address, Uint256, Bytes32 } from 'pollenium-buttercup';
 import { Uish } from 'pollenium-uvaursi';
 import { ContractReader, ContractReaderChildStruct } from 'pollenium-clover';
-export declare class EngineReader extends ContractReader {
+import { StateFetcher } from '../../../';
+export declare class EngineReader extends ContractReader implements StateFetcher {
     constructor(struct: ContractReaderChildStruct);
     fetchOrderSalt(): Promise<Bytes32>;
     fetchDepositSalt(): Promise<Bytes32>;

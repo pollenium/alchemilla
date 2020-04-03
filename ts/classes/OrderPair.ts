@@ -1,6 +1,7 @@
 import { OrderDirection } from '../enums'
 import { Address, Uint256, Bytes32, Uintable } from 'pollenium-buttercup'
 import { Order, OrderStruct } from './Order'
+import { StateFetcher } from './StateFetcher'
 import Bn from 'bn.js'
 
 
@@ -11,13 +12,13 @@ export class OrderPair {
   public quotToken: Address;
   public variToken: Address;
 
-  constructor(readonly struct: {
-    buyyOrder: Order | OrderStruct,
-    sellOrder: Order | OrderStruct
+  constructor(struct: {
+    buyyOrder: Order,
+    sellOrder: Order
   }) {
 
-    this.buyyOrder = struct.buyyOrder instanceof Order ? this.buyyOrder : new Order(this.buyyOrder)
-    this.sellOrder = struct.sellOrder instanceof Order ? this.sellOrder : new Order(this.sellOrder)
+    this.buyyOrder = struct.buyyOrder
+    this.sellOrder = struct.sellOrder
 
     Object.assign(this, struct)
 
@@ -45,53 +46,6 @@ export class OrderPair {
     this.variToken = this.buyyOrder.variToken
   }
 
-  getSolution(struct: {
-    buyyOrderTokenFilled: Uintable,
-    buyyOrderTokenBalance: Uintable,
-    sellOrderTokenFilled: Uintable,
-    sellOrderTokenBalance: Uintable
-  }): {
-    quotTokenTrans: Uint256,
-    variTokenTrans: Uint256,
-    quotTokenArbit: Uint256
-  } {
-
-    const quotTokenAvail = this.buyyOrder.getTokenAvail({
-      tokenFilled: struct.buyyOrderTokenFilled,
-      tokenBalance: struct.buyyOrderTokenBalance
-    })
-    const variTokenAvail = this.sellOrder.getTokenAvail({
-      tokenFilled: struct.sellOrderTokenFilled,
-      tokenBalance: struct.sellOrderTokenBalance
-    })
-
-    const buyyOrderVariTokenTransMax
-      = quotTokenAvail
-        .opMul(this.buyyOrder.priceDenom)
-        .opDiv(this.buyyOrder.priceNumer)
-
-    const variTokenTrans
-      = (buyyOrderVariTokenTransMax.compLt(variTokenAvail))
-      ? buyyOrderVariTokenTransMax
-      : variTokenAvail
-
-    const quotTokenTrans
-      = variTokenTrans
-        .opMul(this.sellOrder.priceNumer)
-        .opDiv(this.sellOrder.priceDenom)
-
-    const quotTokenArbit
-      = variTokenTrans
-        .opMul(this.buyyOrder.priceNumer)
-        .opDiv(this.buyyOrder.priceDenom)
-        .opSub(quotTokenTrans)
-
-    return {
-      quotTokenTrans,
-      quotTokenArbit,
-      variTokenTrans
-    }
-  }
 }
 
 export class InvalidBuyyOrderTypeError extends Error {

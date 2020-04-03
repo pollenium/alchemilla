@@ -30,11 +30,6 @@ export declare class Order {
     getSugmaHash(): Bytes32;
     getPrice(): Bignumber;
     getLimitingToken(): Address;
-    getTokenUnfilled(tokenFilledUintable: Uintable): Uint256;
-    getTokenAvail(struct: {
-        tokenFilled: Uintable;
-        tokenBalance: Uintable;
-    }): Uint256;
 }
 export declare class QuotVariTokenMatchError extends Error {
     constructor(token: Address);

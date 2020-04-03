@@ -94,21 +94,6 @@ var Order = /** @class */ (function () {
             return this.variToken;
         }
     };
-    Order.prototype.getTokenUnfilled = function (tokenFilledUintable) {
-        var tokenFilled = new pollenium_buttercup_1.Uint256(tokenFilledUintable);
-        return this.tokenLimit.opSub(tokenFilled);
-    };
-    Order.prototype.getTokenAvail = function (struct) {
-        var tokenFilled = new pollenium_buttercup_1.Uint256(struct.tokenFilled);
-        var tokenBalance = new pollenium_buttercup_1.Uint256(struct.tokenBalance);
-        var tokenUnfilled = this.getTokenUnfilled(tokenFilled);
-        if (tokenUnfilled.compLt(tokenBalance)) {
-            return tokenUnfilled;
-        }
-        else {
-            return tokenBalance;
-        }
-    };
     return Order;
 }());
 exports.Order = Order;

@@ -14,12 +14,10 @@ var __extends = (this && this.__extends) || (function () {
 })();
 exports.__esModule = true;
 var enums_1 = require("../enums");
-var Order_1 = require("./Order");
 var OrderPair = /** @class */ (function () {
     function OrderPair(struct) {
-        this.struct = struct;
-        this.buyyOrder = struct.buyyOrder instanceof Order_1.Order ? this.buyyOrder : new Order_1.Order(this.buyyOrder);
-        this.sellOrder = struct.sellOrder instanceof Order_1.Order ? this.sellOrder : new Order_1.Order(this.sellOrder);
+        this.buyyOrder = struct.buyyOrder;
+        this.sellOrder = struct.sellOrder;
         Object.assign(this, struct);
         if (this.buyyOrder.direction !== enums_1.OrderDirection.BUYY) {
             throw new InvalidBuyyOrderTypeError();
@@ -39,34 +37,6 @@ var OrderPair = /** @class */ (function () {
         this.quotToken = this.buyyOrder.quotToken,
             this.variToken = this.buyyOrder.variToken;
     }
-    OrderPair.prototype.getSolution = function (struct) {
-        var quotTokenAvail = this.buyyOrder.getTokenAvail({
-            tokenFilled: struct.buyyOrderTokenFilled,
-            tokenBalance: struct.buyyOrderTokenBalance
-        });
-        var variTokenAvail = this.sellOrder.getTokenAvail({
-            tokenFilled: struct.sellOrderTokenFilled,
-            tokenBalance: struct.sellOrderTokenBalance
-        });
-        var buyyOrderVariTokenTransMax = quotTokenAvail
-            .opMul(this.buyyOrder.priceDenom)
-            .opDiv(this.buyyOrder.priceNumer);
-        var variTokenTrans = (buyyOrderVariTokenTransMax.compLt(variTokenAvail))
-            ? buyyOrderVariTokenTransMax
-            : variTokenAvail;
-        var quotTokenTrans = variTokenTrans
-            .opMul(this.sellOrder.priceNumer)
-            .opDiv(this.sellOrder.priceDenom);
-        var quotTokenArbit = variTokenTrans
-            .opMul(this.buyyOrder.priceNumer)
-            .opDiv(this.buyyOrder.priceDenom)
-            .opSub(quotTokenTrans);
-        return {
-            quotTokenTrans: quotTokenTrans,
-            quotTokenArbit: quotTokenArbit,
-            variTokenTrans: variTokenTrans
-        };
-    };
     return OrderPair;
 }());
 exports.OrderPair = OrderPair;

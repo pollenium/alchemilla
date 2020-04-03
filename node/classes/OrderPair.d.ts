@@ -1,28 +1,14 @@
-import { Address, Uint256, Uintable } from 'pollenium-buttercup';
-import { Order, OrderStruct } from './Order';
+import { Address } from 'pollenium-buttercup';
+import { Order } from './Order';
 export declare class OrderPair {
-    readonly struct: {
-        buyyOrder: Order | OrderStruct;
-        sellOrder: Order | OrderStruct;
-    };
     buyyOrder: Order;
     sellOrder: Order;
     quotToken: Address;
     variToken: Address;
     constructor(struct: {
-        buyyOrder: Order | OrderStruct;
-        sellOrder: Order | OrderStruct;
+        buyyOrder: Order;
+        sellOrder: Order;
     });
-    getSolution(struct: {
-        buyyOrderTokenFilled: Uintable;
-        buyyOrderTokenBalance: Uintable;
-        sellOrderTokenFilled: Uintable;
-        sellOrderTokenBalance: Uintable;
-    }): {
-        quotTokenTrans: Uint256;
-        variTokenTrans: Uint256;
-        quotTokenArbit: Uint256;
-    };
 }
 export declare class InvalidBuyyOrderTypeError extends Error {
     constructor();

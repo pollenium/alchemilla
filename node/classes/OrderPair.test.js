@@ -1,9 +1,5 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 exports.__esModule = true;
-var pollenium_frangipani_1 = __importDefault(require("pollenium-frangipani"));
 var enums_1 = require("../enums");
 var __1 = require("../");
 var __2 = require("../");
@@ -13,45 +9,6 @@ var fixtures_1 = require("../fixtures");
 var pollenium_uvaursi_1 = require("pollenium-uvaursi");
 var salt = pollenium_uvaursi_1.Uu.genRandom(32);
 var expiration = new pollenium_buttercup_1.Bytes32(pollenium_uvaursi_1.Uu.genFill({ length: 32, fill: 255 }));
-pollenium_frangipani_1["default"].forEach(function (fixture, index) {
-    var chainState = {
-        buyyOrderTokenFilled: pollenium_buttercup_1.Uint256.fromNumber(fixture.chainState.buyyOrderTokenFilled),
-        sellOrderTokenFilled: pollenium_buttercup_1.Uint256.fromNumber(fixture.chainState.sellOrderTokenFilled),
-        buyyOrderTokenBalance: pollenium_buttercup_1.Uint256.fromNumber(fixture.chainState.buyyOrderTokenBalance),
-        sellOrderTokenBalance: pollenium_buttercup_1.Uint256.fromNumber(fixture.chainState.sellOrderTokenBalance)
-    };
-    var buyyOrder = new __1.Order({
-        salt: salt,
-        expiration: expiration,
-        direction: enums_1.OrderDirection.BUYY,
-        quotToken: fixtures_1.dai,
-        variToken: fixtures_1.weth,
-        tokenLimit: pollenium_buttercup_1.Uint256.fromNumber(fixture.orders.buyy.tokenLimit),
-        priceNumer: pollenium_buttercup_1.Uint256.fromNumber(fixture.orders.buyy.priceNumer),
-        priceDenom: pollenium_buttercup_1.Uint256.fromNumber(fixture.orders.buyy.priceDenom)
-    });
-    var sellOrder = new __1.Order({
-        salt: salt,
-        expiration: expiration,
-        direction: enums_1.OrderDirection.SELL,
-        quotToken: fixtures_1.dai,
-        variToken: fixtures_1.weth,
-        tokenLimit: pollenium_buttercup_1.Uint256.fromNumber(fixture.orders.sell.tokenLimit),
-        priceNumer: pollenium_buttercup_1.Uint256.fromNumber(fixture.orders.sell.priceNumer),
-        priceDenom: pollenium_buttercup_1.Uint256.fromNumber(fixture.orders.sell.priceDenom)
-    });
-    var orderPair = new __2.OrderPair({ buyyOrder: buyyOrder, sellOrder: sellOrder });
-    var solution = orderPair.getSolution(chainState);
-    test("order pair #" + index + ": quotTokenTrans", function () {
-        expect(solution.quotTokenTrans.toNumber()).toBe(fixture.solution.quotTokenTrans);
-    });
-    test("order pair #" + index + ": variTokenTrans", function () {
-        expect(solution.variTokenTrans.toNumber()).toBe(fixture.solution.variTokenTrans);
-    });
-    test("order pair #" + index + ": quotTokenArbit", function () {
-        expect(solution.quotTokenArbit.toNumber()).toBe(fixture.solution.quotTokenArbit);
-    });
-});
 test('InvalidBuyyOrderTypeError', function () {
     var buyyOrder = new __1.Order({
         salt: salt,

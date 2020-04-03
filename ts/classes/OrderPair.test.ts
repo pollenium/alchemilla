@@ -1,4 +1,3 @@
-import frangipani from 'pollenium-frangipani'
 import { OrderDirection } from '../enums'
 import { Order } from '../'
 import { OrderPair } from '../'
@@ -16,52 +15,6 @@ import { Uu } from 'pollenium-uvaursi'
 
 const salt = Uu.genRandom(32)
 const expiration = new Bytes32(Uu.genFill({ length: 32, fill: 255 }))
-
-frangipani.forEach((fixture, index) => {
-
-  const chainState = {
-    buyyOrderTokenFilled: Uint256.fromNumber(fixture.chainState.buyyOrderTokenFilled),
-    sellOrderTokenFilled: Uint256.fromNumber(fixture.chainState.sellOrderTokenFilled),
-    buyyOrderTokenBalance: Uint256.fromNumber(fixture.chainState.buyyOrderTokenBalance),
-    sellOrderTokenBalance: Uint256.fromNumber(fixture.chainState.sellOrderTokenBalance)
-  }
-
-  const buyyOrder = new Order({
-    salt,
-    expiration,
-    direction: OrderDirection.BUYY,
-    quotToken: dai,
-    variToken: weth,
-    tokenLimit: Uint256.fromNumber(fixture.orders.buyy.tokenLimit),
-    priceNumer: Uint256.fromNumber(fixture.orders.buyy.priceNumer),
-    priceDenom: Uint256.fromNumber(fixture.orders.buyy.priceDenom)
-  })
-
-  const sellOrder = new Order({
-    salt,
-    expiration,
-    direction: OrderDirection.SELL,
-    quotToken: dai,
-    variToken: weth,
-    tokenLimit: Uint256.fromNumber(fixture.orders.sell.tokenLimit),
-    priceNumer: Uint256.fromNumber(fixture.orders.sell.priceNumer),
-    priceDenom: Uint256.fromNumber(fixture.orders.sell.priceDenom),
-  })
-
-  const orderPair = new OrderPair({ buyyOrder, sellOrder })
-  const solution = orderPair.getSolution(chainState)
-
-  test(`order pair #${index}: quotTokenTrans`, () => {
-    expect(solution.quotTokenTrans.toNumber()).toBe(fixture.solution.quotTokenTrans)
-  })
-  test(`order pair #${index}: variTokenTrans`, () => {
-    expect(solution.variTokenTrans.toNumber()).toBe(fixture.solution.variTokenTrans)
-  })
-  test(`order pair #${index}: quotTokenArbit`, () => {
-    expect(solution.quotTokenArbit.toNumber()).toBe(fixture.solution.quotTokenArbit)
-  })
-
-})
 
 test('InvalidBuyyOrderTypeError', () => {
   const buyyOrder = new Order({

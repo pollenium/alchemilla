@@ -118,26 +118,6 @@ export class Order {
     }
   }
 
-
-  getTokenUnfilled(tokenFilledUintable: Uintable): Uint256 {
-    const tokenFilled = new Uint256(tokenFilledUintable)
-    return this.tokenLimit.opSub(tokenFilled)
-  }
-
-  getTokenAvail(struct: {
-    tokenFilled: Uintable,
-    tokenBalance: Uintable
-  }): Uint256 {
-    const tokenFilled = new Uint256(struct.tokenFilled)
-    const tokenBalance = new Uint256(struct.tokenBalance)
-    const tokenUnfilled = this.getTokenUnfilled(tokenFilled)
-    if (tokenUnfilled.compLt(tokenBalance)) {
-      return tokenUnfilled
-    } else {
-      return tokenBalance
-    }
-  }
-
 }
 
 export class QuotVariTokenMatchError extends Error {
