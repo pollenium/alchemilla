@@ -17,6 +17,7 @@ var pollenium_buttercup_1 = require("pollenium-buttercup");
 var pollenium_ilex_1 = require("pollenium-ilex");
 var Order_1 = require("./Order");
 var pollenium_uvaursi_1 = require("pollenium-uvaursi");
+var pollenium_ilex_2 = require("pollenium-ilex");
 var web3_utils_1 = require("web3-utils");
 var SignedOrder = /** @class */ (function (_super) {
     __extends(SignedOrder, _super);
@@ -113,6 +114,14 @@ var SignedOrder = /** @class */ (function (_super) {
         }
         this.priority = new pollenium_buttercup_1.Uint256(this.getSignatureHash().u.slice().reverse());
         return this.priority;
+    };
+    SignedOrder.gen = function (struct) {
+        var keypair = new pollenium_ilex_2.Keypair(struct.privateKey);
+        var order = new Order_1.Order(struct.order);
+        return new SignedOrder({
+            order: order,
+            signature: keypair.getSignature(order.getSugmaHash())
+        });
     };
     return SignedOrder;
 }(Order_1.Order));

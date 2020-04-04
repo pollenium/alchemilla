@@ -4,12 +4,11 @@ var Order_1 = require("./Order");
 var SignedOrder_1 = require("./SignedOrder");
 var fixtures_1 = require("../fixtures");
 var order = new Order_1.Order(fixtures_1.validOrderStruct);
-var signature = fixtures_1.keypair.getSignature(order.getSugmaHash());
 test('Order -> SignedOrder', function () {
-    new SignedOrder_1.SignedOrder({ order: order, signature: signature });
+    SignedOrder_1.SignedOrder.gen({ order: order, privateKey: fixtures_1.keypair.privateKey });
 });
 test('getLigma/fromLigma', function () {
-    var signedOrder0 = new SignedOrder_1.SignedOrder({ order: order, signature: signature });
+    var signedOrder0 = SignedOrder_1.SignedOrder.gen({ order: order, privateKey: fixtures_1.keypair.privateKey });
     var ligma = signedOrder0.getLigma();
     var signedOrder1 = SignedOrder_1.SignedOrder.fromLigma(ligma);
     expect(signedOrder0.salt.uu.getIsEqual(signedOrder1.salt.uu)).toBe(true);

@@ -3,6 +3,7 @@ import { Bytes, Address, Bytes32, Uint8, Uint256 } from 'pollenium-buttercup'
 import { Signature, SignatureStruct } from 'pollenium-ilex'
 import { Order, OrderStruct } from './Order'
 import { Uu, Uish } from 'pollenium-uvaursi'
+import { Keypair } from 'pollenium-ilex'
 import { soliditySha3 } from 'web3-utils'
 
 export interface SignedOrderStruct {
@@ -123,5 +124,15 @@ export class SignedOrder extends Order {
     this.priority = new Uint256(this.getSignatureHash().u.slice().reverse())
     return this.priority
   }
+
+  static gen(struct: { order: Order | OrderStruct, privateKey: Uish }): SignedOrder {
+    const keypair = new Keypair(struct.privateKey)
+    const order = new Order(struct.order)
+    return new SignedOrder({
+      order,
+      signature: keypair.getSignature(order.getSugmaHash())
+    })
+  }
+
 
 }

@@ -19,4 +19,8 @@ export declare class SignedOrder extends Order {
     static fromLigma(uishLigma: Uish): SignedOrder;
     getSignatureHash(): Bytes32;
     getPriority(): Uint256;
+    static gen(struct: {
+        order: Order | OrderStruct;
+        privateKey: Uish;
+    }): SignedOrder;
 }

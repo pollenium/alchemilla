@@ -5,16 +5,13 @@ import { Uint8, Bytes32 } from 'pollenium-buttercup'
 import { Signature } from 'pollenium-ilex'
 
 const order = new Order(validOrderStruct)
-const signature = keypair.getSignature(
-  order.getSugmaHash()
-)
 
 test('Order -> SignedOrder', () => {
-  new SignedOrder({ order, signature })
+  SignedOrder.gen({ order, privateKey: keypair.privateKey})
 })
 
 test('getLigma/fromLigma', () => {
-  const signedOrder0 = new SignedOrder({ order, signature })
+  const signedOrder0 = SignedOrder.gen({ order, privateKey: keypair.privateKey })
   const ligma = signedOrder0.getLigma()
   const signedOrder1 = SignedOrder.fromLigma(ligma)
 
