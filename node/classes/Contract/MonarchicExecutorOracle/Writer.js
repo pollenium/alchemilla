@@ -72,14 +72,8 @@ var MonarchicExecutorOracleWriter = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var hot;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        hot = new pollenium_buttercup_1.Address(hotUish);
-                        return [4 /*yield*/, this.ethersContract.setHot(hot.uu.toPhex())];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                hot = new pollenium_buttercup_1.Address(hotUish);
+                return [2 /*return*/, this.genStateChange(this.ethersContract.setHot(hot.uu.toPhex()))];
             });
         });
     };
@@ -87,14 +81,8 @@ var MonarchicExecutorOracleWriter = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var cold;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        cold = new pollenium_buttercup_1.Address(coldUish);
-                        return [4 /*yield*/, this.ethersContract.setCold(cold.uu.toPhex())];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                cold = new pollenium_buttercup_1.Address(coldUish);
+                return [2 /*return*/, this.genStateChange(this.ethersContract.setCold(cold.uu.toPhex()))];
             });
         });
     };

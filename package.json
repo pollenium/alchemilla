@@ -7,7 +7,7 @@
     "compile": "succory && tsc",
     "tsc": "tsc",
     "succory": "succory",
-    "jest": "jest"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,9 +23,10 @@
     "bignumber.js": "^9.0.0",
     "ethereumjs-abi": "^0.6.8",
     "openzeppelin-solidity": "^2.5.0",
-    "pollenium-clover": "^6.1.2",
+    "pollenium-buttercup": "^19.6.1",
+    "pollenium-clover": "^7.0.0",
     "pollenium-ilex": "^9.3.0",
-    "pollenium-uvaursi": "^8.7.0",
+    "pollenium-uvaursi": "^8.11.0",
     "web3-utils": "^1.2.6"
   },
   "devDependencies": {

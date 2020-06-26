@@ -73,14 +73,8 @@ var EngineWriter = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var owner;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        owner = new pollenium_buttercup_1.Address(ownerUish);
-                        return [4 /*yield*/, this.ethersContract.transferOwnership(owner.uu.toPhex())];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                owner = new pollenium_buttercup_1.Address(ownerUish);
+                return [2 /*return*/, this.genStateChange(this.ethersContract.transferOwnership(owner.uu.toPhex()))];
             });
         });
     };
@@ -88,14 +82,8 @@ var EngineWriter = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var executorOracle;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        executorOracle = new pollenium_buttercup_1.Address(executorOracleUish);
-                        return [4 /*yield*/, this.ethersContract.setExecutorOracle(executorOracle.uu.toPhex())];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                executorOracle = new pollenium_buttercup_1.Address(executorOracleUish);
+                return [2 /*return*/, this.genStateChange(this.ethersContract.setExecutorOracle(executorOracle.uu.toPhex()))];
             });
         });
     };
@@ -103,28 +91,17 @@ var EngineWriter = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var to, token, amount;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        to = new pollenium_buttercup_1.Address(struct.to);
-                        token = new pollenium_buttercup_1.Address(struct.token);
-                        amount = new pollenium_buttercup_1.Uint256(struct.amount);
-                        return [4 /*yield*/, this.ethersContract.depositViaNative(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex())];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                to = new pollenium_buttercup_1.Address(struct.to);
+                token = new pollenium_buttercup_1.Address(struct.token);
+                amount = new pollenium_buttercup_1.Uint256(struct.amount);
+                return [2 /*return*/, this.genStateChange(this.ethersContract.depositViaNative(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex()))];
             });
         });
     };
     EngineWriter.prototype.depositViaSignature = function (struct) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.actionViaSignature(this.ethersContract.depositViaSignature, struct)];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/, this.actionViaSignature(this.ethersContract.depositViaSignature, struct)];
             });
         });
     };
@@ -132,28 +109,17 @@ var EngineWriter = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var to, token, amount;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        to = new pollenium_buttercup_1.Address(struct.to);
-                        token = new pollenium_buttercup_1.Address(struct.token);
-                        amount = new pollenium_buttercup_1.Uint256(struct.amount);
-                        return [4 /*yield*/, this.ethersContract.withdrawViaNative(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex())];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                to = new pollenium_buttercup_1.Address(struct.to);
+                token = new pollenium_buttercup_1.Address(struct.token);
+                amount = new pollenium_buttercup_1.Uint256(struct.amount);
+                return [2 /*return*/, this.genStateChange(this.ethersContract.withdrawViaNative(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex()))];
             });
         });
     };
     EngineWriter.prototype.withdrawViaSignature = function (struct) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.actionViaSignature(this.ethersContract.withdrawViaSignature, struct)];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/, this.actionViaSignature(this.ethersContract.withdrawViaSignature, struct)];
             });
         });
     };
@@ -161,28 +127,17 @@ var EngineWriter = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var to, token, amount;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        to = new pollenium_buttercup_1.Address(struct.to);
-                        token = new pollenium_buttercup_1.Address(struct.token);
-                        amount = new pollenium_buttercup_1.Uint256(struct.amount);
-                        return [4 /*yield*/, this.ethersContract.withdrawAndNotifyViaNative(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex())];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                to = new pollenium_buttercup_1.Address(struct.to);
+                token = new pollenium_buttercup_1.Address(struct.token);
+                amount = new pollenium_buttercup_1.Uint256(struct.amount);
+                return [2 /*return*/, this.genStateChange(this.ethersContract.withdrawAndNotifyViaNative(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex()))];
             });
         });
     };
     EngineWriter.prototype.withdrawAndNotifyViaSignature = function (struct) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.actionViaSignature(this.ethersContract.withdrawAndNotifyViaSignature, struct)];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/, this.actionViaSignature(this.ethersContract.withdrawAndNotifyViaSignature, struct)];
             });
         });
     };
@@ -191,32 +146,26 @@ var EngineWriter = /** @class */ (function (_super) {
             var args;
             var _a;
             return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        args = [
-                            executionRequest.signedOrders.map(function (signedOrder) {
-                                return signedOrder.getEthersArg();
-                            }),
-                            executionRequest.exchanges.map(function (exchange) {
-                                var buyyOrderIndex = new pollenium_buttercup_1.Uint8(exchange.signedBuyyOrderIndex);
-                                var sellOrderIndex = new pollenium_buttercup_1.Uint8(exchange.signedSellOrderIndex);
-                                var quotTokenTrans = new pollenium_buttercup_1.Uint256(exchange.quotTokenTrans);
-                                var variTokenTrans = new pollenium_buttercup_1.Uint256(exchange.variTokenTrans);
-                                var quotTokenArbit = new pollenium_buttercup_1.Uint256(exchange.quotTokenArbit);
-                                return {
-                                    buyyOrderIndex: buyyOrderIndex.uu.toPhex(),
-                                    sellOrderIndex: sellOrderIndex.uu.toPhex(),
-                                    quotTokenTrans: quotTokenTrans.uu.toPhex(),
-                                    variTokenTrans: variTokenTrans.uu.toPhex(),
-                                    quotTokenArbit: quotTokenArbit.uu.toPhex()
-                                };
-                            })
-                        ];
-                        return [4 /*yield*/, (_a = this.ethersContract).execute.apply(_a, args)];
-                    case 1:
-                        _b.sent();
-                        return [2 /*return*/];
-                }
+                args = [
+                    executionRequest.signedOrders.map(function (signedOrder) {
+                        return signedOrder.getEthersArg();
+                    }),
+                    executionRequest.exchanges.map(function (exchange) {
+                        var buyyOrderIndex = new pollenium_buttercup_1.Uint8(exchange.signedBuyyOrderIndex);
+                        var sellOrderIndex = new pollenium_buttercup_1.Uint8(exchange.signedSellOrderIndex);
+                        var quotTokenTrans = new pollenium_buttercup_1.Uint256(exchange.quotTokenTrans);
+                        var variTokenTrans = new pollenium_buttercup_1.Uint256(exchange.variTokenTrans);
+                        var quotTokenArbit = new pollenium_buttercup_1.Uint256(exchange.quotTokenArbit);
+                        return {
+                            buyyOrderIndex: buyyOrderIndex.uu.toPhex(),
+                            sellOrderIndex: sellOrderIndex.uu.toPhex(),
+                            quotTokenTrans: quotTokenTrans.uu.toPhex(),
+                            variTokenTrans: variTokenTrans.uu.toPhex(),
+                            quotTokenArbit: quotTokenArbit.uu.toPhex()
+                        };
+                    })
+                ];
+                return [2 /*return*/, this.genStateChange((_a = this.ethersContract).execute.apply(_a, args))];
             });
         });
     };
@@ -224,19 +173,13 @@ var EngineWriter = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var to, token, amount, expiration, nonce, signature;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        to = new pollenium_buttercup_1.Address(struct.to);
-                        token = new pollenium_buttercup_1.Address(struct.token);
-                        amount = new pollenium_buttercup_1.Uint256(struct.amount);
-                        expiration = new pollenium_buttercup_1.Uint256(struct.expiration);
-                        nonce = new pollenium_buttercup_1.Bytes32(struct.nonce);
-                        signature = new pollenium_ilex_1.Signature(struct.signature);
-                        return [4 /*yield*/, ethersContractFunction(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex(), expiration.uu.toPhex(), nonce.uu.toPhex(), signature.v.uu.toPhex(), signature.r.uu.toPhex(), signature.s.uu.toPhex())];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                to = new pollenium_buttercup_1.Address(struct.to);
+                token = new pollenium_buttercup_1.Address(struct.token);
+                amount = new pollenium_buttercup_1.Uint256(struct.amount);
+                expiration = new pollenium_buttercup_1.Uint256(struct.expiration);
+                nonce = new pollenium_buttercup_1.Bytes32(struct.nonce);
+                signature = new pollenium_ilex_1.Signature(struct.signature);
+                return [2 /*return*/, this.genStateChange(ethersContractFunction(to.uu.toPhex(), token.uu.toPhex(), amount.uu.toPhex(), expiration.uu.toPhex(), nonce.uu.toPhex(), signature.v.uu.toPhex(), signature.r.uu.toPhex(), signature.s.uu.toPhex()))];
             });
         });
     };

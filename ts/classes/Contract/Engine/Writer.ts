@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { Address, Uint256, Bytes32, Uint8, Uintable } from 'pollenium-buttercup'
 import { Uu, Uish } from 'pollenium-uvaursi'
-import { ContractWriter, ContractWriterChildStruct } from 'pollenium-clover'
+import { ContractWriter, ContractWriterChildStruct, StateChange } from 'pollenium-clover'
 import { engineOutput } from '../../../'
 import { SignedOrder } from '../../SignedOrder'
 import { SignatureStruct, Signature } from 'pollenium-ilex'
@@ -37,74 +37,84 @@ export class EngineWriter extends ContractWriter {
     })
   }
 
-  async setOwner(ownerUish: Uish): Promise<void> {
+  async setOwner(ownerUish: Uish): Promise<StateChange> {
     const owner = new Address(ownerUish)
-    await this.ethersContract.transferOwnership(owner.uu.toPhex())
+    return this.genStateChange(
+      this.ethersContract.transferOwnership(owner.uu.toPhex())
+    )
   }
 
-  async setExecutorOracle(executorOracleUish: Uish): Promise<void> {
+  async setExecutorOracle(executorOracleUish: Uish): Promise<StateChange> {
     const executorOracle = new Address(executorOracleUish)
-    await this.ethersContract.setExecutorOracle(executorOracle.uu.toPhex())
+    return this.genStateChange(
+      this.ethersContract.setExecutorOracle(executorOracle.uu.toPhex())
+    )
   }
 
   async depositViaNative(struct: {
     to: Uish,
     token: Uish,
     amount: Uintable
-  }): Promise<void> {
+  }): Promise<StateChange> {
     const to = new Address(struct.to)
     const token = new Address(struct.token)
     const amount = new Uint256(struct.amount)
-    await this.ethersContract.depositViaNative(
-      to.uu.toPhex(),
-      token.uu.toPhex(),
-      amount.uu.toPhex()
+    return this.genStateChange(
+      this.ethersContract.depositViaNative(
+        to.uu.toPhex(),
+        token.uu.toPhex(),
+        amount.uu.toPhex()
+      )
     )
   }
 
-  async depositViaSignature(struct: ActionViaSignatureStruct): Promise<void> {
-    await this.actionViaSignature(this.ethersContract.depositViaSignature, struct)
+  async depositViaSignature(struct: ActionViaSignatureStruct): Promise<StateChange> {
+    return this.actionViaSignature(this.ethersContract.depositViaSignature, struct)
   }
 
   async withdrawViaNative(struct: {
     to: Uish,
     token: Uish,
     amount: Uintable
-  }): Promise<void> {
+  }): Promise<StateChange> {
     const to = new Address(struct.to)
     const token = new Address(struct.token)
     const amount = new Uint256(struct.amount)
-    await this.ethersContract.withdrawViaNative(
-      to.uu.toPhex(),
-      token.uu.toPhex(),
-      amount.uu.toPhex()
+    return this.genStateChange(
+      this.ethersContract.withdrawViaNative(
+        to.uu.toPhex(),
+        token.uu.toPhex(),
+        amount.uu.toPhex()
+      )
     )
   }
 
-  async withdrawViaSignature(struct: ActionViaSignatureStruct): Promise<void> {
-    await this.actionViaSignature(this.ethersContract.withdrawViaSignature, struct)
+  async withdrawViaSignature(struct: ActionViaSignatureStruct): Promise<StateChange> {
+    return this.actionViaSignature(this.ethersContract.withdrawViaSignature, struct)
   }
 
   async withdrawAndNotifyViaNative(struct: {
     to: Uish,
     token: Uish,
     amount: Uintable
-  }): Promise<void> {
+  }): Promise<StateChange> {
     const to = new Address(struct.to)
     const token = new Address(struct.token)
     const amount = new Uint256(struct.amount)
-    await this.ethersContract.withdrawAndNotifyViaNative(
-      to.uu.toPhex(),
-      token.uu.toPhex(),
-      amount.uu.toPhex()
+    return this.genStateChange(
+      this.ethersContract.withdrawAndNotifyViaNative(
+        to.uu.toPhex(),
+        token.uu.toPhex(),
+        amount.uu.toPhex()
+      )
     )
   }
 
-  async withdrawAndNotifyViaSignature(struct: ActionViaSignatureStruct): Promise<void> {
-    await this.actionViaSignature(this.ethersContract.withdrawAndNotifyViaSignature, struct)
+  async withdrawAndNotifyViaSignature(struct: ActionViaSignatureStruct): Promise<StateChange> {
+    return this.actionViaSignature(this.ethersContract.withdrawAndNotifyViaSignature, struct)
   }
 
-  async execute(executionRequest: ExecutionRequest): Promise<void> {
+  async execute(executionRequest: ExecutionRequest): Promise<StateChange> {
 
     const args = [
       executionRequest.signedOrders.map((signedOrder) => {
@@ -126,11 +136,13 @@ export class EngineWriter extends ContractWriter {
       })
     ]
 
-    await this.ethersContract.execute(...args)
+    return this.genStateChange(
+      this.ethersContract.execute(...args)
+    )
 
   }
 
-  private async actionViaSignature(ethersContractFunction: (...any) => any, struct: ActionViaSignatureStruct) {
+  private async actionViaSignature(ethersContractFunction: (...any) => any, struct: ActionViaSignatureStruct): Promise<StateChange> {
     const to = new Address(struct.to)
     const token = new Address(struct.token)
     const amount = new Uint256(struct.amount)
@@ -138,16 +150,19 @@ export class EngineWriter extends ContractWriter {
     const nonce = new Bytes32(struct.nonce)
     const signature = new Signature(struct.signature)
 
-    await ethersContractFunction(
-      to.uu.toPhex(),
-      token.uu.toPhex(),
-      amount.uu.toPhex(),
-      expiration.uu.toPhex(),
-      nonce.uu.toPhex(),
-      signature.v.uu.toPhex(),
-      signature.r.uu.toPhex(),
-      signature.s.uu.toPhex()
+    return this.genStateChange(
+      ethersContractFunction(
+        to.uu.toPhex(),
+        token.uu.toPhex(),
+        amount.uu.toPhex(),
+        expiration.uu.toPhex(),
+        nonce.uu.toPhex(),
+        signature.v.uu.toPhex(),
+        signature.r.uu.toPhex(),
+        signature.s.uu.toPhex()
+      )
     )
+
   }
 
 }
